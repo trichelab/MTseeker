@@ -21,6 +21,7 @@ Imports:
     Rsamtools,
     S4Vectors,
     Biostrings,
+    BiocGenerics,
     GenomicRanges,
     GenomicAlignments
 License: GPL-3.0
