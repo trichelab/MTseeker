@@ -99,7 +99,7 @@ setMethod("annotation", signature(object="MVRanges"),
 
           })
 
-# previously from chromVAR
+# previously defined in chromvar
 setGeneric("getAnnotations",
            function(annotations, ...) standardGeneric("getAnnotations"))
 

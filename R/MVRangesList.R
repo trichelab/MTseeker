@@ -4,7 +4,6 @@
 #' @import VariantTools
 #' @import Biostrings
 #' @import S4Vectors
-#' @import chromVAR
 #' 
 #' @exportClass MVRangesList
 setClass("MVRangesList", contains="SimpleVRangesList")
