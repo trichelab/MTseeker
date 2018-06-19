@@ -8,7 +8,7 @@ getMT(bam, chrM = "chrM", mtGenome = "hg19", plotMAPQ = FALSE,
   filter = TRUE, parallel = FALSE)
 }
 \arguments{
-\item{bam}{a BAM filename, or a RangedSummarizedExperiment with $BAM}
+\item{bam}{a BAM filename, or DataFrame/SummarizedExperiment with $BAM}
 
 \item{chrM}{what the mitochondrial contig is called. Default is "chrM"}
 
@@ -16,7 +16,7 @@ getMT(bam, chrM = "chrM", mtGenome = "hg19", plotMAPQ = FALSE,
 
 \item{plotMAPQ}{plot distribution of mitochondrial mapping quality? (FALSE)}
 
-\item{filter}{filter on colData(bam)$mtCovg? (default is TRUE, if an RSE)}
+\item{filter}{filter on colData(bam)$mtCovg? (default is TRUE, if DF/RSE)}
 
 \item{parallel}{load multiple BAMs in parallel, if possible? (FALSE)}
 }

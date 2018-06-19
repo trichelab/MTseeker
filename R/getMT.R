@@ -4,11 +4,11 @@
 #' nb. nb. this returns NuMt-depleted mitochondrial GenomicAlignments
 #' FIXME: liftOver hg18/hg19-aligned results to rCRS for better variant calls
 #' 
-#' @param bam       a BAM filename, or a RangedSummarizedExperiment with $BAM
+#' @param bam       a BAM filename, or DataFrame/SummarizedExperiment with $BAM
 #' @param chrM      what the mitochondrial contig is called. Default is "chrM" 
 #' @param mtGenome  what mitochondrial assembly was used (default is hg19) 
 #' @param plotMAPQ  plot distribution of mitochondrial mapping quality? (FALSE)
-#' @param filter    filter on colData(bam)$mtCovg? (default is TRUE, if an RSE)
+#' @param filter    filter on colData(bam)$mtCovg? (default is TRUE, if DF/RSE)
 #' @param parallel  load multiple BAMs in parallel, if possible? (FALSE)
 #'
 #' @import GenomicAlignments
@@ -18,10 +18,20 @@
 getMT <- function(bam, chrM="chrM", mtGenome="hg19", 
                   plotMAPQ=FALSE, filter=TRUE, parallel=FALSE){
 
-  if (is(bam, "RangedSummarizedExperiment")) {
-    if (! "BAM" %in% names(colData(bam))) stop("RSE must have colData()$BAM")
+  if (is(bam, "SummarizedExperiment") | 
+      is(bam, "DataFrame") | 
+      is(bam, "data.frame")) {
+    if (is(bam, "DataFrame") | is(bam, "data.frame")) {
+      if (! "BAM" %in% names(bam)) stop("data frame must have column `BAM`")
+    } else {
+      if (! "BAM" %in% names(colData(bam))) stop("SE must have colData()$BAM")
+    }
     if (filter == TRUE) { 
-      if (!"mtCovg" %in% names(colData(bam))) stop("filter on colData()$mtCovg")
+      if (is(bam, "DataFrame") | is(bam, "data.frame")) {
+        if (!"mtCovg" %in% names(bam)) stop("cannot filter on missing `mtCovg`")
+      } else { 
+        if (!"mtCovg" %in% names(colData(bam))) stop("missing colData()$mtCovg")
+      }
       bam <- filterMT(bam) 
     }
     if (nrow(bam) > 0) {

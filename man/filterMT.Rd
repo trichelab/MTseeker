@@ -2,12 +2,12 @@
 % Please edit documentation in R/filterMT.R
 \name{filterMT}
 \alias{filterMT}
-\title{Filter a RangedSummarizedExperiment's columns based on its $mtCovg colData}
+\title{Filter SummarizedExperiment or DataFrame values based on its $mtCovg column}
 \usage{
-filterMT(SE, minCovg = 20)
+filterMT(DFSE, minCovg = 20)
 }
 \arguments{
-\item{SE}{a RangedSummarizedExperiment with colData() named mtCovg}
+\item{DFSE}{a DataFrame/SummarizedExperiment with colData() $mtCovg}
 
 \item{minCovg}{minimum covg (20, cf. Griffin, Genetics in Medicine 2014)}
 }

@@ -11,7 +11,6 @@
 #' @import gmapR
 #' @import VariantTools
 #' @import GenomicAlignments
-#' @import GmapGenome.Hsapiens.hg19.chrM
 #'
 #' @export
 callMT <- function(mal, ..., rCRS=FALSE, verbose=FALSE){
