@@ -36,7 +36,11 @@ getMT <- function(bam, chrM="chrM", mtGenome="hg19",
     }
     if (nrow(bam) > 0) {
       bams <- bam$BAM
-      names(bams) <- colnames(bam)
+      if (is(bam, "SummarizedExperiment")) {
+        names(bams) <- colnames(bam)
+      } else { 
+        names(bams) <- rownames(bam)
+      }
       # why lapply() by default? 
       # because most laptops will die otherwise!
       if (parallel == TRUE) {
