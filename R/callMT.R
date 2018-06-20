@@ -55,7 +55,8 @@ callMT <- function(mal, ..., verbose=FALSE){
   if (verbose) message("QA'ing variants...") 
   QAed <- qaVariants(tallied)
 
-  if (verbose) message("Calling variants...") 
+  # needed for feedback during sometimes-slow bulk variant calling 
+  message("Calling variants for ", fileName(mal), " against ", mtGenome, "...") 
   filters <- VariantCallingFilters(...)
   res <- callVariants(QAed, calling.filters=filters)
 

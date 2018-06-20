@@ -4,14 +4,12 @@
 \alias{callMT}
 \title{call mitochondrial variants from an MAlignments object}
 \usage{
-callMT(mal, ..., rCRS = FALSE, verbose = FALSE)
+callMT(mal, ..., verbose = FALSE)
 }
 \arguments{
 \item{mal}{an MAlignments (or, potentially, an MAlignmentsList)}
 
 \item{...}{other optional arguments to pass to callVariants}
-
-\item{rCRS}{lift to rCRS if not hg38/GRCh38? (FALSE, and unsupported!)}
 
 \item{verbose}{be verbose? (FALSE; turn on for debugging purposes)}
 }
