@@ -159,12 +159,12 @@ setMethod("locateVariants",
             # otherwise, annotate:
             isCircular(query)["chrM"] <- TRUE # grrr
             whichGenes <- paste0("mtGenes.", genome(query))
-            avail <- data(package="ATACseeker")$results[,"Item"]
+            avail <- data(package="MTseeker")$results[,"Item"]
             availableMtGenes <- grep("^mtGenes\\.", value=TRUE, avail)
             if (!whichGenes %in% availableMtGenes) {
               stop("No quick gene location database for ", whichGenes)
             } else { 
-              data(list=whichGenes, package="ATACseeker")
+              data(list=whichGenes, package="MTseeker")
               anno <- get(whichGenes)
             }
 
