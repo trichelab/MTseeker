@@ -5,7 +5,7 @@
 #' 
 #' @param mal         an MAlignments (or, potentially, an MAlignmentsList) 
 #' @param ...         other optional arguments to pass to callVariants
-#' @param rCRS        lift to rCRS if not already hg38/GRCh38? (FALSE) 
+#' @param rCRS        lift to rCRS if not hg38/GRCh38? (FALSE, and unsupported!)
 #' @param verbose     be verbose? (FALSE; turn on for debugging purposes)
 #'
 #' @import gmapR
@@ -15,17 +15,29 @@
 #' @export
 callMT <- function(mal, ..., rCRS=FALSE, verbose=FALSE){
 
+  if (rCRS == TRUE) stop("MTseeker does not currently support non-rCRS genomes")
+
   if (!is(mal, "MAlignments") & !is(mal, "MAlignmentsList")) {
     stop("callMT needs a MAlignments or MAlignmentsList to call variants.")
   } else if (is(mal, "MAlignmentsList")) { 
-    message("Variant-calling an MAlignmentsList. This may melt your machine.")
+    message("Variant-calling an MAlignmentsList (this may melt your machine).")
     return(MVRangesList(lapply(mal, callMT)))
   }
 
   mtChr <- seqlevelsInUse(mal)
   mtGenome <- unique(genome(mal))
   gmapGenome <- paste("GmapGenome", "Hsapiens", mtGenome, mtChr, sep=".")
-  requireNamespace(gmapGenome)
+  if (verbose) {
+    message("Attempting to load ", gmapGenome, " as reference genome index...") 
+  }
+
+  if (!requireNamespace(gmapGenome)) {
+    if (mtGenome == "rCRS") {
+      message("Check out ", system.file("extdata/rCRS.R", package="MTseeker"))
+      message("if loading ", gmapGenome, " fails (you can build it yourself).")
+    }
+  }
+
   try(attachNamespace(gmapGenome), silent=TRUE)
   genome(mal) <- paste(mtGenome, mtChr, sep=".")
   isCircular(mal) <- FALSE # for variant calling

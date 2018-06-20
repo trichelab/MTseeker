@@ -16,14 +16,14 @@ mtHGVS <- function(mvr) {
 
   # single nucleotide deletions 
   if (length(sbdel) > 0) {
-    nms[sbdel] <- paste0("g.", start(mvr)[sbdel] + 1, "del")
+    nms[sbdel] <- paste0("m.", start(mvr)[sbdel] + 1, "del")
   }
 
   # multinucleotide deletions 
   if (length(mbdel) > 0) {
     mbstarts <- start(mvr)[mbdel] + 1
     mbends <- start(mvr)[mbdel] + (nchar(alt(mvr)) - nchar(ref(mvr)))[mbdel]
-    nms[mbdel] <- paste0("g.", mbstarts, "_", mbends, "del")
+    nms[mbdel] <- paste0("m.", mbstarts, "_", mbends, "del")
   }
 
   # for insertion strings:
@@ -36,7 +36,7 @@ mtHGVS <- function(mvr) {
   # get the inserted bases for a particular set of insertions:
   ins <- function(mvr, idx) psub(ref(mvr)[idx], alt(mvr)[idx])
   hgvsins <- function(mvr, idx) {
-    paste0("g.", start(mvr)[idx], "_", start(mvr)[idx]+1, "ins", ins(mvr, idx))
+    paste0("m.", start(mvr)[idx], "_", start(mvr)[idx]+1, "ins", ins(mvr, idx))
   }
 
   # indices of insertions (if any were detected)

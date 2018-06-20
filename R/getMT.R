@@ -2,25 +2,25 @@
 #'
 #' nb. this could probably be done faster for a list of BAMs but it's not
 #' nb. nb. this returns NuMt-depleted mitochondrial GenomicAlignments
-#' FIXME: liftOver hg18/hg19-aligned results to rCRS for better variant calls
+#' nb. nb. nb. for the time being, this function ONLY supports rCRS/GRCh/hg38!
+#' nb. nb. nb. nb. both chrM and mtGenome are now autodetected from BAM headers
+#' nb. nb. nb. nb. nb. in the process of converting to rCRS, chrM becomes "chrM"
 #' 
 #' @param bam       a BAM filename, or DataFrame/SummarizedExperiment with $BAM
-#' @param chrM      what the mitochondrial contig is called. Default is "chrM" 
-#' @param mtGenome  what mitochondrial assembly was used (default is hg19) 
-#' @param plotMAPQ  plot distribution of mitochondrial mapping quality? (FALSE)
-#' @param filter    filter on colData(bam)$mtCovg? (default is TRUE, if DF/RSE)
+#' @param filter    filter on bam$mtCovg? (default is TRUE, if bam is a DF/RSE)
 #' @param parallel  load multiple BAMs in parallel, if possible? (FALSE)
+#' @param plotMAPQ  plot distribution of mitochondrial mapping quality? (FALSE)
+#' @param ...       additional args to pass scanBamParam(), such as mapqFilter
 #'
 #' @import GenomicAlignments
 #' @import Rsamtools
 #'
 #' @export
-getMT <- function(bam, chrM="chrM", mtGenome="hg19", 
-                  plotMAPQ=FALSE, filter=TRUE, parallel=FALSE){
+getMT <- function(bam, filter=TRUE, parallel=FALSE, plotMAPQ=FALSE, ...) {
 
-  if (is(bam, "SummarizedExperiment") | 
-      is(bam, "DataFrame") | 
-      is(bam, "data.frame")) {
+  # for lists/DataFrames/SEs of data:
+  if (is(bam,"SummarizedExperiment")|is(bam,"DataFrame")|is(bam,"data.frame")) {
+    # {{{
     if (is(bam, "DataFrame") | is(bam, "data.frame")) {
       if (! "BAM" %in% names(bam)) stop("data frame must have column `BAM`")
     } else {
@@ -54,35 +54,47 @@ getMT <- function(bam, chrM="chrM", mtGenome="hg19",
       message("No matching records.")
       return(NULL) 
     }
+    # }}}
   }
 
+  # for individual BAM files:
   bai <- paste0(bam, ".bai")
   if (!file.exists(bai)) indexBam(bam)
   bamfile <- BamFile(bam, index=bai, asMates=TRUE)
+  chrM <- ifelse("chrM" %in% seqlevels(bamfile), "chrM", "MT")
+  mtSeqLen <- seqlengths(bamfile)[chrM] # GRCh37/38, hg38 & rCRS are identical
+  mtGenome <- ifelse(mtSeqLen == 16569, "rCRS", "other") # hg19 YRI is "other"
+  if (mtGenome == "other") {
+    message("MTseeker currently supports only rCRS-derived reference genomes.")
+    message(bam, " seems to be aligned to hg19, RSRS, or maybe something else.")
+    message("We find that lifting hg19 (YRI) chrM to rCRS can create problems.")
+    message("(Patches for this and other human/nonhuman MT refs are welcome!)")
+    stop("Currently unsupported mitochondrial reference detected; exiting.")
+  }
+
   idxStats <- idxstatsBam(bamfile)
   rownames(idxStats) <- idxStats$seqnames
-  mtFrac <- idxStats[chrM, "mapped"] / sum(idxStats[, "mapped"])
-  message(bam, " has ~", round(mtFrac * 100), "% mitochondrial reads.")
+  mtReadCount <- idxStats[chrM, "mapped"] 
+  mtFrac <- mtReadCount / sum(idxStats[, "mapped"])
+  message(bam, " maps ", mtReadCount, " unique reads (~",
+          round(mtFrac * 100, 1), "%) to ", chrM, ".")
 
-  mtRange <- GRanges(chrM, IRanges(1, idxStats[chrM, "seqlength"]), "*")
+  mtRange <- GRanges(chrM, IRanges(1, mtSeqLen), strand="*")
   mtView <- BamViews(bam, bai, bamRanges=mtRange)
-  if (!base::grepl(mtGenome, bam)) {
-    message(mtGenome, " (supplied or default) isn't found in your bam filename")
-  }
   flags <- scanBamFlag(isPaired=TRUE, 
                        isProperPair=TRUE, 
                        isUnmappedQuery=FALSE, 
                        hasUnmappedMate=FALSE, 
                        isSecondaryAlignment=FALSE, 
                        isNotPassingQualityControls=FALSE, 
-                       isDuplicate=FALSE)
-
-  mtParam <- ScanBamParam(flag=flags, what=c("seq","mapq")) 
+                       isDuplicate=FALSE) 
+  mtParam <- ScanBamParam(flag=flags, what=c("seq","mapq"), ...) 
   mtReads <- suppressWarnings(readGAlignments(mtView, param=mtParam)[[1]])
   attr(mtReads, "mtFrac") <- mtFrac
-  genome(mtReads) <- mtGenome
   mtReads <- keepSeqlevels(mtReads, chrM)
-  isCircular(seqinfo(mtReads)) <- TRUE 
+  isCircular(seqinfo(mtReads))[chrM] <- TRUE 
+  seqlevelsStyle(mtReads) <- "UCSC"
+  genome(mtReads) <- mtGenome
 
   if (plotMAPQ) {
     plot(density(mcols(mtReads)$mapq), type="h", col="red",

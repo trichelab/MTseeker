@@ -11,7 +11,7 @@ callMT(mal, ..., rCRS = FALSE, verbose = FALSE)
 
 \item{...}{other optional arguments to pass to callVariants}
 
-\item{rCRS}{lift to rCRS if not already hg38/GRCh38? (FALSE)}
+\item{rCRS}{lift to rCRS if not hg38/GRCh38? (FALSE, and unsupported!)}
 
 \item{verbose}{be verbose? (FALSE; turn on for debugging purposes)}
 }

@@ -4,24 +4,23 @@
 \alias{getMT}
 \title{grab the mitochondrial reads from a BAM and estimate their fraction}
 \usage{
-getMT(bam, chrM = "chrM", mtGenome = "hg19", plotMAPQ = FALSE,
-  filter = TRUE, parallel = FALSE)
+getMT(bam, filter = TRUE, parallel = FALSE, plotMAPQ = FALSE, ...)
 }
 \arguments{
 \item{bam}{a BAM filename, or DataFrame/SummarizedExperiment with $BAM}
 
-\item{chrM}{what the mitochondrial contig is called. Default is "chrM"}
+\item{filter}{filter on bam$mtCovg? (default is TRUE, if bam is a DF/RSE)}
 
-\item{mtGenome}{what mitochondrial assembly was used (default is hg19)}
+\item{parallel}{load multiple BAMs in parallel, if possible? (FALSE)}
 
 \item{plotMAPQ}{plot distribution of mitochondrial mapping quality? (FALSE)}
 
-\item{filter}{filter on colData(bam)$mtCovg? (default is TRUE, if DF/RSE)}
-
-\item{parallel}{load multiple BAMs in parallel, if possible? (FALSE)}
+\item{...}{additional args to pass scanBamParam(), such as mapqFilter}
 }
 \description{
 nb. this could probably be done faster for a list of BAMs but it's not
 nb. nb. this returns NuMt-depleted mitochondrial GenomicAlignments
-FIXME: liftOver hg18/hg19-aligned results to rCRS for better variant calls
+nb. nb. nb. for the time being, this function ONLY supports rCRS/GRCh/hg38!
+nb. nb. nb. nb. both chrM and mtGenome are now autodetected from BAM headers
+nb. nb. nb. nb. nb. in the process of converting to rCRS, chrM becomes "chrM"
 }
