@@ -37,13 +37,13 @@ callMT <- function(mal, ..., verbose=FALSE) {
                                    BAM=metadata(mal)$cache$BAM,
                                    SIZE=metadata(mal)$cache$readLength,
                                    GENOME=metadata(mal)$cache$genome,
-                                   CHR=metadata(mal)$cache$chrom)))
+                                   CHR=rep(seqlevelsInUse(mal), length(mal)))))
     } else { 
       return(MVRangesList(mapply(callMtVars,
                                  BAM=metadata(mal)$cache$BAM,
                                  SIZE=metadata(mal)$cache$readLength,
                                  GENOME=metadata(mal)$cache$genome,
-                                 CHR=metadata(mal)$cache$chrom)))
+                                 CHR=rep(seqlevelsInUse(mal), length(mal)))))
     }
 
   } else if (is(mal, "MAlignments")) { 
