@@ -95,8 +95,8 @@ setMethod("runLength", signature(x="MAlignmentsList"),
 #' @export
 setMethod("fileName", signature(object="MAlignmentsList"),
           function(object) {
-            BAMs <- metadata(x)$cache$BAM
-            names(BAMs) <- names(x)
+            BAMs <- metadata(object)$cache$BAM
+            names(BAMs) <- names(object)
             return(BAMs)
           }) 
 
