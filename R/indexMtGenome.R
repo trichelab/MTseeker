@@ -24,7 +24,9 @@ indexMtGenome <- function(mtGenome="rCRS", fa=NULL, organism="Hsapiens",
   if (is.null(fa)) { 
     fa <- system.file(paste0("extdata/", mtGenome, ".fa"), package="MTseeker")
   }
-  gmapGenomeRef <- GmapGenome(FastaFile(fa), create=TRUE)
+  faf <- FastaFile(fa)
+  message("Found contigs named ", paste(seqlevels(faf), collapse=", "), "...")
+  gmapGenomeRef <- GmapGenome(faf, create=TRUE)
   show(gmapGenomeRef)
 
   if (is.null(destDir)) destDir <- Sys.getenv("HOME") 

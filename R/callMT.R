@@ -38,7 +38,11 @@ callMT <- function(mal, ..., rCRS=FALSE, verbose=FALSE){
   }
 
   try(attachNamespace(gmapGenome), silent=TRUE)
-  genome(mal) <- mtGenome
+  supportedSeqLevels <- seqlevels(get(gmapGenome)) 
+  if (!mtChr %in% supportedSeqLevels) { 
+    stop(mtChr, " is not among the supported seqlevels in ", gmapGenome, ".")
+  }
+
   isCircular(mal) <- FALSE # for variant calling
   pars <- TallyVariantsParam(get(gmapGenome), 
                              minimum_mapq=20L,
