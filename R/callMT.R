@@ -26,7 +26,7 @@ callMT <- function(mal, ..., rCRS=FALSE, verbose=FALSE){
 
   mtChr <- seqlevelsInUse(mal)
   mtGenome <- unique(genome(mal))
-  gmapGenome <- paste("GmapGenome", "Hsapiens", mtGenome, mtChr, sep=".")
+  gmapGenome <- paste("GmapGenome", "Hsapiens", mtGenome, sep=".")
   if (verbose) {
     message("Attempting to load ", gmapGenome, " as reference genome index...") 
   }
@@ -38,7 +38,7 @@ callMT <- function(mal, ..., rCRS=FALSE, verbose=FALSE){
   }
 
   try(attachNamespace(gmapGenome), silent=TRUE)
-  genome(mal) <- paste(mtGenome, mtChr, sep=".")
+  genome(mal) <- mtGenome
   isCircular(mal) <- FALSE # for variant calling
   pars <- TallyVariantsParam(get(gmapGenome), 
                              minimum_mapq=20L,

@@ -2,15 +2,17 @@
 % Please edit documentation in R/indexMtGenome.R
 \name{indexMtGenome}
 \alias{indexMtGenome}
-\title{build and install GmapGenome.Hsapiens.[mtGenome], currently for rCRS}
+\title{build and install GmapGenome.[organism].[mtGenome], mostly for rCRS}
 \usage{
-indexMtGenome(mtGenome = "rCRS", chrM = "chrM", destDir = NULL,
-  install = TRUE)
+indexMtGenome(mtGenome = "rCRS", fa = NULL, organism = "Hsapiens",
+  destDir = NULL, install = TRUE)
 }
 \arguments{
 \item{mtGenome}{mitochondrial reference genome to index (default is rCRS)}
 
-\item{chrM}{what the mitochondrial contig is called (default is chrM)}
+\item{fa}{FASTA file (default is to find included `mtGenome`.fa)}
+
+\item{organism}{organism whose mitochondrial genome is indexed (Hsapiens)}
 
 \item{destDir}{optional destination for the package ($HOME is default)}
 
@@ -24,4 +26,6 @@ gmapR needs a reference genome index against which to call variants.
 We support (only) rCRS as that reference (at least for the time being). 
 This function creates and installs a reference Gmap index, by default rCRS.
 In principle, hg19 and mm10 are supported, but in practice, support is poor.
+Note: this function creates a "skeleton key" rCRS index for contigs named
+'chrM', 'MT', 'rCRS', 'NC_012920.1', and/or 'gi|251831106|ref|NC_012920.1|'.
 }
