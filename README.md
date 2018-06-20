@@ -4,7 +4,9 @@
 
 ## How to install
 
+```
 devtools::install_github("trichelab/MTseeker", username="yourGithubUsername", auth_token="yourGitHubUserTokenFromGithub.com/settings/tokens") 
+```
 
 ## ToDo items:
 
@@ -24,7 +26,7 @@ The pre-release version of the package can be pulled from GitHub using the [devt
 
 ```
 # install.packages("devtools")
-devtools::install_github("trichelab/MTseeker/MTseeker",
+devtools::install_github("trichelab/MTseeker",
                          username="yourGithubUsername", 
                          auth_token="yourTokenFromGithub.com/settings/tokens",
                          build_vignettes=TRUE)
