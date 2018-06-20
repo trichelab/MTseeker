@@ -3,7 +3,6 @@
 \docType{methods}
 \name{MAlignmentsList-methods}
 \alias{MAlignmentsList-methods}
-\alias{updateObject,MAlignmentsList-method}
 \alias{coverage,MAlignmentsList-method}
 \alias{runLength,MAlignmentsList-method}
 \alias{fileName,MAlignmentsList-method}
@@ -11,8 +10,6 @@
 \alias{show,MAlignmentsList-method}
 \title{MAlignmentsList methods (centralized).}
 \usage{
-\S4method{updateObject}{MAlignmentsList}(object)
-
 \S4method{coverage}{MAlignmentsList}(x)
 
 \S4method{runLength}{MAlignmentsList}(x)
@@ -24,21 +21,17 @@
 \S4method{show}{MAlignmentsList}(object)
 }
 \arguments{
-\item{object}{an MAlignmentsList, usually lacking some cached information}
-
-\item{x}{an MAlignmentsList}
-
 \item{x}{an MAlignmentsList}
 
 \item{object}{an MAlignmentsList}
 
 \item{x}{an MAlignmentsList}
 
+\item{x}{an MAlignmentsList}
+
 \item{objects}{an MAlignmentsList}
 }
 \value{
-an updated MAlignmentsList with cached metadata summaries
-
 estimated coverage (numeric vector)
 
 estimated coverage (numeric vector)

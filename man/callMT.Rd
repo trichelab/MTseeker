@@ -2,20 +2,35 @@
 % Please edit documentation in R/callMT.R
 \name{callMT}
 \alias{callMT}
-\title{call mitochondrial variants from an MAlignments object}
+\alias{callMtVars}
+\title{call mitochondrial variants against rCRS from an MAlignments[List] object}
 \usage{
-callMT(mal, ..., parallel = FALSE, verbose = FALSE)
+callMT(mal, ..., verbose = FALSE)
+
+callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM", COV = NULL,
+  verbose = F)
 }
 \arguments{
 \item{mal}{an MAlignments (or, potentially, an MAlignmentsList)}
 
 \item{...}{other optional arguments to pass to callVariants}
 
-\item{parallel}{try to call in parallel? (FALSE; buggy as hell at present)}
-
 \item{verbose}{be verbose? (FALSE; turn on for debugging purposes)}
+
+\item{BAM}{the BAM filename (for callMtVars)}
+
+\item{SIZE}{the read length (for callMtVars; default is 75)}
+
+\item{GENOME}{the reference genome (for callMtVars; default is rCRS)}
+
+\item{CHR}{the mt contig name (for callMtVars; default is chrM)}
+
+\item{COV}{average read coverage (so we don't have to countBam)}
 }
 \description{
+`callMtVars` is a helper function for callMT
+}
+\details{
 FIXME: figure out a way to reprocess extracted chrM/MT reads against rCRS,
        regardless of what reference they were originally aligned against.
 }

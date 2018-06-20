@@ -16,114 +16,101 @@ setClass("MAlignmentsList", contains="GAlignmentsList")
 #' 
 #' @export
 MAlignmentsList <- function(...) {
+
+  # this must be done first: 
+  mdat <- list()
+  mdat$cache <- data.frame(BAM=sapply(..., fileName),
+                           reads=sapply(..., length),
+                           readLength=sapply(..., runLength), 
+                           genomeSize=sapply(..., runValue), 
+                           genome=unname(sapply(..., genome)))
+  mdat$cache$genomeCoverage <- with(mdat$cache, 
+                                    round((reads*readLength) / genomeSize))
+  mdat$summaryCols <- c("reads", "readLength", "genomeSize", "genomeCoverage")
+
+  # because otherwise this clobbers it: 
   gal <- GenomicAlignments:::GAlignmentsList(...)
-  if (is.null(names(gal))) warning("This MAlignmentsList has no element names!")
-  updateObject(new("MAlignmentsList", gal))
+
+  # name entries if possible
+  if (is.null(names(gal))) {
+    warning("This MAlignmentsList has no element names!")
+  } else {
+    rownames(mdat$cache) <- names(gal) 
+  }
+
+  # construct the object + its cache
+  mal <- new("MAlignmentsList", gal)
+  metadata(mal) <- mdat
+  return(mal)
+
 }
 
 
 #' MAlignmentsList methods (centralized).
 #'
-#' @name      MAlignmentsList-methods
+#' @name            MAlignmentsList-methods
 NULL
 
 
 #' @rdname          MAlignmentsList-methods
+#'
+#' @param x         an MAlignmentsList
 #' 
-#' @param object    an MAlignmentsList, usually lacking some cached information
+#' @return          estimated coverage (numeric vector)
 #'
-#' @return          an updated MAlignmentsList with cached metadata summaries
-#'
-#' @export
-setMethod("updateObject", signature(object="MAlignmentsList"),
-          function(object) { 
-            if (!"Summary" %in% names(metadata(object))) {
-              message("Caching element summaries in metadata(object)$Summary:") 
-              metadata(object)$Summary <- Summary(object)
-              message("Done.")
-            }
-            if (!"" %in% names(metadata(object))) {
-              message("Caching BAM file listings in metadata(object)$BAMs:")
-              metadata(object)$BAMs <- fileName(object)
-              message("Done.")
-            }
-            return(object)
-          }) 
-
-
-#' @rdname          MAlignmentsList-methods
-#'
-#' @param x   an MAlignmentsList
-#' 
-#' @return    estimated coverage (numeric vector)
-#'
-#' @import    IRanges
+#' @import          IRanges
 #' 
 #' @export
 setMethod("coverage", signature(x="MAlignmentsList"),
-          function(x) Summary(x)[, "genomeCoverage"])
+          function(x) {
+            covg <- metadata(x)$cache$coverage
+            names(covg) <- names(x)
+            return(covg)
+          })
 
 
 #' @rdname          MAlignmentsList-methods
 #'
-#' @param x   an MAlignmentsList
+#' @param x         an MAlignmentsList
 #' 
-#' @return    estimated coverage (numeric vector)
+#' @return          estimated coverage (numeric vector)
 #'
-#' @import    S4Vectors
+#' @import          S4Vectors
 #' 
 #' @export
 setMethod("runLength", signature(x="MAlignmentsList"),
-          function(x) sapply(x, runLength))
-
-
-#' @rdname          MAlignmentsList-methods
-#' 
-#' @param object  an MAlignmentsList
-#' 
-#' @return        BAM file summary for the MAlignmentsList 
-#' 
-#' @export
-setMethod("fileName", signature(object="MAlignmentsList"),
-          function(object) {
-            if ("BAMs" %in% names(metadata(object))) {
-              BAMs <- metadata(object)$BAMs
-            } else {
-              BAMs <- DataFrame(BAM=sapply(object, fileName),
-                                readLength=unname(sapply(object, runLength)),
-                                genome=unname(sapply(object, genome)))
-              if (!is.null(names(object))) rownames(BAMs) <- names(object)
-            } 
-            if (!is.null(names(object))) {
-              return(BAMs[names(object), ])
-            } else { 
-              return(BAMs)
-            }
+          function(x) {
+            rl <- metadata(x)$cache$readLength
+            names(rl) <- names(x)
+            return(rl)
           })
 
 
 #' @rdname          MAlignmentsList-methods
 #' 
-#' @param x    an MAlignmentsList
+#' @param object    an MAlignmentsList
 #' 
-#' @return     a DataFrame
+#' @return          BAM file summary for the MAlignmentsList 
+#' 
+#' @export
+setMethod("fileName", signature(object="MAlignmentsList"),
+          function(object) {
+            BAMs <- metadata(x)$cache$BAM
+            names(BAMs) <- names(x)
+            return(BAMs)
+          }) 
+
+
+#' @rdname          MAlignmentsList-methods
+#' 
+#' @param x         an MAlignmentsList
+#' 
+#' @return          a DataFrame
 #'
 #' @export
 setMethod("Summary", signature(x="MAlignmentsList"),
           function(x) {
-            if ("Summary" %in% names(metadata(x))) {
-              dat <- metadata(x)$Summary
-            } else {
-              dat <- DataFrame(reads=sapply(x, length),
-                               readLength=sapply(x, runLength),
-                               genomeSize=sapply(x, runValue))
-              if (!is.null(names(x))) rownames(dat) <- names(x)
-              dat$genomeCoverage <- round(with(dat,
-                                               (reads*readLength) / genomeSize))
-            }
-            # try to make the most of cached summaries... 
-            if (!is.null(names(x))) dat <- dat[names(x), ] 
-            return(dat)
+            metadata(x)$cache[, metadata(x)$summaryCols]
           })
 
 

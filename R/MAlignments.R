@@ -111,9 +111,7 @@ setMethod("show", signature(object="MAlignments"),
 #'
 #' @export
 setMethod("fileName", signature(object="MAlignments"),
-          function(object) {
-            return(object@bam)
-          })
+          function(object) return(object@bam))
 
 
 #' @rdname    MAlignments-methods
