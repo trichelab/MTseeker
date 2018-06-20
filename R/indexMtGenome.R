@@ -27,10 +27,9 @@ indexMtGenome <- function(mtGenome="rCRS", fa=NULL, organism="Hsapiens",
   gmapGenomeRef <- GmapGenome(FastaFile(fa), create=TRUE)
   show(gmapGenomeRef)
 
-  homeDir <- Sys.getenv("HOME") 
-  if (is.null(destDir)) destDir <- homeDir
-  pkgName <- paste0("GmapGenome.", organism, ".", mtGenome)
-  pkgPath <- paste0(destDir, "/", pkgName)
+  if (is.null(destDir)) destDir <- Sys.getenv("HOME") 
+  pkgName <- paste("GmapGenome", organism, mtGenome, sep=".")
+  pkgPath <- paste(destDir, pkgName, sep="/")
   message("Building ", pkgName, " in ", pkgPath)
   makeGmapGenomePackage(gmapGenomeRef, 
                         version="1.0", 
