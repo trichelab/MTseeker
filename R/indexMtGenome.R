@@ -6,6 +6,7 @@
 #' In principle, hg19 and mm10 are supported, but in practice, support is poor.
 #'
 #' @param  mtGenome   mitochondrial reference genome to index (default is rCRS)
+#' @param  chrM       what the mitochondrial contig is called (default is chrM)
 #' @param  destDir    optional destination for the package ($HOME is default)
 #' @param  install    install the package after creation? (default is TRUE) 
 #'
@@ -14,7 +15,8 @@
 #' @import gmapR
 #'
 #' @export
-indexMtGenome <- function(mtGenome="rCRS", destDir=NULL, install=TRUE) {
+indexMtGenome <- function(mtGenome="rCRS", chrM="chrM", 
+                          destDir=NULL, install=TRUE) {
 
   fa <- system.file(paste0("extdata/", mtGenome, ".fa"), package="MTseeker")
   gmapGenomeRef <- GmapGenome(FastaFile(fa), create=TRUE)
@@ -22,7 +24,7 @@ indexMtGenome <- function(mtGenome="rCRS", destDir=NULL, install=TRUE) {
 
   homeDir <- Sys.getenv("HOME") 
   if (is.null(destDir)) destDir <- homeDir
-  pkgName <- paste0("GmapGenome.Hsapiens.", mtGenome)
+  pkgName <- paste0("GmapGenome.Hsapiens.", mtGenome, ".", chrM)
   pkgPath <- paste0(destDir, "/", pkgName)
   message("Building ", pkgName, " in ", pkgPath)
   makeGmapGenomePackage(gmapGenomeRef, 

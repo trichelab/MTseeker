@@ -4,10 +4,13 @@
 \alias{indexMtGenome}
 \title{build and install GmapGenome.Hsapiens.[mtGenome], currently for rCRS}
 \usage{
-indexMtGenome(mtGenome = "rCRS", destDir = NULL, install = TRUE)
+indexMtGenome(mtGenome = "rCRS", chrM = "chrM", destDir = NULL,
+  install = TRUE)
 }
 \arguments{
 \item{mtGenome}{mitochondrial reference genome to index (default is rCRS)}
+
+\item{chrM}{what the mitochondrial contig is called (default is chrM)}
 
 \item{destDir}{optional destination for the package ($HOME is default)}
 
