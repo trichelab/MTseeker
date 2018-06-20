@@ -4,12 +4,14 @@
 \alias{callMT}
 \title{call mitochondrial variants from an MAlignments object}
 \usage{
-callMT(mal, ..., verbose = FALSE)
+callMT(mal, ..., parallel = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{mal}{an MAlignments (or, potentially, an MAlignmentsList)}
 
 \item{...}{other optional arguments to pass to callVariants}
+
+\item{parallel}{try to call in parallel? (FALSE; buggy as hell at present)}
 
 \item{verbose}{be verbose? (FALSE; turn on for debugging purposes)}
 }

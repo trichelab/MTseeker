@@ -5,6 +5,7 @@
 #' 
 #' @param mal         an MAlignments (or, potentially, an MAlignmentsList) 
 #' @param ...         other optional arguments to pass to callVariants
+#' @param parallel    try to call in parallel? (FALSE; buggy as hell at present)
 #' @param verbose     be verbose? (FALSE; turn on for debugging purposes)
 #'
 #' @import gmapR
@@ -12,13 +13,18 @@
 #' @import GenomicAlignments
 #'
 #' @export
-callMT <- function(mal, ..., verbose=FALSE){
+callMT <- function(mal, ..., parallel=FALSE, verbose=FALSE){
 
   if (!is(mal, "MAlignments") & !is(mal, "MAlignmentsList")) {
     stop("callMT needs a MAlignments or MAlignmentsList to call variants.")
   } else if (is(mal, "MAlignmentsList")) { 
     message("Variant-calling an MAlignmentsList (this may melt your machine).")
-    return(MVRangesList(lapply(mal, callMT)))
+    if (parallel == TRUE) { 
+      message("Trying to call variants in parallel from R is doubleplus ungood")
+      return(MVRangesList(mclapply(mal, callMT)))
+    } else { 
+      return(MVRangesList(lapply(mal, callMT))) 
+    }
   }
 
   mtChr <- seqlevelsInUse(mal)
