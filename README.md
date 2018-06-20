@@ -26,7 +26,8 @@ The pre-release version of the package can be pulled from GitHub using the [devt
 # install.packages("devtools")
 devtools::install_github("trichelab/MTseeker/MTseeker",
                          username="yourGithubUsername", 
-                         auth_token="yourTokenFromGithub.com/settings/tokens",                           build_vignettes=TRUE)
+                         auth_token="yourTokenFromGithub.com/settings/tokens",
+                         build_vignettes=TRUE)
 ```
 
 Note that the access token and username are required as the repo is private.
