@@ -33,8 +33,7 @@ callMT <- function(mal, ..., rCRS=FALSE, verbose=FALSE){
 
   if (!requireNamespace(gmapGenome)) {
     if (mtGenome == "rCRS") {
-      message("Check out ", system.file("extdata/rCRS.R", package="MTseeker"))
-      message("if loading ", gmapGenome, " fails (you can build it yourself).")
+      stop("You can use indexMtGenome() to build a suitable ", gmapGenome, ".")
     }
   }
 
@@ -68,7 +67,6 @@ callMT <- function(mal, ..., rCRS=FALSE, verbose=FALSE){
 
   if (verbose) message("Formatting variants...") 
   mvr <- MVRanges(res, coverage(mal))
-  if (rCRS == TRUE) mvr <- rCRS(mvr)
   names(mvr) <- mtHGVS(mvr)
   return(mvr)
 }

@@ -116,7 +116,6 @@ setMethod("filt", signature(x="MVRangesList"),
 #' @export
 setMethod("granges", signature(x="MVRangesList"),
           function(x, filterLowQual=TRUE) {
-            data(hg19TorCRS)
             data(chrominfo.rCRS)
             # pull in annotations
             anno <- suppressMessages(getAnnotations(annotation(x[[1]]))) 
@@ -127,11 +126,7 @@ setMethod("granges", signature(x="MVRangesList"),
             mtGenome <- unique(genome(gr))
             if (mtGenome %in% c("rCRS","GRCh38","hg38")) {
               seqinfo(gr) <- chrominfo.rCRS # identical save for name 
-            } else if (mtGenome == "hg19") {
-              message("Lifting variants to rCRS...")
-              gr <- sort(unlist(liftOver(gr, hg19TorCRS)))
-              seqinfo(gr) <- chrominfo.rCRS # as with TxDB
-            } else if (mtGenome != "rCRS") { 
+            } else {
               stop("Unsupported genome: ", mtGenome)
             }
             gr <- reduce(gr)

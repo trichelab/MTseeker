@@ -81,10 +81,6 @@ setMethod("annotation", signature(object="MVRanges"),
           function(object) {
 
             if (!"annotation" %in% names(metadata(object))) {
-              if (unique(genome(object)) != "rCRS") {
-                message("Lifting to rCRS...")
-                object <- rCRS(object)
-              }
               data(anno_rCRS)
               metadata(object)$annotation <- anno_rCRS
             }
@@ -197,7 +193,7 @@ setMethod("predictCoding", # mitochondrial annotations kept internally
 
             # setup:
             data(rCRSeq)
-            query <- encoding(rCRS(query)) 
+            query <- encoding(query)
             MT_CODE <- getGeneticCode("SGC1")
             mtGenes <- subset(metadata(query)$annotation, region == "coding")
             mcols(mtGenes) <- DataFrame(DNA=getSeq(rCRSeq, mtGenes))
