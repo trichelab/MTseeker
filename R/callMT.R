@@ -30,7 +30,8 @@ callMT <- function(mal, ..., verbose=FALSE) {
       message("Variant-calling an MAlignmentsList (may melt your machine)...")
     } 
 
-    if (parallel == TRUE) { 
+    if (FALSE) { 
+    # if (parallel == TRUE) { 
       warning("Parallel mtDNA variant calling is REALLY flaky at the moment.") 
       return(MVRangesList(mcmapply(callMtVars,
                                    BAM=metadata(mal)$cache$BAM,
