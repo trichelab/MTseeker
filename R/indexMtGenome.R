@@ -25,7 +25,8 @@ indexMtGenome <- function(mtGenome="rCRS", fa=NULL, organism="Hsapiens",
     fa <- system.file(paste0("extdata/", mtGenome, ".fa"), package="MTseeker")
   }
   faf <- FastaFile(fa)
-  message("Found contigs named ", paste(seqlevels(faf), collapse=", "), "...")
+  fai <- scanFaIndex(fa)
+  message("Found contigs named ", paste(seqlevels(fai), collapse=", "), "...")
   gmapGenomeRef <- GmapGenome(faf, create=TRUE)
   show(gmapGenomeRef)
 
