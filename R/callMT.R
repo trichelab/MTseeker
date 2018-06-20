@@ -5,7 +5,6 @@
 #' 
 #' @param mal         an MAlignments (or, potentially, an MAlignmentsList) 
 #' @param ...         other optional arguments to pass to callVariants
-#' @param rCRS        lift to rCRS if not hg38/GRCh38? (FALSE, and unsupported!)
 #' @param verbose     be verbose? (FALSE; turn on for debugging purposes)
 #'
 #' @import gmapR
@@ -13,9 +12,7 @@
 #' @import GenomicAlignments
 #'
 #' @export
-callMT <- function(mal, ..., rCRS=FALSE, verbose=FALSE){
-
-  if (rCRS == TRUE) stop("MTseeker does not currently support non-rCRS genomes")
+callMT <- function(mal, ..., verbose=FALSE){
 
   if (!is(mal, "MAlignments") & !is(mal, "MAlignmentsList")) {
     stop("callMT needs a MAlignments or MAlignmentsList to call variants.")
