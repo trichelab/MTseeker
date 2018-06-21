@@ -46,6 +46,7 @@ callMT <- function(mal, ..., parallel=FALSE, verbose=FALSE) {
                                   CHR=rep(seqlevelsInUse(mal), length(mal))))
     }
     seqinfo(mvrl) <- seqinfo(mal) 
+    names(mvrl) <- names(mal)
     return(mvrl) 
 
   } else if (is(mal, "MAlignments")) { 

@@ -128,14 +128,12 @@ setMethod("granges", signature(x="MVRangesList"),
             anno <- suppressMessages(getAnnotations(annotation(x[[1]]))) 
             if (filterLowQual == TRUE) x <- filt(x) 
             message("Aggregating variants...")
-            gr <- unlist(as(x, "GRangesList"))
+            gr <- unlist(as(x, "GRangesList")) 
             seqlevelsStyle(gr) <- "UCSC" # chrM
+            gr <- keepSeqlevels(gr, 
+                                seqlevels(chrominfo.rCRS), 
+                                pruning.mode="coarse")
             mtGenome <- unique(genome(gr))
-            if (mtGenome %in% c("rCRS","GRCh38","hg38")) {
-              seqinfo(gr) <- chrominfo.rCRS # identical save for name 
-            } else {
-              stop("Unsupported genome: ", mtGenome)
-            }
             gr <- reduce(gr)
             annoGenome <- unique(genome(anno))
             newMtGenome <- unique(genome(gr))
