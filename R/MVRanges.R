@@ -18,6 +18,7 @@ setClass("MVRanges",
 #' @export
 MVRanges <- function(vr, coverage) new("MVRanges", vr, coverage=coverage)
 
+
 #' MVRanges methods (centralized).
 #'
 #' `pos` returns a character vector describing variant positions 
@@ -118,10 +119,11 @@ setMethod("encoding", signature(x="MVRanges"),
 
             # limit the search 
             x <- annotation(x) # ensure it's rCRS
-            x <- subset(x, PASS & region == "coding") 
+            x <- subset(x, x$PASS == TRUE & region == "coding") 
 
             # fix issues
             data(rCRSeq)
+            x <- keepSeqlevels(x, names(rCRSeq), pruning.mode="coarse")
             comp <- data.frame(ref=as.character(getSeq(rCRSeq, x)), alt=alt(x))
             keep <- with(comp, which(ref != alt))
             
@@ -133,7 +135,7 @@ setMethod("encoding", signature(x="MVRanges"),
 
 #' @rdname    MVRanges-methods
 #' @export
-setMethod("filt", signature(x="MVRanges"), function(x) subset(x,x$PASS == TRUE))
+setMethod("filt", signature(x="MVRanges"), function(x) subset(x, x$PASS==TRUE))
 
 
 #' @rdname    MVRanges-methods
@@ -203,8 +205,7 @@ setMethod("predictCoding", # mitochondrial annotations kept internally
             # execution:
             result <- granges(query)
             result$varAllele <- alt(query)
-
-            stop("predictCoding(MVRanges) is not finished") 
+            stop("predictCoding(MVRanges) is not finished...") 
 
           })
 

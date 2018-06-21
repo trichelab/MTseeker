@@ -35,9 +35,9 @@ MVRangesList <- function(...) {
 #' `summarizeVariants`    attempts mass functional annotation of variant sites
 #' 
 #' @param x             an MVRangesList (for some methods)
-#' @param object        an MVRangesList (for other methods)
 #' @param value         a RangedSummarizedExperiment with matching colnames
-#' @param annotations   a RangedSummarizedExperiment with motif count matches
+#' @param query         an MVRangesList (for predictCoding)
+#' @param object        an MVRangesList (for other methods)
 #' @param filterLowQual opt. for `granges`/`summarizeVariants`/`tallyVariants`
 #'
 #' @name  MVRangesList-methods
@@ -79,6 +79,13 @@ setMethod("counts", signature(object="MVRangesList"),
 #' @export
 setMethod("encoding", signature(x="MVRangesList"), 
           function(x) MVRangesList(lapply(x, encoding)))
+
+
+#' @rdname    MVRangesList-methods
+#' @export
+setMethod("predictCoding", # mitochondrial annotations kept internally
+          signature(query="MVRangesList", "missing", "missing", "missing"), 
+          function(query, ...) sapply(query, predictCoding))
 
 
 #' @rdname    MVRangesList-methods

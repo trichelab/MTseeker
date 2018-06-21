@@ -7,6 +7,7 @@
 \alias{counts<-,MVRangesList,RangedSummarizedExperiment-method}
 \alias{counts,MVRangesList-method}
 \alias{encoding,MVRangesList-method}
+\alias{predictCoding,MVRangesList,missing,missing,missing-method}
 \alias{show,MVRangesList-method}
 \alias{filt,MVRangesList-method}
 \alias{granges,MVRangesList-method}
@@ -23,6 +24,9 @@
 \S4method{counts}{MVRangesList}(object)
 
 \S4method{encoding}{MVRangesList}(x)
+
+\S4method{predictCoding}{MVRangesList,missing,missing,missing}(query, subject,
+  seqSource, varAllele, ...)
 
 \S4method{show}{MVRangesList}(object)
 
@@ -47,9 +51,9 @@
 
 \item{value}{a RangedSummarizedExperiment with matching colnames}
 
-\item{filterLowQual}{opt. for `granges`/`summarizeVariants`/`tallyVariants`}
+\item{query}{an MVRangesList (for predictCoding)}
 
-\item{annotations}{a RangedSummarizedExperiment with motif count matches}
+\item{filterLowQual}{opt. for `granges`/`summarizeVariants`/`tallyVariants`}
 }
 \description{
 `counts`               returns fragment counts, if any

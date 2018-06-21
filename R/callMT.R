@@ -131,9 +131,9 @@ callMtVars <- function(BAM,SIZE=75,GENOME="rCRS",CHR="chrM",COV=NULL,verbose=F){
   } 
 
   if (verbose) message("Formatting variants...") 
-  mvr <- MVRanges(res, COV)
-  names(mvr) <- mtHGVS(mvr)
+  mvr <- keepSeqlevels(MVRanges(res, COV), CHR, pruning.mode="coarse") 
   isCircular(mvr)[CHR]<- TRUE
+  names(mvr) <- mtHGVS(mvr)
   return(mvr)
 
 }
