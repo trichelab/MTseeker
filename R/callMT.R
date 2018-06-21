@@ -9,6 +9,7 @@
 #'
 #' @param mal         an MAlignments (or, potentially, an MAlignmentsList) 
 #' @param ...         other optional arguments to pass to callVariants
+#' @param parallel    try to run in parallel? (FALSE; this is super unstable)
 #' @param verbose     be verbose? (FALSE; turn on for debugging purposes)
 #'
 #' @import gmapR
@@ -16,7 +17,7 @@
 #' @import GenomicAlignments
 #'
 #' @export
-callMT <- function(mal, ..., verbose=FALSE) {
+callMT <- function(mal, ..., parallel=FALSE, verbose=FALSE) {
 
   if (!is(mal, "MAlignments") & !is(mal, "MAlignmentsList")) {
 
@@ -30,8 +31,7 @@ callMT <- function(mal, ..., verbose=FALSE) {
       message("Variant-calling an MAlignmentsList (may melt your machine)...")
     } 
 
-    if (FALSE) { 
-    # if (parallel == TRUE) { 
+    if (parallel == TRUE) { 
       warning("Parallel mtDNA variant calling is REALLY flaky at the moment.") 
       return(MVRangesList(mcmapply(callMtVars,
                                    BAM=metadata(mal)$cache$BAM,

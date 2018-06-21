@@ -5,7 +5,7 @@
 \alias{callMtVars}
 \title{call mitochondrial variants against rCRS from an MAlignments[List] object}
 \usage{
-callMT(mal, ..., verbose = FALSE)
+callMT(mal, ..., parallel = FALSE, verbose = FALSE)
 
 callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM", COV = NULL,
   verbose = F)
@@ -14,6 +14,8 @@ callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM", COV = NULL,
 \item{mal}{an MAlignments (or, potentially, an MAlignmentsList)}
 
 \item{...}{other optional arguments to pass to callVariants}
+
+\item{parallel}{try to run in parallel? (FALSE; this is super unstable)}
 
 \item{verbose}{be verbose? (FALSE; turn on for debugging purposes)}
 
