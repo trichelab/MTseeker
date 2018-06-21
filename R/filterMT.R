@@ -18,7 +18,10 @@ filterMT <- function(DFSE, minCovg=20) {
         "SummarizedExperiment","RangedSummarizedExperiment")) {
     stop("filterMT operates on a [Ranged]SummarizedExperiment or DataFrame.")
   } else {
-    if (is(DFSE, "SummarizedExperiment") & !"mtCovg" %in% names(colData(DFSE))){
+    if (is(DFSE, "DataFrame") | is(DFSE, "data.frame")) {
+      stopifnot("mtCovg" %in% names(DFSE))
+    } else if (is(DFSE, "SummarizedExperiment") & 
+               !"mtCovg" %in% names(colData(DFSE))) {
       stop("filterMT requires colData named `mtCovg`.")
     } else if (!"mtCovg" %in% names(DFSE)) {
       stop("filterMT requires a column named `mtCovg`.")
@@ -26,6 +29,10 @@ filterMT <- function(DFSE, minCovg=20) {
   }
 
   message("Filtering out samples with < ", minCovg, "x mean read coverage...")
-  return(DFSE[, which(DFSE$mtCovg >= minCovg)])
+  if (is(DFSE, "SummarizedExperiment")) {
+    return(DFSE[, which(DFSE$mtCovg >= minCovg)])
+  } else { 
+    return(subset(DFSE, mtCovg >= minCovg))
+  }
 
 }

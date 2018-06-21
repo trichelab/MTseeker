@@ -161,7 +161,7 @@ setMethod("summarizeVariants",
                            "genomic_position", pos, sep="/")
               res <- as.data.frame(read_json(url, simplifyVector=TRUE)$variants)
               if (nrow(res) > 0) {
-                res$genomic <- with(res, paste0("g.", Start, Ref, ">", Alt))
+                res$genomic <- with(res, paste0("m.", Start, Ref, ">", Alt))
                 res$protein <- with(res, paste0("p.",AA_ref,AA_position,AA_alt))
                 res$Consequence <- with(res, 
                                         paste(Gene_symbol, 

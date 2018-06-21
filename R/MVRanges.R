@@ -218,10 +218,10 @@ setMethod("summarizeVariants", signature(query="MVRanges","missing","missing"),
             # helper function  
             getImpact <- function(pos) {
               url <- paste("http://mitimpact.css-mendel.it", "api", "v2.0",
-                           "genomic_position", sub("^g\\.", "", pos), sep="/")
+                           "genomic_position", sub("^(g|m)\\.","",pos), sep="/")
               res <- as.data.frame(read_json(url, simplifyVector=TRUE)$variants)
               if (nrow(res) > 0) {
-                res$genomic <- with(res, paste0("g.", Start, Ref, ">", Alt))
+                res$genomic <- with(res, paste0("m.", Start, Ref, ">", Alt))
                 res$protein <- with(res, paste0("p.",AA_ref,AA_position,AA_alt))
                 res$change <- with(res, paste(Gene_symbol, protein))
                 res[, c("genomic","protein","change","APOGEE_boost_consensus",
