@@ -10,10 +10,10 @@ setClass("MVRanges",
 
 #' wrap a VRanges for mitochondrial use
 #'
-#' @param   vr    the VRanges
-#' @param   covg  estimated coverage
+#' @param   vr        the VRanges
+#' @param   coverage  estimated coverage
 #'
-#' @return        an MVRanges
+#' @return            an MVRanges
 #' 
 #' @export
 MVRanges <- function(vr, coverage) new("MVRanges", vr, coverage=coverage)
@@ -56,7 +56,7 @@ setMethod("type", signature(x="MVRanges"),
 #' @export
 setMethod("pos", signature(x="MVRanges"), 
           function(x) {
-            mtChr <- grep("(chrM|MT)", seqlevels(x), value=TRUE)
+            mtChr <- grep("(chrM|MT|rCRS|NC_012920.1)",seqlevels(x),value=TRUE)
             loci <- gsub(paste0(mtChr,":"), "", as.character(granges(x)))
             return(loci)
           })

@@ -9,7 +9,7 @@ MVRanges(vr, coverage)
 \arguments{
 \item{vr}{the VRanges}
 
-\item{covg}{estimated coverage}
+\item{coverage}{estimated coverage}
 }
 \value{
 an MVRanges

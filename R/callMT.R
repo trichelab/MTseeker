@@ -31,19 +31,21 @@ callMT <- function(mal, ..., parallel=FALSE, verbose=FALSE) {
       message("Variant-calling an MAlignmentsList (may melt your machine)...")
     } 
 
+    mtChr <- grep("(MT|chrM|NC_012920.1|rCRS)", seqlevelsInUse(mal), value=TRUE)
+
     if (parallel == TRUE) { 
       warning("Parallel mtDNA variant calling is REALLY flaky at the moment.") 
       mvrl <- MVRangesList(mcmapply(callMtVars,
                                     BAM=metadata(mal)$cache$BAM,
                                     SIZE=metadata(mal)$cache$readLength,
                                     GENOME=metadata(mal)$cache$genome,
-                                    CHR=rep(seqlevelsInUse(mal), length(mal))))
+                                    CHR=rep(mtChr, length(mal))))
     } else { 
       mvrl <- MVRangesList(mapply(callMtVars,
                                   BAM=metadata(mal)$cache$BAM,
                                   SIZE=metadata(mal)$cache$readLength,
                                   GENOME=metadata(mal)$cache$genome,
-                                  CHR=rep(seqlevelsInUse(mal), length(mal))))
+                                  CHR=rep(mtChr, length(mal))))
     }
     seqinfo(mvrl) <- seqinfo(mal) 
     names(mvrl) <- names(mal)
@@ -51,11 +53,12 @@ callMT <- function(mal, ..., parallel=FALSE, verbose=FALSE) {
 
   } else if (is(mal, "MAlignments")) { 
 
+    mtChr <- grep("(MT|chrM|NC_012920.1|rCRS)", seqlevelsInUse(mal), value=TRUE)
     mvr <- callMtVars(BAM=fileName(mal),
                       COV=coverage(mal),
                       SIZE=runLength(mal),
                       GENOME=unname(unique(genome(mal))),
-                      CHR=seqlevelsInUse(mal))
+                      CHR=mtChr)
     seqinfo(mvr) <- seqinfo(mal)
     return(mvr)
 
@@ -132,7 +135,7 @@ callMtVars <- function(BAM,SIZE=75,GENOME="rCRS",CHR="chrM",COV=NULL,verbose=F){
   } 
 
   if (verbose) message("Formatting variants...") 
-  mvr <- keepSeqlevels(MVRanges(res, COV), CHR, pruning.mode="coarse") 
+  mvr <- keepSeqlevels(MVRanges(res, coverage=COV), CHR, pruning.mode="coarse") 
   isCircular(mvr)[CHR]<- TRUE
   names(mvr) <- mtHGVS(mvr)
   return(mvr)
