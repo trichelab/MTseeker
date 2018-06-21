@@ -33,26 +33,30 @@ callMT <- function(mal, ..., parallel=FALSE, verbose=FALSE) {
 
     if (parallel == TRUE) { 
       warning("Parallel mtDNA variant calling is REALLY flaky at the moment.") 
-      return(MVRangesList(mcmapply(callMtVars,
-                                   BAM=metadata(mal)$cache$BAM,
-                                   SIZE=metadata(mal)$cache$readLength,
-                                   GENOME=metadata(mal)$cache$genome,
-                                   CHR=rep(seqlevelsInUse(mal), length(mal)))))
+      mvrl <- MVRangesList(mcmapply(callMtVars,
+                                    BAM=metadata(mal)$cache$BAM,
+                                    SIZE=metadata(mal)$cache$readLength,
+                                    GENOME=metadata(mal)$cache$genome,
+                                    CHR=rep(seqlevelsInUse(mal), length(mal))))
     } else { 
-      return(MVRangesList(mapply(callMtVars,
-                                 BAM=metadata(mal)$cache$BAM,
-                                 SIZE=metadata(mal)$cache$readLength,
-                                 GENOME=metadata(mal)$cache$genome,
-                                 CHR=rep(seqlevelsInUse(mal), length(mal)))))
+      mvrl <- MVRangesList(mapply(callMtVars,
+                                  BAM=metadata(mal)$cache$BAM,
+                                  SIZE=metadata(mal)$cache$readLength,
+                                  GENOME=metadata(mal)$cache$genome,
+                                  CHR=rep(seqlevelsInUse(mal), length(mal))))
     }
+    seqinfo(mvrl) <- seqinfo(mal) 
+    return(mvrl) 
 
   } else if (is(mal, "MAlignments")) { 
 
-    return(callMtVars(BAM=fileName(mal),
+    mvr <- callMtVars(BAM=fileName(mal),
                       COV=coverage(mal),
                       SIZE=runLength(mal),
                       GENOME=unname(unique(genome(mal))),
-                      CHR=seqlevelsInUse(mal)))
+                      CHR=seqlevelsInUse(mal))
+    seqinfo(mvr) <- seqinfo(mal)
+    return(mvr)
 
   }
 
@@ -129,6 +133,7 @@ callMtVars <- function(BAM,SIZE=75,GENOME="rCRS",CHR="chrM",COV=NULL,verbose=F){
   if (verbose) message("Formatting variants...") 
   mvr <- MVRanges(res, COV)
   names(mvr) <- mtHGVS(mvr)
+  isCircular(mvr)[CHR]<- TRUE
   return(mvr)
 
 }
