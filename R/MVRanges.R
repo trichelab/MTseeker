@@ -154,7 +154,10 @@ setMethod("locateVariants",
 
             if (filterLowQual == TRUE) query <- filt(query)
             if ("gene" %in% names(mcols(query)) &
-                "region" %in% names(mcols(query))) return(query) # done 
+                "region" %in% names(mcols(query)) &
+                "localPos" %in% names(mcols(query))) {
+              return(query) # done 
+            }
 
             # otherwise, annotate:
             isCircular(query)["chrM"] <- TRUE # grrr
