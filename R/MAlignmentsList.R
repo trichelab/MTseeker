@@ -24,6 +24,10 @@ MAlignmentsList <- function(...) {
                            readLength=sapply(..., runLength), 
                            genomeSize=sapply(..., runValue), 
                            genome=unname(sapply(..., genome)))
+  # options(stringsAsFactors) fix
+  if (is.factor(mdat$cache$BAM)) {
+    mdat$cache$BAM <- levels(mdat$cache$BAM)[mdat$cache$BAM] 
+  }
   mdat$cache$genomeCoverage <- with(mdat$cache, 
                                     round((reads*readLength) / genomeSize))
   mdat$summaryCols <- c("reads", "readLength", "genomeSize", "genomeCoverage")
