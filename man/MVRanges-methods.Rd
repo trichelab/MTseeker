@@ -37,7 +37,7 @@
 \S4method{genome}{MVRanges}(x)
 
 \S4method{locateVariants}{MVRanges,missing,missing}(query,
-  filterLowQual = TRUE, ...)
+  filterLowQual = FALSE, ...)
 
 \S4method{tallyVariants}{MVRanges}(x, filterLowQual = TRUE, ...)
 
@@ -55,6 +55,8 @@
 \item{annotations}{an MVRanges}
 
 \item{query}{an MVRanges}
+
+\item{filterLowQual}{boolean; drop non-PASSing variants from locateVariants?}
 }
 \description{
 `pos` returns a character vector describing variant positions 
@@ -64,6 +66,7 @@
 `annotation` returns (perhaps oddly) an annotated, lifted MVRanges object
 `getAnnotations` returns the GRanges of gene/region annotations for an MVR
 `encoding` returns variants residing in coding regions (consequence unknown)
+`locateVariants` annotates variants w/region, gene, and localStart/localEnd
 `predictCoding` returns variants consequence predictions as one might expect
 `tallyVariants` returns a named vector of variant types by annotated region.
 `summarizeVariants` uses MitImpact to attempt annotation of coding variants.

@@ -28,6 +28,7 @@ MVRanges <- function(vr, coverage) new("MVRanges", vr, coverage=coverage)
 #' `annotation` returns (perhaps oddly) an annotated, lifted MVRanges object
 #' `getAnnotations` returns the GRanges of gene/region annotations for an MVR
 #' `encoding` returns variants residing in coding regions (consequence unknown)
+#' `locateVariants` annotates variants w/region, gene, and localStart/localEnd
 #' `predictCoding` returns variants consequence predictions as one might expect
 #' `tallyVariants` returns a named vector of variant types by annotated region.
 #' `summarizeVariants` uses MitImpact to attempt annotation of coding variants.
@@ -36,6 +37,7 @@ MVRanges <- function(vr, coverage) new("MVRanges", vr, coverage=coverage)
 #' @param object        an MVRanges
 #' @param annotations   an MVRanges
 #' @param query         an MVRanges
+#' @param filterLowQual boolean; drop non-PASSing variants from locateVariants?
 #'
 #' @name                MVRanges-methods
 NULL
@@ -148,7 +150,7 @@ setMethod("genome", signature(x="MVRanges"),
 #' @export
 setMethod("locateVariants", 
           signature(query="MVRanges","missing","missing"),
-          function(query, filterLowQual=TRUE, ...) {
+          function(query, filterLowQual=FALSE, ...) {
 
             if (filterLowQual == TRUE) query <- filt(query)
             if ("gene" %in% names(mcols(query)) &
@@ -171,6 +173,13 @@ setMethod("locateVariants",
             query[queryHits(ol)]$gene <- names(anno)[subjectHits(ol)] 
             query$region <- NA_character_
             query[queryHits(ol)]$region <- anno[subjectHits(ol)]$region
+
+            ## NEW! Add localized coords
+            query$localPos <- NA_integer_
+            query[queryHits(ol)]$localStart <- 
+              start(query[queryHits(ol)]) - start(anno[subjectHits(ol)])
+            query[queryHits(ol)]$localEnd <- 
+              end(query[queryHits(ol)]) - start(anno[subjectHits(ol)])
             return(query)
 
           })
@@ -196,16 +205,21 @@ setMethod("predictCoding", # mitochondrial annotations kept internally
             # setup:
             data(rCRSeq)
             query <- encoding(query)
-            MT_CODE <- getGeneticCode("SGC1")
             mtGenes <- subset(metadata(query)$annotation, region == "coding")
-            mcols(mtGenes) <- DataFrame(DNA=getSeq(rCRSeq, mtGenes))
-            mtGenes$AA <- translate(mtGenes$DNA, MT_CODE)
-            ol <- findOverlaps(query, mtGenes)
 
-            # execution:
-            result <- granges(query)
-            result$varAllele <- alt(query)
-            stop("predictCoding(MVRanges) is not finished...") 
+            # "subject" is mtGenes annotations
+            ol <- findOverlaps(query, mtGenes)
+            if (length(ol) < 1) {
+              message("No candidate coding variants were found.")
+              return(subset(query, NULL))
+            }
+
+            # see whether any produce new proteins:
+            affected <- mapply(injectMtVariants, 
+                               mtGenes[subjectHits(ol)],
+                               SNVs[queryHits(ol)],
+                               SNVsOnly=TRUE)
+            stop("Still working on this!")
 
           })
 
