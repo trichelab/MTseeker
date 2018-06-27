@@ -155,7 +155,8 @@ setMethod("locateVariants",
             if (filterLowQual == TRUE) query <- filt(query)
             if ("gene" %in% names(mcols(query)) &
                 "region" %in% names(mcols(query)) &
-                "localPos" %in% names(mcols(query))) {
+                "localEnd" %in% names(mcols(query)) & 
+                "localStart" %in% names(mcols(query))) {
               return(query) # done 
             }
 
@@ -178,9 +179,10 @@ setMethod("locateVariants",
             query[queryHits(ol)]$region <- anno[subjectHits(ol)]$region
 
             ## NEW! Add localized coords
-            query$localPos <- NA_integer_
+            query$localStart <- NA_integer_
             query[queryHits(ol)]$localStart <- 
               start(query[queryHits(ol)]) - start(anno[subjectHits(ol)])
+            query$localEnd <- NA_integer_
             query[queryHits(ol)]$localEnd <- 
               end(query[queryHits(ol)]) - start(anno[subjectHits(ol)])
             return(query)

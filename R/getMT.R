@@ -64,10 +64,11 @@ getMT <- function(bam, filter=TRUE, parallel=FALSE, plotMAPQ=FALSE, ...) {
   chrM <- ifelse("chrM" %in% seqlevels(bamfile), "chrM", "MT")
   mtSeqLen <- seqlengths(bamfile)[chrM] # GRCh37/38, hg38 & rCRS are identical
   mtGenome <- ifelse(mtSeqLen == 16569, "rCRS", "other") # hg19 YRI is "other"
+  # Note: based on the BAM headers (alone), we can't distinguish rCRS from RSRS
   if (mtGenome == "other") {
     message("MTseeker currently supports only rCRS-derived reference genomes.")
-    message(bam, " seems to be aligned to hg19, RSRS, or maybe something else.")
-    message("We find that lifting hg19 (YRI) chrM to rCRS can create problems.")
+    message(bam, " may be aligned to hg19, as length(", chrM, ") is not 16569.")
+    message("We find lifting hg19 (YRI) chrM to rCRS/RSRS can create problems.")
     message("(Patches for this and other human/nonhuman MT refs are welcome!)")
     stop("Currently unsupported mitochondrial reference detected; exiting.")
   }
@@ -107,4 +108,13 @@ getMT <- function(bam, filter=TRUE, parallel=FALSE, plotMAPQ=FALSE, ...) {
   attr(mal, "coverage") <- coverage(mal)
   return(mal)
 
+}
+
+
+# helper function:
+.rCRSvsRSRS <- function(referenceSequence) { 
+  switch(as.character(extractAt(referenceSequence, IRanges(523,524))[[1]]),
+         "AC"="rCRS",
+         "NN"="RSRS",
+         "neither rCRS nor RSRS")
 }
