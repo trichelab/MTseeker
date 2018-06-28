@@ -7,9 +7,10 @@
 \alias{getAnnotations}
 \alias{predictCoding}
 \alias{summarizeVariants}
-\alias{filt}
+\alias{genes}
 \alias{coverage,MVRanges-method}
 \alias{type,MVRanges-method}
+\alias{genes,MVRanges-method}
 \alias{pos,MVRanges-method}
 \alias{show,MVRanges-method}
 \alias{annotation,MVRanges-method}
@@ -26,6 +27,8 @@
 \S4method{coverage}{MVRanges}(x)
 
 \S4method{type}{MVRanges}(x)
+
+\S4method{genes}{MVRanges}(x)
 
 \S4method{pos}{MVRanges}(x)
 
@@ -79,7 +82,8 @@ In such cases, the method will usually, but not always, be apply()ed.
 
 
 `type` returns a character vector describing variant type (SNV or indel)
-`annotation` returns (perhaps oddly) an annotated, lifted MVRanges object
+`genes` retrieves a GRanges of mitochondrial gene locations for an MVRanges
+`annotation` gets (perhaps oddly) an MVRanges object annotated against rCRS
 `getAnnotations` returns the GRanges of gene/region annotations for an MVR
 `encoding` returns variants residing in coding regions (consequence unknown)
 `locateVariants` annotates variants w/region, gene, and localStart/localEnd
