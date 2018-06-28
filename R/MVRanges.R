@@ -131,17 +131,10 @@ setMethod("encoding", signature(x="MVRanges"),
           function(x) {
 
             # limit the search 
-            x <- annotation(x) # ensure it's rCRS
-            x <- subset(x, x$PASS == TRUE & region == "coding") 
-
-            # fix issues
-            data(rCRSeq)
-            x <- keepSeqlevels(x, names(rCRSeq), pruning.mode="coarse")
-            comp <- data.frame(ref=as.character(getSeq(rCRSeq, x)), alt=alt(x))
-            keep <- with(comp, which(ref != alt))
-            
-            # return subset
-            return(x[keep])
+            x <- locateVariants(x) 
+            x <- subset(x, region == "coding") 
+            chrM <- grep("(MT|chrM|rCRS|RSRS)", seqlevelsInUse(x), value=TRUE)
+            return(keepSeqlevels(x, chrM, pruning.mode="coarse"))
 
           })
 
