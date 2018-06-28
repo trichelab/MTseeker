@@ -21,10 +21,18 @@ MVRanges <- function(vr, coverage) new("MVRanges", vr, coverage=coverage)
 
 #' MVRanges methods (centralized).
 #'
-#' `pos` returns a character vector describing variant positions 
-#' `type` returns a character vector describing variant type (SNV or indel)
+#' Many of these methods can be dispatched from an MVRangesList OR an MVRanges.
+#' In such cases, the method will usually, but not always, be apply()ed. 
+#' 
+#' @section Utility methods:
+#' 
+#' `pos` returns a character vector describing variant positions. 
 #' `filt` returns a subset of variant calls where PASS == TRUE (i.e. filtered)
 #' `coverage` returns the estimated average mitochondrial read coverage depth
+#'
+#' @section Annotation methods:
+#' 
+#' `type` returns a character vector describing variant type (SNV or indel)
 #' `annotation` returns (perhaps oddly) an annotated, lifted MVRanges object
 #' `getAnnotations` returns the GRanges of gene/region annotations for an MVR
 #' `encoding` returns variants residing in coding regions (consequence unknown)
@@ -39,6 +47,8 @@ MVRanges <- function(vr, coverage) new("MVRanges", vr, coverage=coverage)
 #' @param query         an MVRanges
 #' @param filterLowQual boolean; drop non-PASSing variants from locateVariants?
 #'
+#' @aliases locateVariants getAnnotations predictCoding summarizeVariants filt 
+#' 
 #' @name                MVRanges-methods
 NULL
 
@@ -51,7 +61,7 @@ setMethod("coverage", signature(x="MVRanges"), function(x) x@coverage)
 #' @rdname    MVRanges-methods
 #' @export
 setMethod("type", signature(x="MVRanges"), 
-          function(x) ifelse(width(x) == 1, "SNV", "indel"))
+          function(x) ifelse(nchar(ref(x)) == nchar(alt(x)), "SNV", "indel"))
 
 
 #' @rdname    MVRanges-methods
@@ -106,11 +116,12 @@ setGeneric("getAnnotations",
 #' @export
 setMethod("getAnnotations", signature(annotations="MVRanges"), 
           function(annotations) {
-            anno <- metadata(annotations)$annotation
-            if (is.null(anno)) {
-              message("Unannotated! Try getAnnotations(annotation(object))).")
+            if (is.null(metadata(annotations)$annotation)) {
+              message("Annotating on the fly (less efficient)...")
+              return(metadata(annotation(annotation)$annotation))
+            } else { 
+              return(metadata(annotations)$annotation)
             }
-            return(anno)
           })
 
 
@@ -169,7 +180,8 @@ setMethod("locateVariants",
               stop("No quick gene location database for ", whichGenes)
             } else { 
               data(list=whichGenes, package="MTseeker")
-              anno <- get(whichGenes)
+              metadata(query)$annotation <- get(whichGenes)
+              anno <- metadata(query)$annotation
             }
 
             ol <- findOverlaps(query, anno, ignore.strand=TRUE)
@@ -178,13 +190,22 @@ setMethod("locateVariants",
             query$region <- NA_character_
             query[queryHits(ol)]$region <- anno[subjectHits(ol)]$region
 
-            ## NEW! Add localized coords
+            ## Localized genic coordinates
             query$localStart <- NA_integer_
             query[queryHits(ol)]$localStart <- 
               start(query[queryHits(ol)]) - start(anno[subjectHits(ol)])
             query$localEnd <- NA_integer_
             query[queryHits(ol)]$localEnd <- 
               end(query[queryHits(ol)]) - start(anno[subjectHits(ol)])
+
+            ## Affected reference codon(s)
+            query$startCodon <- NA_integer_
+            query[queryHits(ol)]$startCodon <- 
+              query[queryHits(ol)]$localStart %/% 3
+            query$endCodon <- NA_integer_
+            query[queryHits(ol)]$endCodon <- 
+              query[queryHits(ol)]$localEnd %/% 3
+
             return(query)
 
           })

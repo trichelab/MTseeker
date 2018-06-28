@@ -4,17 +4,24 @@
 \alias{injectMtVariants}
 \title{Inject (one or more) variants against rCRS.}
 \usage{
-injectMtVariants(gr, mvr, xlate = TRUE)
+injectMtVariants(gr, mvr, xlate = TRUE, canon = 0.99, refX = 1,
+  altX = 1)
 }
 \arguments{
 \item{gr}{A GRanges, usually of protein-coding regions}
 
-\item{mvr}{An MVRanges, usually from callMT}
+\item{mvr}{An MVRanges, usually from callMT, often subsetted}
 
 \item{xlate}{Attempt to translate codon(s) affected by variant(s)? (TRUE)}
+
+\item{canon}{Minimum VAF to treat variants as canonical by subject (0.99)}
+
+\item{refX}{Reference depth below which variant is deemed canonical (1)}
+
+\item{altX}{Alternative depth above which variants deemed canonical (1)}
 }
 \value{
-The same GRanges, but with ref/var DNA and AA from rCRS.
+The GRanges, with ref/var DNA and AA and
 }
 \description{
 FIXME: this function could most likely be orders of magnitude faster.

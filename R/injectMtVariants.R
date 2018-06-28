@@ -4,41 +4,60 @@
 #' FIXME: this ONLY considers variants injected against rCRS, not RSRS or hg19. 
 #' 
 #' @param gr        A GRanges, usually of protein-coding regions
-#' @param mvr       An MVRanges, usually from callMT
+#' @param mvr       An MVRanges, usually from callMT, often subsetted
 #' @param xlate     Attempt to translate codon(s) affected by variant(s)? (TRUE)
+#' @param canon     Minimum VAF to treat variants as canonical by subject (0.99)
+#' @param refX      Reference depth below which variant is deemed canonical (1)
+#' @param altX      Alternative depth above which variants deemed canonical (1)
 #' 
-#' @return          The same GRanges, but with ref/var DNA and AA from rCRS. 
+#' @return          The GRanges, with ref/var DNA and AA and 
 #' 
 #' @import GenomicRanges 
 #'
 #' @export
-injectMtVariants <- function(gr, mvr, xlate=TRUE) {
+injectMtVariants <- function(gr, mvr, xlate=TRUE, canon=0.99, refX=1, altX=1) {
 
   # rCRS only, for the time being 
   stopifnot(unique(genome(gr)) == "rCRS")
   stopifnot(unique(genome(mvr)) == "rCRS")
   
-  # subset the variants to those that overlap the target GRanges
-  mvr <- locateVariants(subsetByOverlaps(mvr, gr)) 
+  # subset the variants to those that overlap the target GRanges and are canon
+  mvr <- subset(locateVariants(subsetByOverlaps(mvr, gr, type="within")),
+                VAF >= canon & refDepth < refX & altDepth > altX )
 
   # mitochondrial genomic sequence
   data(rCRSeq, package="MTseeker")
   gr$refDNA <- getSeq(rCRSeq, gr)
-  altSeq <- DNAStringSet(replaceLetterAt(rCRSeq[[1]], start(mvr), alt(mvr)))
+  altSeq <- DNAStringSet(replaceAt(rCRSeq[[1]], ranges(mvr), alt(mvr)))
   names(altSeq) <- names(rCRSeq)
   gr$varDNA <- getSeq(altSeq, gr)
 
   if (xlate) {
 
-    # which codon(s) have been perturbed?
-    # split codons out to do this:
-    stop("Not quite finished") 
-      
     # use MT_CODE to translate results
     MT_CODE <- getGeneticCode("SGC1")
-    gr$refAA <- suppressWarnings(translate(gr$refCodon, MT_CODE))
-    gr$varAA <- suppressWarnings(translate(gr$varCodon, MT_CODE))
+    gr$refSeq <- getSeq(rCRSeq, gr)
+    gr$refAA <- suppressWarnings(translate(gr$refSeq, MT_CODE))
 
+    # this is tricky!
+    for (g in seq_along(gr)) {
+      submvr <- subsetByOverlaps(mvr, gr[g])
+      gr[g]$varSeq <- replaceAt(gr[g]$refSeq, 
+                                IRanges(submvr$localStart, submvr$localEnd),
+                                alt(submvr))
+    } 
+
+    gr$varAA <- suppressWarnings(translate(gr$varDNA, MT_CODE))
+
+
+    # which codon(s) have been perturbed?
+    alignments <- pairwiseAlignment(gr$refAA, 
+                                    gr$varAA,
+                                    substitutionMatrix = "BLOSUM50",
+                                    gapOpening = 0, gapExtension = 8)
+
+
+      
   }
 
   # done

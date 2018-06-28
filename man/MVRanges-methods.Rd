@@ -3,6 +3,11 @@
 \docType{methods}
 \name{MVRanges-methods}
 \alias{MVRanges-methods}
+\alias{locateVariants}
+\alias{getAnnotations}
+\alias{predictCoding}
+\alias{summarizeVariants}
+\alias{filt}
 \alias{coverage,MVRanges-method}
 \alias{type,MVRanges-method}
 \alias{pos,MVRanges-method}
@@ -59,10 +64,21 @@
 \item{filterLowQual}{boolean; drop non-PASSing variants from locateVariants?}
 }
 \description{
-`pos` returns a character vector describing variant positions 
-`type` returns a character vector describing variant type (SNV or indel)
+Many of these methods can be dispatched from an MVRangesList OR an MVRanges.
+In such cases, the method will usually, but not always, be apply()ed.
+}
+\section{Utility methods}{
+
+
+`pos` returns a character vector describing variant positions. 
 `filt` returns a subset of variant calls where PASS == TRUE (i.e. filtered)
 `coverage` returns the estimated average mitochondrial read coverage depth
+}
+
+\section{Annotation methods}{
+
+
+`type` returns a character vector describing variant type (SNV or indel)
 `annotation` returns (perhaps oddly) an annotated, lifted MVRanges object
 `getAnnotations` returns the GRanges of gene/region annotations for an MVR
 `encoding` returns variants residing in coding regions (consequence unknown)
@@ -71,3 +87,4 @@
 `tallyVariants` returns a named vector of variant types by annotated region.
 `summarizeVariants` uses MitImpact to attempt annotation of coding variants.
 }
+

@@ -32,5 +32,8 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 
+# Temporary files created by vim
+.*.sw*
+
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
