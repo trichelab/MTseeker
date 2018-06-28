@@ -3,8 +3,8 @@
 #' FIXME: this function could most likely be orders of magnitude faster.
 #' FIXME: this ONLY considers variants injected against rCRS, not RSRS or hg19. 
 #' 
-#' @param gr        A GRanges, usually of protein-coding regions
 #' @param mvr       An MVRanges, usually from callMT, often subsetted
+#' @param gr        A GRanges, usually of protein-coding regions (the default)
 #' @param xlate     Attempt to translate codon(s) affected by variant(s)? (TRUE)
 #' @param canon     Minimum VAF to treat variants as canonical by subject (0.99)
 #' @param refX      Reference depth below which variant is deemed canonical (1)
@@ -15,12 +15,16 @@
 #' @import GenomicRanges 
 #'
 #' @export
-injectMtVariants <- function(gr, mvr, xlate=TRUE, canon=0.99, refX=1, altX=1) {
+injectMtVariants <- function(mvr, gr=NULL, xlate=TRUE, 
+                             canon=.99, refX=1, altX=1) {
 
   # rCRS only, for the time being 
-  stopifnot(unique(genome(gr)) == "rCRS")
   stopifnot(unique(genome(mvr)) == "rCRS")
-  
+
+  # get mtGenes if needed 
+  if (is.null(gr)) gr <-   
+  stopifnot(unique(genome(gr)) == "rCRS")
+
   # subset the variants to those that overlap the target GRanges and are canon
   mvr <- subset(locateVariants(subsetByOverlaps(mvr, gr, type="within")),
                 VAF >= canon & refDepth < refX & altDepth > altX )

@@ -117,8 +117,8 @@ setGeneric("getAnnotations",
 setMethod("getAnnotations", signature(annotations="MVRanges"), 
           function(annotations) {
             if (is.null(metadata(annotations)$annotation)) {
-              message("Annotating on the fly (less efficient)...")
-              return(metadata(annotation(annotation)$annotation))
+              data(anno_rCRS)
+              return(anno_rCRS) 
             } else { 
               return(metadata(annotations)$annotation)
             }

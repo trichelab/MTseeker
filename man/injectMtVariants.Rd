@@ -4,13 +4,13 @@
 \alias{injectMtVariants}
 \title{Inject (one or more) variants against rCRS.}
 \usage{
-injectMtVariants(gr, mvr, xlate = TRUE, canon = 0.99, refX = 1,
+injectMtVariants(mvr, gr = NULL, xlate = TRUE, canon = 0.99, refX = 1,
   altX = 1)
 }
 \arguments{
-\item{gr}{A GRanges, usually of protein-coding regions}
-
 \item{mvr}{An MVRanges, usually from callMT, often subsetted}
+
+\item{gr}{A GRanges, usually of protein-coding regions (the default)}
 
 \item{xlate}{Attempt to translate codon(s) affected by variant(s)? (TRUE)}
 
