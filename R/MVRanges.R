@@ -167,10 +167,13 @@ setMethod("locateVariants",
             if ("gene" %in% names(mcols(query)) &
                 "region" %in% names(mcols(query)) &
                 "localEnd" %in% names(mcols(query)) & 
-                "localStart" %in% names(mcols(query))) {
+                "localStart" %in% names(mcols(query)) &
+                "startCodon " %in% names(mcols(query)) &
+                "endCodon" %in% names(mcols(query))) {
               return(query) # done 
             }
 
+            # FIXME: this is old 
             # otherwise, annotate:
             isCircular(query)["chrM"] <- TRUE # grrr
             whichGenes <- paste0("mtGenes.", genome(query))

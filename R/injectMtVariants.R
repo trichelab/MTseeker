@@ -22,7 +22,7 @@ injectMtVariants <- function(mvr, gr=NULL, xlate=TRUE,
   stopifnot(unique(genome(mvr)) == "rCRS")
 
   # get mtGenes if needed 
-  if (is.null(gr)) gr <- genes(mvr)  
+  if (is.null(gr)) gr <- genes(mvr)
   stopifnot(unique(genome(gr)) == "rCRS")
 
   # subset the variants to those that overlap the target GRanges and are canon
