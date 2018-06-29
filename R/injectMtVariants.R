@@ -30,6 +30,8 @@ injectMtVariants <- function(mvr, gr=NULL, xlate=TRUE,
                 VAF >= canon & refDepth < refX & altDepth > altX )
 
   # mitochondrial genomic sequence
+  # FIXME: may not want to do this
+  # FIXME: else may want to filter
   data(rCRSeq, package="MTseeker")
   gr$refDNA <- getSeq(rCRSeq, gr)
   altSeq <- DNAStringSet(replaceAt(rCRSeq[[1]], ranges(mvr), alt(mvr)))
@@ -41,26 +43,30 @@ injectMtVariants <- function(mvr, gr=NULL, xlate=TRUE,
     # use MT_CODE to translate results
     MT_CODE <- getGeneticCode("SGC1")
     gr$refSeq <- getSeq(rCRSeq, gr)
+    gr$varSeq <- gr$refSeq 
     gr$refAA <- suppressWarnings(translate(gr$refSeq, MT_CODE))
+    gr$varAA <- gr$refAA
+    gr$consequences <- NA_character_
 
-    # this is tricky!
-    for (g in seq_along(gr)) {
+    # this is a bit tricky 
+    for (g in names(gr)) {
       submvr <- subsetByOverlaps(mvr, gr[g])
-      gr[g]$varSeq <- replaceAt(gr[g]$refSeq, 
-                                IRanges(submvr$localStart, submvr$localEnd),
-                                alt(submvr))
+      subir <- IRanges(submvr$localStart, submvr$localEnd)
+      gr[g]$varSeq <- replaceAt(gr[g]$refSeq, subir, alt(submvr))
+      gr[g]$varAA <- suppressWarnings(translate(gr[g]$varSeq, MT_CODE))
+      # FIXME: probably different in terms of end codon from orig (esp for AAfs)
+      orig <- extractAt(gr[g]$refAA, IRanges(submvr$startCodon,submvr$endCodon))
+      altd <- extractAt(gr[g]$varAA, IRanges(submvr$startCodon,submvr$endCodon))
+      gr[g]$consequences <- .flattenConsequences(orig, altd, submvr$startCodon)
+
     } 
 
-    gr$varAA <- suppressWarnings(translate(gr$varDNA, MT_CODE))
-
-
-    # which codon(s) have been perturbed?
-    alignments <- pairwiseAlignment(gr$refAA, 
-                                    gr$varAA,
-                                    substitutionMatrix = "BLOSUM50",
-                                    gapOpening = 0, gapExtension = 8)
-
-
+    # for later
+    if (FALSE) {
+      alignments <- pairwiseAlignment(gr$refAA, gr$varAA,
+                                      substitutionMatrix = "BLOSUM50",
+                                      gapOpening = 0, gapExtension = 8)
+    }
       
   }
 
@@ -69,15 +75,12 @@ injectMtVariants <- function(mvr, gr=NULL, xlate=TRUE,
 }
 
 # helper function
-.injectVars <- function(mvr) {
-  data(rCRSeq, package="MTseeker")
-  replaceAt(rCRSeq, ranges(mvr), alt(mvr))
-}
+.flattenConsequences <- function(orig, altd, startCodons) {
 
-# helper function 
-.getCodons <- function(gr, mvr) { 
-  data(rCRSeq, package="MTseeker")
-  gr$firstCodon <- (start(mvr) - start(gr)) %/% 3
-  gr$lastCodon <- (end(mvr) - start(gr)) %/% 3
-  return(gr)
+  .flat <- function(x) sapply(x[[1]], as.character)
+  .prettify <- function(x) paste0(gsub(" ", "", x), collapse="")
+  asdf <- data.frame(refAA=.flat(orig), pos=startCodons, varAA=.flat(altd))
+  csqs <- apply(subset(asdf, asdf$refAA != asdf$varAA), 1, .prettify)
+  paste(csqs, collapse=",")
+
 }

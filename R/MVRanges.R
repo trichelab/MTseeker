@@ -229,28 +229,7 @@ setMethod("tallyVariants", signature(x="MVRanges"),
 #' @export
 setMethod("predictCoding", # mitochondrial annotations kept internally
           signature(query="MVRanges", "missing", "missing", "missing"), 
-          function(query, ...) {
-
-            # setup:
-            data(rCRSeq)
-            query <- encoding(query)
-            mtGenes <- subset(metadata(query)$annotation, region == "coding")
-
-            # "subject" is mtGenes annotations
-            ol <- findOverlaps(query, mtGenes)
-            if (length(ol) < 1) {
-              message("No candidate coding variants were found.")
-              return(subset(query, NULL))
-            }
-
-            # see whether any produce new proteins:
-            affected <- mapply(injectMtVariants, 
-                               mtGenes[subjectHits(ol)],
-                               SNVs[queryHits(ol)],
-                               SNVsOnly=TRUE)
-            stop("Still working on this!")
-
-          })
+          function(query, ...) injectMtVariants(query))
 
 
 #' @rdname    MVRanges-methods
