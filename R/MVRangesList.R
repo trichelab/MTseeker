@@ -23,11 +23,18 @@ MVRangesList <- function(...) {
 
 #' MVRangesList methods (centralized).
 #'
+#' @section Utility methods:
+#' 
 #' `counts`               returns fragment counts, if any
 #' `counts<-`             adds or updates fragment counts
-#' `coverage`             returns estimated coverage for each element
-#' `genome`               returns the genome (or, perhaps, genomes) in an MVRL
+#' `coverage`             returns estimated mitochondrial read coverage depth
 #' `filt`                 removes variants where PASS != TRUE for each element 
+#'
+#' @section Annotation methods:
+#'
+#' `genes`                returns an annotated GRanges of mitochondrial genes 
+#' `getAnnotations`       returns a GRanges of annotated mitochondrial features
+#' `genome`               returns the genome (or, perhaps, genomes) in an MVRL
 #' `encoding`             returns mutations in coding regions for each element
 #' `granges`              returns mildly annotated aggregates of variant sites
 #' `tallyVariants`        return a matrix of variant types by annotated region
@@ -38,6 +45,7 @@ MVRangesList <- function(...) {
 #' @param value         a RangedSummarizedExperiment with matching colnames
 #' @param query         an MVRangesList (for predictCoding)
 #' @param object        an MVRangesList (for other methods)
+#' @param annotations   an MVRangesList (for getAnnotations)
 #' @param filterLowQual opt. for `granges`/`summarizeVariants`/`tallyVariants`
 #'
 #' @name  MVRangesList-methods
@@ -73,6 +81,18 @@ setReplaceMethod("counts",
 setMethod("counts", signature(object="MVRangesList"), 
           # it turns out that filtering may be needed on egress:
           function(object) filterPeaks(metadata(object)$counts))
+
+
+#' @rdname    MVRangesList-methods
+#' @export
+setMethod("genes", signature(x="MVRangesList"), 
+          function(x) subset(getAnnotations(x), region == "coding"))
+
+
+#' @rdname    MVRangesList-methods
+#' @export
+setMethod("getAnnotations", signature(annotations="MVRangesList"), 
+          function(annotations) getAnnotations(annotations[[1]]))
 
 
 #' @rdname    MVRangesList-methods

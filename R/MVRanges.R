@@ -229,7 +229,7 @@ setMethod("tallyVariants", signature(x="MVRanges"),
 #' @export
 setMethod("predictCoding", # mitochondrial annotations kept internally
           signature(query="MVRanges", "missing", "missing", "missing"), 
-          function(query, ...) injectMtVariants(query))
+          function(query, ...) injectMtVariants(filt(query)))
 
 
 #' @rdname    MVRanges-methods
