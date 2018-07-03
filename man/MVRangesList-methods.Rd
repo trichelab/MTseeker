@@ -6,6 +6,8 @@
 \alias{coverage,MVRangesList-method}
 \alias{counts<-,MVRangesList,RangedSummarizedExperiment-method}
 \alias{counts,MVRangesList-method}
+\alias{genes,MVRangesList-method}
+\alias{getAnnotations,MVRangesList-method}
 \alias{encoding,MVRangesList-method}
 \alias{predictCoding,MVRangesList,missing,missing,missing-method}
 \alias{show,MVRangesList-method}
@@ -22,6 +24,10 @@
 \S4method{counts}{MVRangesList,RangedSummarizedExperiment}(object) <- value
 
 \S4method{counts}{MVRangesList}(object)
+
+\S4method{genes}{MVRangesList}(x)
+
+\S4method{getAnnotations}{MVRangesList}(annotations)
 
 \S4method{encoding}{MVRangesList}(x)
 
@@ -51,19 +57,34 @@
 
 \item{value}{a RangedSummarizedExperiment with matching colnames}
 
+\item{annotations}{an MVRangesList (for getAnnotations)}
+
 \item{query}{an MVRangesList (for predictCoding)}
 
 \item{filterLowQual}{opt. for `granges`/`summarizeVariants`/`tallyVariants`}
 }
 \description{
+MVRangesList methods (centralized).
+}
+\section{Utility methods}{
+
+
 `counts`               returns fragment counts, if any
 `counts<-`             adds or updates fragment counts
-`coverage`             returns estimated coverage for each element
+`coverage`             returns estimated mitochondrial read coverage depth
+`filt`                 removes variants where PASS != TRUE for each element
+}
+
+\section{Annotation methods}{
+
+
+`genes`                returns an annotated GRanges of mitochondrial genes 
+`getAnnotations`       returns a GRanges of annotated mitochondrial features
 `genome`               returns the genome (or, perhaps, genomes) in an MVRL
-`filt`                 removes variants where PASS != TRUE for each element 
 `encoding`             returns mutations in coding regions for each element
 `granges`              returns mildly annotated aggregates of variant sites
 `tallyVariants`        return a matrix of variant types by annotated region
 `locateVariants`       locates variants within genes, tRNA, rRNA, or D-loop
 `summarizeVariants`    attempts mass functional annotation of variant sites
 }
+
