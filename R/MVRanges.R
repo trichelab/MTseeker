@@ -101,8 +101,8 @@ setMethod("annotation", signature(object="MVRanges"),
           function(object) {
 
             if (!"annotation" %in% names(metadata(object))) {
-              data(anno_rCRS)
-              metadata(object)$annotation <- anno_rCRS
+              data(mtAnno.rCRS)
+              metadata(object)$annotation <- mtAnno
             }
 
             anno <- getAnnotations(object)
@@ -124,8 +124,8 @@ setGeneric("getAnnotations",
 setMethod("getAnnotations", signature(annotations="MVRanges"), 
           function(annotations) {
             if (is.null(metadata(annotations)$annotation)) {
-              data(anno_rCRS)
-              return(anno_rCRS) 
+              data(mtAnno.rCRS)
+              return(mtAnno)
             } else { 
               return(metadata(annotations)$annotation)
             }
@@ -173,17 +173,17 @@ setMethod("locateVariants",
               return(query) # done 
             }
 
-            # FIXME: this is old 
             # otherwise, annotate:
             isCircular(query)["chrM"] <- TRUE # grrr
-            whichGenes <- paste0("mtGenes.", genome(query))
+            whichAnno <- paste0("mtAnno.", genome(query))
             avail <- data(package="MTseeker")$results[,"Item"]
-            availableMtGenes <- grep("^mtGenes\\.", value=TRUE, avail)
-            if (!whichGenes %in% availableMtGenes) {
-              stop("No quick gene location database for ", whichGenes)
+            availableMtAnno <- grep("^mtAnno\\.", value=TRUE, avail)
+            if (!whichAnno %in% availableMtAnno) {
+              stop("No stored annotation database for ", whichAnno)
             } else { 
-              data(list=whichGenes, package="MTseeker")
-              metadata(query)$annotation <- get(whichGenes)
+              data(list=whichAnno, package="MTseeker")
+              metadata(query)$annotation <- subset(get(whichAnno), 
+                                                   region=="coding")
               anno <- metadata(query)$annotation
             }
 
