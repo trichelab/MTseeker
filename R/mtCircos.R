@@ -4,10 +4,10 @@
 #' if you want to fiddle with the details, crack open the code and modify it...
 #' or alternatively, add sectors/dendrograms inside of this "framed" version.
 #' 
-#' @param anno     a GRanges (optional, defaults to mtAnno.rCRS if none given)
-#' @param variants an MVRanges or MVRangesList (optional, and poorly supported)
+#' @param anno      a GRanges (optional, defaults to mtAnno.rCRS if none given)
+#' @param variants  an MVRanges or MVRangesList (optional, and poorly supported)
 #' 
-#' @return      a list with elements `anno` (data.frame) and `pfun` (panel.fun)
+#' @return          invisibly, a list: `anno` (data.frame) + `pfun` (panel.fun)
 #'
 #' @import circlize
 #' 
@@ -55,5 +55,5 @@ mtCircos <- function(anno=NULL, variants=NULL) {
   if (!is.null(variants)) {
     warning("Warning: variant plotting support is very sucky right now...")
   }
-  return(res)
+  invisible(res)
 }

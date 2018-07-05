@@ -12,7 +12,7 @@ mtCircos(anno = NULL, variants = NULL)
 \item{variants}{an MVRanges or MVRangesList (optional, and poorly supported)}
 }
 \value{
-a list with elements `anno` (data.frame) and `pfun` (panel.fun)
+invisibly, a list: `anno` (data.frame) + `pfun` (panel.fun)
 }
 \description{
 The default font sizes, orientations, etc. are optimized for a "cold" start;
