@@ -143,28 +143,27 @@ setMethod("filt", signature(x="MVRangesList"),
 #' @export
 setMethod("granges", signature(x="MVRangesList"),
           function(x, filterLowQual=TRUE) {
-            data(chrominfo.rCRS)
-            # pull in annotations
-            anno <- suppressMessages(getAnnotations(annotation(x[[1]]))) 
             if (filterLowQual == TRUE) x <- filt(x) 
+            anno <- suppressMessages(getAnnotations(x))
             message("Aggregating variants...")
             gr <- unlist(as(x, "GRangesList")) 
-            seqlevelsStyle(gr) <- "UCSC" # chrM
-            gr <- keepSeqlevels(gr, 
-                                seqlevels(chrominfo.rCRS), 
-                                pruning.mode="coarse")
-            mtGenome <- unique(genome(gr))
+            gr <- keepSeqlevels(gr, "chrM", pruning.mode="coarse")
             gr <- reduce(gr)
-            annoGenome <- unique(genome(anno))
-            newMtGenome <- unique(genome(gr))
-            stopifnot(newMtGenome == annoGenome)
-            metadata(gr)$annotation <- anno
             ol <- findOverlaps(gr, anno)
+            metadata(gr)$annotation <- anno
+            metadata(gr)$sampleNames <- names(x)
             message("Annotating variants by region...")
             gr$gene <- NA_character_
             gr[queryHits(ol)]$gene <- names(anno)[subjectHits(ol)] 
             gr$region <- NA_character_
             gr[queryHits(ol)]$region <- anno[subjectHits(ol)]$region
+            message("Annotating variants by sample...") 
+            hitMat <- matrix(0, ncol=length(x), nrow=length(gr),
+                             dimnames=list(NULL, names(x)))
+            varHits <- findOverlaps(as(x, "GRangesList"), gr)
+            bySample <- split(subjectHits(varHits), queryHits(varHits))
+            for (s in seq_along(bySample)) hitMat[bySample[[s]], s] <- 1
+            mcols(gr)$overlaps <- hitMat 
             return(gr)
           })
 

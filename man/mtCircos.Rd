@@ -4,12 +4,14 @@
 \alias{mtCircos}
 \title{plot a canonical human (or, in principle, any) mitochondrial genome}
 \usage{
-mtCircos(anno = NULL, variants = NULL)
+mtCircos(anno = NULL, variants = NULL, matrices = NULL)
 }
 \arguments{
 \item{anno}{a GRanges (optional, defaults to mtAnno.rCRS if none given)}
 
-\item{variants}{an MVRanges or MVRangesList (optional, and poorly supported)}
+\item{variants}{optional MVRanges or MVRangesList to plot outside the circle}
+
+\item{matrices}{optional matrices of data to plot inside of the genes circle}
 }
 \value{
 invisibly, a list: `anno` (data.frame) + `pfun` (panel.fun)
