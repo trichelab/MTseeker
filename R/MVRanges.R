@@ -174,18 +174,9 @@ setMethod("locateVariants",
             }
 
             # otherwise, annotate:
-            isCircular(query)["chrM"] <- TRUE # grrr
-            whichAnno <- paste0("mtAnno.", genome(query))
-            avail <- data(package="MTseeker")$results[,"Item"]
-            availableMtAnno <- grep("^mtAnno\\.", value=TRUE, avail)
-            if (!whichAnno %in% availableMtAnno) {
-              stop("No stored annotation database for ", whichAnno)
-            } else { 
-              data(list=whichAnno, package="MTseeker")
-              metadata(query)$annotation <- subset(get(whichAnno), 
-                                                   region=="coding")
-              anno <- metadata(query)$annotation
-            }
+            data("mtAnno.rCRS", package="MTseeker")
+            metadata(query)$annotation <- subset(mtAnno, region=="coding")
+            anno <- metadata(query)$annotation
 
             ol <- findOverlaps(query, anno, ignore.strand=TRUE)
             query$gene <- NA_character_
