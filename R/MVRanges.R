@@ -75,9 +75,7 @@ setMethod("genes", signature(x="MVRanges"),
 #' @export
 setMethod("pos", signature(x="MVRanges"), 
           function(x) {
-            mtChr <- grep("(chrM|MT|rCRS|NC_012920.1)",seqlevels(x),value=TRUE)
-            loci <- gsub(paste0(mtChr,":"), "", as.character(granges(x)))
-            return(loci)
+            sapply(apply(cbind(start(x),end(x)),1, unique), paste, collapse="-")
           })
 
 
@@ -173,32 +171,32 @@ setMethod("locateVariants",
               return(query) # done 
             }
 
-            # otherwise, annotate:
             data("mtAnno.rCRS", package="MTseeker")
-            metadata(query)$annotation <- subset(mtAnno, region=="coding")
-            anno <- metadata(query)$annotation
+            metadata(query)$annotation <- mtAnno
 
-            ol <- findOverlaps(query, anno, ignore.strand=TRUE)
+            ol <- findOverlaps(query, mtAnno, ignore.strand=TRUE)
             query$gene <- NA_character_
-            query[queryHits(ol)]$gene <- names(anno)[subjectHits(ol)] 
+            query[queryHits(ol)]$gene <- names(mtAnno)[subjectHits(ol)] 
             query$region <- NA_character_
-            query[queryHits(ol)]$region <- anno[subjectHits(ol)]$region
+            query[queryHits(ol)]$region <- mtAnno[subjectHits(ol)]$region
 
             ## Localized genic coordinates
+            anno <- subset(mtAnno, region == "coding") 
+            ol2 <- findOverlaps(query, anno, ignore.strand=TRUE)
             query$localStart <- NA_integer_
-            query[queryHits(ol)]$localStart <- 
-              start(query[queryHits(ol)]) - start(anno[subjectHits(ol)])
+            query[queryHits(ol2)]$localStart <- 
+              start(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])
             query$localEnd <- NA_integer_
-            query[queryHits(ol)]$localEnd <- 
-              end(query[queryHits(ol)]) - start(anno[subjectHits(ol)])
-
+            query[queryHits(ol2)]$localEnd <- 
+              end(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])
+            
             ## Affected reference codon(s)
             query$startCodon <- NA_integer_
-            query[queryHits(ol)]$startCodon <- 
-              query[queryHits(ol)]$localStart %/% 3
+            query[queryHits(ol2)]$startCodon <- 
+              query[queryHits(ol2)]$localStart %/% 3
             query$endCodon <- NA_integer_
-            query[queryHits(ol)]$endCodon <- 
-              query[queryHits(ol)]$localEnd %/% 3
+            query[queryHits(ol2)]$endCodon <- 
+              query[queryHits(ol2)]$localEnd %/% 3
 
             return(query)
 

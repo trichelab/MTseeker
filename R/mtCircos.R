@@ -11,6 +11,7 @@
 #' @return          invisibly, a list: `anno` (data.frame) + `pfun` (panel.fun)
 #'
 #' @import circlize
+#' @import viridis
 #' 
 #' @export 
 mtCircos <- function(anno=NULL, variants=NULL, matrices=NULL) { 
@@ -36,21 +37,18 @@ mtCircos <- function(anno=NULL, variants=NULL, matrices=NULL) {
  
   # outside track: variant annotations (use granges() if variants is an MVRL)
   if (!is.null(variants)) {
-    gr2 <- granges(variants)
-    # coding <- predictCoding(variants)
-    browser()
-    circos.genomicRainfall(as.data.frame(gr2), pch=16, cex=.4, track.height=.1,
-                           col=c("#FF000080", "#0000FF80"), bg.border=NA)
+    circos.genomicHeatmap(.makeBed(variants), col=.plasma, 
+                          side="outside", border="white") 
   } else { 
-    circos.track(track.height=0.1, ylim=c(0,1), bg.border=NA)
+    circos.track(track.height=0.15, ylim=c(0,1), bg.border=NA)
   }
   
   # main track, gene names and such
   circos.track(panel.fun=pfun, ylim=c(-1,1), track.height=0.5, bg.border=NA)
 
   # inside track: plots of VAFs/indels and such? (also could use granges(MVRL))
-  if (!is.null(matrices)) message("Warning: matrix support is very sucky too")
-  circos.track(track.height=0.2, ylim=c(0,1), bg.border=NA)
+  if (!is.null(matrices)) message("Warning: matrix support is very very sucky")
+  circos.track(track.height=0.15, ylim=c(0,1), bg.border=NA)
 
   res <- list(anno=dat, pfun=pfun)
   invisible(res)
@@ -76,3 +74,48 @@ mtCircos <- function(anno=NULL, variants=NULL, matrices=NULL) {
          ifelse(gr$name %in% c("MT-ND3","MT-ND4L","MT-ND6","MT-CO2","MT-CO3",
                                "MT-RNR1","MT-RNR2","MT-ATP8","MT-ATP6"),.8,.9))
 }
+
+# helper fn
+.makeBed <- function(x) {
+  bed <- switch(class(x),
+                "MVRanges"=.mvrToBed(x),
+                "MVRangesList"=.mvrlToBed(x),
+                "GRanges"=.grToBed(x))
+  names(bed)[1] <- "chr"
+  return(bed)
+}
+
+# helper fn
+.mvrToBed <- function(mvr) { 
+  bed <- as.data.frame(locateVariants(mvr))[, c("gene", "start", "end")]
+  bed$value <- mvr$VAF
+  bed <- subset(bed, !is.na(bed[,1]))
+  return(bed)
+}
+
+# helper fn
+.mvrlToBed <- function(mvrl) { 
+  gr <- granges(mvrl)
+  bed <- as.data.frame(gr)
+  bed <- bed[, c(6, 2, 3, 8:(ncol(bed)))]
+  return(bed)
+}
+
+# helper fn
+.grToBed <- function(gr) { 
+  bed <- as.data.frame(gr)[, c("gene", "start", "end")]
+  bed$value <- 1
+  return(bed)
+}
+
+# helper fn
+.viridis <- colorRamp2(seq(0, 1, by = 0.1), viridis(11))
+
+# helper fn
+.plasma <- colorRamp2(seq(0, 1, by = 0.1), plasma(11))
+
+# helper fn; should probably use viridis instead 
+.jet <- colorRamp2(seq(0, 1, 0.125),
+                   c("#00007F", "blue", "#007FFF", "cyan",
+                     "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
+

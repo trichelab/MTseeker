@@ -1,29 +1,35 @@
 #' convert mitochondrial variant calls to HGVS format for naming
 #'
-#' @param mvr   an MVRanges
+#' @param x     an MVRanges (or, in a pinch, a GRanges)
 #'
-#' @return      a properly named MVRanges
+#' @return      a properly named MVRanges (or, in a pinch, GRanges)
 #'
 #' @export
-mtHGVS <- function(mvr) { 
+mtHGVS <- function(x) { 
+
+  # for plotting purposes
+  if (is(x, "GRanges")) {
+    return(paste0("m.", sapply(apply(cbind(start(x), end(x)), 1, unique), 
+                               paste, collapse="-")))
+  }
 
   # baseline notation, assuming mostly SNVs 
-  nms <- paste0(pos(mvr), ref(mvr), ">", alt(mvr))
+  nms <- paste0(gsub("\\-", "_", pos(x)), ref(x), ">", alt(x))
 
   # deletions
-  sbdel <- which((nchar(ref(mvr)) - nchar(alt(mvr))) == 1)
-  mbdel <- which((nchar(ref(mvr)) - nchar(alt(mvr))) > 1)
+  sbdel <- which((nchar(ref(x)) - nchar(alt(x))) == 1)
+  mbdel <- which((nchar(ref(x)) - nchar(alt(x))) > 1)
 
   # single nucleotide deletions 
   if (length(sbdel) > 0) {
-    nms[sbdel] <- paste0("m.", start(mvr)[sbdel] + 1, "del")
+    nms[sbdel] <- paste0(start(x)[sbdel] + 1, "del")
   }
 
   # multinucleotide deletions 
   if (length(mbdel) > 0) {
-    mbstarts <- start(mvr)[mbdel] + 1
-    mbends <- start(mvr)[mbdel] + (nchar(alt(mvr)) - nchar(ref(mvr)))[mbdel]
-    nms[mbdel] <- paste0("m.", mbstarts, "_", mbends, "del")
+    mbstarts <- start(x)[mbdel] + 1
+    mbends <- start(x)[mbdel] + (nchar(alt(x)) - nchar(ref(x)))[mbdel]
+    nms[mbdel] <- paste0(mbstarts, "_", mbends, "del")
   }
 
   # for insertion strings:
@@ -34,18 +40,18 @@ mtHGVS <- function(mvr) {
   }
 
   # get the inserted bases for a particular set of insertions:
-  ins <- function(mvr, idx) psub(ref(mvr)[idx], alt(mvr)[idx])
-  hgvsins <- function(mvr, idx) {
-    paste0("m.", start(mvr)[idx], "_", start(mvr)[idx]+1, "ins", ins(mvr, idx))
+  ins <- function(x, idx) psub(ref(x)[idx], alt(x)[idx])
+  hgvsins <- function(x, idx) {
+    paste0(start(x)[idx], "_", start(x)[idx]+1, "ins", ins(x, idx))
   }
 
   # indices of insertions (if any were detected)
-  bpins <- which(nchar(alt(mvr)) > nchar(ref(mvr)))
+  bpins <- which(nchar(alt(x)) > nchar(ref(x)))
 
   # rename insertions (length is not important) 
-  if (length(bpins) > 0) nms[bpins] <- hgvsins(mvr, bpins)
+  if (length(bpins) > 0) nms[bpins] <- hgvsins(x, bpins)
 
-  # done (for now)
-  return(nms) 
+  # prepend m.
+  return(paste0("m.", nms))
 
 }

@@ -4,13 +4,13 @@
 \alias{mtHGVS}
 \title{convert mitochondrial variant calls to HGVS format for naming}
 \usage{
-mtHGVS(mvr)
+mtHGVS(x)
 }
 \arguments{
-\item{mvr}{an MVRanges}
+\item{x}{an MVRanges (or, in a pinch, a GRanges)}
 }
 \value{
-a properly named MVRanges
+a properly named MVRanges (or, in a pinch, GRanges)
 }
 \description{
 convert mitochondrial variant calls to HGVS format for naming
