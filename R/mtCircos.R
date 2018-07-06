@@ -37,9 +37,9 @@ mtCircos <- function(anno=NULL, variants=NULL, matrices=NULL) {
  
   # outside track: variant annotations (use granges() if variants is an MVRL)
   if (!is.null(variants)) {
-    circos.genomicHeatmap(.makeBed(variants), .plasma, 
-                          connection_height = convert_height(3, "mm"),
-                          side="outside", border="white") 
+    bed <- .makeBed(variants)
+    circos.genomicHeatmap(bed, .newsprint, line_col=.colorCode(bed$chr), 
+                          track.margin=c(0,0), side="outside", border="white")
   } else { 
     circos.track(track.height=0.15, ylim=c(0,1), bg.border=NA)
   }
@@ -47,7 +47,7 @@ mtCircos <- function(anno=NULL, variants=NULL, matrices=NULL) {
   # main track, gene names and such
   circos.track(panel.fun=pfun, ylim=c(-1,1), track.height=0.5, bg.border=NA)
 
-  # inside track: plots of VAFs/indels and such? (also could use granges(MVRL))
+  # inside track: plots of VAFs/indels and such? 
   if (!is.null(matrices)) message("Warning: matrix support is very very sucky")
   circos.track(track.height=0.15, ylim=c(0,1), bg.border=NA)
 
@@ -108,6 +108,21 @@ mtCircos <- function(anno=NULL, variants=NULL, matrices=NULL) {
   bed$value <- 1
   return(bed)
 }
+
+# helper fn
+.colorCode <- function(x) { 
+  data("mtAnno.rCRS", package="MTseeker")
+  mtAnno[x]$itemRgb 
+}
+
+# helper fn
+.newsprint <- colorRamp2(c(0, 1), c("#FFFFFF", "#000000"))
+
+# helper fn
+.bloody <- colorRamp2(c(0, 1), c("#FFFFFF", "#880000"))
+
+# helper fn
+.blurple <- colorRamp2(c(0, 1), c("#FFFFFF", "#FF00FF"))
 
 # helper fn
 .viridis <- colorRamp2(seq(0, 1, by = 0.1), viridis(11))
