@@ -37,7 +37,8 @@ mtCircos <- function(anno=NULL, variants=NULL, matrices=NULL) {
  
   # outside track: variant annotations (use granges() if variants is an MVRL)
   if (!is.null(variants)) {
-    circos.genomicHeatmap(.makeBed(variants), col=.plasma, 
+    circos.genomicHeatmap(.makeBed(variants), .plasma, 
+                          connection_height = convert_height(3, "mm"),
                           side="outside", border="white") 
   } else { 
     circos.track(track.height=0.15, ylim=c(0,1), bg.border=NA)
