@@ -70,9 +70,9 @@ mtCircos <- function(anno=NULL, variants=NULL, matrices=NULL) {
 
 # helper fn
 .textcex <- function(gr) { 
-  ifelse(gr$name %in% c("HVR1","HVR2"), .65,
+  ifelse(gr$name %in% c("HVR1","HVR2"), .6,
          ifelse(gr$name %in% c("MT-ND3","MT-ND4L","MT-ND6","MT-CO2","MT-CO3",
-                               "MT-RNR1","MT-RNR2","MT-ATP8","MT-ATP6"),.8,.9))
+                               "MT-RNR1","MT-RNR2","MT-ATP8","MT-ATP6"),.75,.9))
 }
 
 # helper fn
