@@ -37,9 +37,10 @@ mtCircos <- function(anno=NULL, variants=NULL, matrices=NULL) {
   # outside track: variant annotations (use granges() if variants is an MVRL)
   if (!is.null(variants)) {
     gr2 <- granges(variants)
-    coding <- predictCoding(variants)
+    # coding <- predictCoding(variants)
+    circos.genomicRainfall(gr2, pch=16, cex=0.4, track.height=0.1,
+                           col=c("#FF000080", "#0000FF80"), bg.border=NA)
     browser()
-    circos.track(track.height=0.1, ylim=c(0,1), bg.border=NA)
   } else { 
     circos.track(track.height=0.1, ylim=c(0,1), bg.border=NA)
   }
