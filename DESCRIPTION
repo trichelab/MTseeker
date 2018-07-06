@@ -1,8 +1,8 @@
 Package: MTseeker
 Type: Package
 Title: Bioconductor tools for mitochondrial variant calling
-Version: 0.9.14
-Date: 2018-07-04
+Version: 0.9.21
+Date: 2018-07-06
 Author: Tim Triche, Jr., Ben Johnson, Noor Sohail
 Maintainer: Tim Triche, Jr. <tim.triche@vai.org>
 Description: Variant calling tools for mitochondrial DNA. 
@@ -13,11 +13,11 @@ Depends:
     rtracklayer,
     ggthemes,
     jsonlite,
-    circlize,
-    ggplot2
+    viridis 
 Imports:
     gmapR,
     IRanges,
+    circlize,
     Rsamtools,
     S4Vectors,
     Biostrings,
