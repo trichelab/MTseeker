@@ -58,7 +58,7 @@ mtCircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
     bed1 <- .makeBed(outside)
     if (is.null(outcol)) outcol <- .newsprint
     circos.genomicHeatmap(bed1, outcol, line_col=.colorCode(bed1$chr), 
-                          track.margin=c(0,0), side="outside", border="white")
+                          track.margin=c(0,0), side="outside", border=NA)
   } else { 
     circos.track(track.height=0.15, ylim=c(0,1), bg.border=NA)
   }
@@ -71,7 +71,7 @@ mtCircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
     bed2 <- .makeBed(inside)
     if (is.null(incol)) incol <- .newsprint
     circos.genomicHeatmap(bed2, incol, line_col=.colorCode(bed2$chr), 
-                          track.margin=c(0,0), side="inside", border="white")
+                          track.margin=c(0,0), side="inside", border=NA)
   } else { 
     circos.track(track.height=0.15, ylim=c(0,1), bg.border=NA)
   }
