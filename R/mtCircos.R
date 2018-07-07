@@ -84,10 +84,10 @@ mtCircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
 
 
 # helper fn
-.height <- function(gr) ifelse(gr$region %in% c("tRNA", "D-loop"), 0.5, 1)
+.height <- function(gr) ifelse(gr$region == "tRNA", 0.5, 1)
 
 # helper fn
-.halfheight <- function(gr) gr$region %in% c("tRNA", "D-loop")
+.halfheight <- function(gr) gr$region == "tRNA"
 
 # helper fn
 .textloc <- function(gr) {
