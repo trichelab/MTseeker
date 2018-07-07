@@ -76,7 +76,7 @@ setMethod("genes", signature(x="MVRanges"),
 #' @rdname    MVRanges-methods
 #' @export
 setMethod("snpCall", signature(object="MVRanges"),
-          function(object) subset(object, PASS & nchar(alt) == nchar(ref)))
+          function(object) subset(object, nchar(alt) == nchar(ref)))
 
 
 #' @rdname    MVRanges-methods
