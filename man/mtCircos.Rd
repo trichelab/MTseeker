@@ -4,14 +4,25 @@
 \alias{mtCircos}
 \title{plot a canonical human (or, in principle, any) mitochondrial genome}
 \usage{
-mtCircos(anno = NULL, variants = NULL, matrices = NULL)
+mtCircos(variants = NULL, outside = NULL, inside = NULL, outcol = NULL,
+  incol = NULL, anno = NULL, how = c("matrix", "VAF"), ...)
 }
 \arguments{
+\item{variants}{optional MVRanges or MVRangesList to split by strand & plot}
+
+\item{outside}{optional MVRanges or MVRangesList to plot outside the circle}
+
+\item{inside}{optional MVRanges or MVRangesList to plot inside the circle}
+
+\item{outcol}{optional color assignment function or matrix for outside}
+
+\item{incol}{optional color assignment function or matrix for inside}
+
 \item{anno}{a GRanges (optional, defaults to mtAnno.rCRS if none given)}
 
-\item{variants}{optional MVRanges or MVRangesList to plot outside the circle}
+\item{how}{optional specification for how to plot multiple samples}
 
-\item{matrices}{optional matrices of data to plot inside of the genes circle}
+\item{...}{other arguments to pass on to called functions}
 }
 \value{
 invisibly, a list: `anno` (data.frame) + `pfun` (panel.fun)
@@ -20,4 +31,7 @@ invisibly, a list: `anno` (data.frame) + `pfun` (panel.fun)
 The default font sizes, orientations, etc. are optimized for a "cold" start;
 if you want to fiddle with the details, crack open the code and modify it...
 or alternatively, add sectors/dendrograms inside of this "framed" version.
+}
+\details{
+FIXME: add variant type coloration (del=blue, SNV=black, ins=red)
 }

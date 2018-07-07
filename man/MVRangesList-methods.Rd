@@ -7,6 +7,7 @@
 \alias{counts<-,MVRangesList,RangedSummarizedExperiment-method}
 \alias{counts,MVRangesList-method}
 \alias{genes,MVRangesList-method}
+\alias{snpCall,MVRangesList-method}
 \alias{getAnnotations,MVRangesList-method}
 \alias{encoding,MVRangesList-method}
 \alias{predictCoding,MVRangesList,missing,missing,missing-method}
@@ -26,6 +27,8 @@
 \S4method{counts}{MVRangesList}(object)
 
 \S4method{genes}{MVRangesList}(x)
+
+\S4method{snpCall}{MVRangesList}(object)
 
 \S4method{getAnnotations}{MVRangesList}(annotations)
 
@@ -83,6 +86,7 @@ MVRangesList methods (centralized).
 `genome`               returns the genome (or, perhaps, genomes) in an MVRL
 `encoding`             returns mutations in coding regions for each element
 `granges`              returns mildly annotated aggregates of variant sites
+`snpCall`              retrieves single nucleotide variant polymorphisms 
 `tallyVariants`        return a matrix of variant types by annotated region
 `locateVariants`       locates variants within genes, tRNA, rRNA, or D-loop
 `summarizeVariants`    attempts mass functional annotation of variant sites

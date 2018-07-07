@@ -3,10 +3,17 @@
 #' The default font sizes, orientations, etc. are optimized for a "cold" start;
 #' if you want to fiddle with the details, crack open the code and modify it...
 #' or alternatively, add sectors/dendrograms inside of this "framed" version.
+#'
+#' FIXME: add variant type coloration (del=blue, SNV=black, ins=red) 
 #' 
+#' @param variants  optional MVRanges or MVRangesList to split by strand & plot
+#' @param outside   optional MVRanges or MVRangesList to plot outside the circle
+#' @param inside    optional MVRanges or MVRangesList to plot inside the circle
+#' @param outcol    optional color assignment function or matrix for outside
+#' @param incol     optional color assignment function or matrix for inside
 #' @param anno      a GRanges (optional, defaults to mtAnno.rCRS if none given)
-#' @param variants  optional MVRanges or MVRangesList to plot outside the circle
-#' @param matrices  optional matrices of data to plot inside of the genes circle
+#' @param how       optional specification for how to plot multiple samples
+#' @param ...       other arguments to pass on to called functions
 #' 
 #' @return          invisibly, a list: `anno` (data.frame) + `pfun` (panel.fun)
 #'
@@ -14,7 +21,9 @@
 #' @import viridis
 #' 
 #' @export 
-mtCircos <- function(anno=NULL, variants=NULL, matrices=NULL) { 
+mtCircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL, 
+                     incol=NULL, anno=NULL, how=c("matrix","VAF"), ...) {
+
   circos.clear() 
   data(mtAnno.rCRS)
   if (is.null(anno)) anno <- mtAnno #.rCRS
@@ -34,12 +43,22 @@ mtCircos <- function(anno=NULL, variants=NULL, matrices=NULL) {
   dat <- data.frame(name=names(anno), start=start(anno), end=end(anno))
   circos.par("clock.wise"=FALSE, start.degree=90, gap.degree=0)
   circos.genomicInitialize(data=dat, plotType=NULL, major.by=16569)
- 
-  # outside track: variant annotations (use granges() if variants is an MVRL)
+
   if (!is.null(variants)) {
-    bed <- .makeBed(variants)
-    circos.genomicHeatmap(bed, .newsprint, line_col=.colorCode(bed$chr), 
-                          track.margin=c(0,0), side="outside", border="white")
+    message("Splitting variants by strand...")
+    stranded <- byStrand(variants)
+    message("Replacing `outside` with heavy-strand variants...")
+    outside <- stranded$heavy
+    message("Replacing `inside` with light-strand variants...")
+    inside <- stranded$light
+  } 
+
+  # outside track: variant annotations (use granges() if outside is an MVRL)
+  if (!is.null(outside)) {
+    bed1 <- .makeBed(outside)
+    if (is.null(outcol)) outcol <- .newsprint
+    circos.genomicHeatmap(bed1, outcol, line_col=.colorCode(bed1$chr), 
+                          track.margin=c(0,0), side="outside", border=NA)
   } else { 
     circos.track(track.height=0.15, ylim=c(0,1), bg.border=NA)
   }
@@ -47,19 +66,28 @@ mtCircos <- function(anno=NULL, variants=NULL, matrices=NULL) {
   # main track, gene names and such
   circos.track(panel.fun=pfun, ylim=c(-1,1), track.height=0.5, bg.border=NA)
 
-  # inside track: plots of VAFs/indels and such? 
-  if (!is.null(matrices)) message("Warning: matrix support is very very sucky")
-  circos.track(track.height=0.15, ylim=c(0,1), bg.border=NA)
+  # inside track: 
+  if (!is.null(inside)) {
+    bed2 <- .makeBed(inside)
+    if (is.null(incol)) incol <- .newsprint
+    circos.genomicHeatmap(bed2, incol, line_col=.colorCode(bed2$chr), 
+                          track.margin=c(0,0), side="inside", border=NA)
+  } else { 
+    circos.track(track.height=0.15, ylim=c(0,1), bg.border=NA)
+  }
 
   res <- list(anno=dat, pfun=pfun)
   invisible(res)
 }
 
-# helper fn
-.height <- function(gr) ifelse(gr$region %in% c("tRNA", "D-loop"), 0.5, 1)
+
+
 
 # helper fn
-.halfheight <- function(gr) gr$region %in% c("tRNA", "D-loop")
+.height <- function(gr) ifelse(gr$region == "tRNA", 0.5, 1)
+
+# helper fn
+.halfheight <- function(gr) gr$region == "tRNA"
 
 # helper fn
 .textloc <- function(gr) {

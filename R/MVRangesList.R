@@ -37,6 +37,7 @@ MVRangesList <- function(...) {
 #' `genome`               returns the genome (or, perhaps, genomes) in an MVRL
 #' `encoding`             returns mutations in coding regions for each element
 #' `granges`              returns mildly annotated aggregates of variant sites
+#' `snpCall`              retrieves single nucleotide variant polymorphisms 
 #' `tallyVariants`        return a matrix of variant types by annotated region
 #' `locateVariants`       locates variants within genes, tRNA, rRNA, or D-loop
 #' `summarizeVariants`    attempts mass functional annotation of variant sites
@@ -87,6 +88,12 @@ setMethod("counts", signature(object="MVRangesList"),
 #' @export
 setMethod("genes", signature(x="MVRangesList"), 
           function(x) subset(getAnnotations(x), region == "coding"))
+
+
+#' @rdname    MVRangesList-methods
+#' @export
+setMethod("snpCall", signature(object="MVRangesList"),
+          function(object) endoapply(object, snpCall))
 
 
 #' @rdname    MVRangesList-methods
@@ -143,6 +150,17 @@ setMethod("filt", signature(x="MVRangesList"),
 #' @export
 setMethod("granges", signature(x="MVRangesList"),
           function(x, filterLowQual=TRUE) {
+
+            # if cached...
+            if (filterLowQual == TRUE & 
+                "granges.filtered" %in% names(metadata(x))) {
+              return(metadata(x)$granges.filtered)
+            } else if (filterLowQual == FALSE & 
+                       "granges.unfiltered" %in% names(metadata(x))) {
+              return(metadata(x)$granges.unfiltered)
+            }
+
+            # if not...
             if (filterLowQual == TRUE) x <- filt(x) 
             anno <- suppressMessages(getAnnotations(x))
             message("Aggregating variants...")
