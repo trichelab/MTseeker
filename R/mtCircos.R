@@ -3,7 +3,10 @@
 #' The default font sizes, orientations, etc. are optimized for a "cold" start;
 #' if you want to fiddle with the details, crack open the code and modify it...
 #' or alternatively, add sectors/dendrograms inside of this "framed" version.
+#'
+#' FIXME: add variant type coloration (del=blue, SNV=black, ins=red) 
 #' 
+#' @param variants  optional MVRanges or MVRangesList to split by strand & plot
 #' @param outside   optional MVRanges or MVRangesList to plot outside the circle
 #' @param inside    optional MVRanges or MVRangesList to plot inside the circle
 #' @param outcol    optional color assignment function or matrix for outside
@@ -18,8 +21,9 @@
 #' @import viridis
 #' 
 #' @export 
-mtCircos <- function(outside=NULL, inside=NULL, outcol=NULL, incol=NULL, 
-                     anno=NULL, how=c("matrix","VAF"), ...) {
+mtCircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL, 
+                     incol=NULL, anno=NULL, how=c("matrix","VAF"), ...) {
+
   circos.clear() 
   data(mtAnno.rCRS)
   if (is.null(anno)) anno <- mtAnno #.rCRS
@@ -39,7 +43,16 @@ mtCircos <- function(outside=NULL, inside=NULL, outcol=NULL, incol=NULL,
   dat <- data.frame(name=names(anno), start=start(anno), end=end(anno))
   circos.par("clock.wise"=FALSE, start.degree=90, gap.degree=0)
   circos.genomicInitialize(data=dat, plotType=NULL, major.by=16569)
- 
+
+  if (!is.null(variants)) {
+    message("Splitting variants by strand...")
+    stranded <- byStrand(variants)
+    message("Replacing `outside` with heavy-strand variants...")
+    outside <- stranded$heavy
+    message("Replacing `inside` with light-strand variants...")
+    inside <- stranded$light
+  } 
+
   # outside track: variant annotations (use granges() if outside is an MVRL)
   if (!is.null(outside)) {
     bed1 <- .makeBed(outside)

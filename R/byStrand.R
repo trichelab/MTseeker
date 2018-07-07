@@ -15,6 +15,11 @@ byStrand <- function(x, anno=NULL) {
 
   stranded <- split(anno, strand(anno))[c("+", "-")]
   names(stranded) <- c("heavy", "light")
-  sapply(stranded, function(features) endoapply(x, subsetByOverlaps, features))
+  
+  if (is(x, "GRanges") | is(x, "MVRanges")) {
+    sapply(stranded, function(feats) subsetByOverlaps(x, feats))    
+  } else {
+    sapply(stranded, function(feats) endoapply(x, subsetByOverlaps, feats))
+  }
 
 }

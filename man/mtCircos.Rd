@@ -4,10 +4,12 @@
 \alias{mtCircos}
 \title{plot a canonical human (or, in principle, any) mitochondrial genome}
 \usage{
-mtCircos(outside = NULL, inside = NULL, outcol = NULL, incol = NULL,
-  anno = NULL, how = c("matrix", "VAF"), ...)
+mtCircos(variants = NULL, outside = NULL, inside = NULL, outcol = NULL,
+  incol = NULL, anno = NULL, how = c("matrix", "VAF"), ...)
 }
 \arguments{
+\item{variants}{optional MVRanges or MVRangesList to split by strand & plot}
+
 \item{outside}{optional MVRanges or MVRangesList to plot outside the circle}
 
 \item{inside}{optional MVRanges or MVRangesList to plot inside the circle}
@@ -29,4 +31,7 @@ invisibly, a list: `anno` (data.frame) + `pfun` (panel.fun)
 The default font sizes, orientations, etc. are optimized for a "cold" start;
 if you want to fiddle with the details, crack open the code and modify it...
 or alternatively, add sectors/dendrograms inside of this "framed" version.
+}
+\details{
+FIXME: add variant type coloration (del=blue, SNV=black, ins=red)
 }
