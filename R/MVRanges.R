@@ -34,6 +34,7 @@ MVRanges <- function(vr, coverage) new("MVRanges", vr, coverage=coverage)
 #' 
 #' `type` returns a character vector describing variant type (SNV or indel)
 #' `genes` retrieves a GRanges of mitochondrial gene locations for an MVRanges
+#' `snpCall` retrieves single nucleotide variant polymorphisms PASSing filters
 #' `annotation` gets (perhaps oddly) an MVRanges object annotated against rCRS
 #' `getAnnotations` returns the GRanges of gene/region annotations for an MVR
 #' `encoding` returns variants residing in coding regions (consequence unknown)
@@ -48,7 +49,8 @@ MVRanges <- function(vr, coverage) new("MVRanges", vr, coverage=coverage)
 #' @param query         an MVRanges
 #' @param filterLowQual boolean; drop non-PASSing variants from locateVariants?
 #'
-#' @aliases locateVariants getAnnotations predictCoding summarizeVariants genes
+#' @aliases locateVariants getAnnotations predictCoding genes
+#' @aliases snpCall annotation tallyVariants summarizeVariants
 #' 
 #' @name                MVRanges-methods
 NULL
@@ -69,6 +71,12 @@ setMethod("type", signature(x="MVRanges"),
 #' @export
 setMethod("genes", signature(x="MVRanges"), 
           function(x) subset(getAnnotations(x), region == "coding"))
+
+
+#' @rdname    MVRanges-methods
+#' @export
+setMethod("snpCall", signature(object="MVRanges"),
+          function(object) subset(object, PASS & nchar(alt) == nchar(ref)))
 
 
 #' @rdname    MVRanges-methods
