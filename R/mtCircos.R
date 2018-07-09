@@ -58,19 +58,21 @@ mtCircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
     bed1 <- .makeBed(outside)
     if (is.null(outcol)) outcol <- .newsprint
     circos.genomicHeatmap(bed1, outcol, line_col=.colorCode(bed1$chr), 
-                          track.margin=c(0,0), side="outside", border=NA)
+                          track.margin=c(0,0), side="outside", border=NA,
+                          line_lwd=2) # how to color-code the "matrix" itself?
   } else { 
     circos.track(track.height=0.15, ylim=c(0,1), bg.border=NA)
   }
   
   # main track, gene names and such
-  circos.track(panel.fun=pfun, ylim=c(-1,1), track.height=0.5, bg.border=NA)
+  circos.track(panel.fun=pfun, ylim=c(-1,1), track.height=0.5, 
+               track.margin=c(0,0), bg.border=NA)
 
   # inside track: 
   if (!is.null(inside)) {
     bed2 <- .makeBed(inside)
     if (is.null(incol)) incol <- .newsprint
-    circos.genomicHeatmap(bed2, incol, line_col=.colorCode(bed2$chr), 
+    circos.genomicHeatmap(bed2, incol, line_col=.colorCode(bed2$chr),
                           track.margin=c(0,0), side="inside", border=NA)
   } else { 
     circos.track(track.height=0.15, ylim=c(0,1), bg.border=NA)
@@ -138,10 +140,15 @@ mtCircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
 }
 
 # helper fn
-.colorCode <- function(x) { 
+.colorCode <- function(x, darken=TRUE, howMuch=1.25) { 
   data("mtAnno.rCRS", package="MTseeker")
-  mtAnno[x]$itemRgb 
+  color <- mtAnno[x]$itemRgb
+  if (darken) color <- .darken(color, howMuch=howMuch)
+  return(color)
 }
+
+# helper fn
+.darken <- function(hex, howMuch=1.25) rgb(t(col2rgb(hex)/howMuch), max=255)
 
 # helper fn
 .newsprint <- colorRamp2(c(0, 1), c("#FFFFFF", "#000000"))
