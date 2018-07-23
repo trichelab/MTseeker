@@ -42,6 +42,10 @@ MVRangesList <- function(...) {
 #' `locateVariants`       locates variants within genes, tRNA, rRNA, or D-loop
 #' `summarizeVariants`    attempts mass functional annotation of variant sites
 #' 
+#' @section Visualization methods:
+#'
+#' `plot`                 creates circular plot of mitochondrial variant calls
+#'
 #' @param x             an MVRangesList (for some methods)
 #' @param value         a RangedSummarizedExperiment with matching colnames
 #' @param query         an MVRangesList (for predictCoding)
@@ -258,3 +262,9 @@ setMethod("tallyVariants", signature(x="MVRangesList"),
             t(sapply(x, tallyVariants))
 
           })
+
+
+#' @rdname    MVRangesList-methods
+#' @export
+setMethod("plot", signature(x="MVRangesList"),
+          function(x, ...) mtCircos(x, ...))

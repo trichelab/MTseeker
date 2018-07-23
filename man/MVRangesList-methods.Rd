@@ -18,6 +18,7 @@
 \alias{genome,MVRangesList-method}
 \alias{locateVariants,MVRangesList,missing,missing-method}
 \alias{tallyVariants,MVRangesList-method}
+\alias{plot,MVRangesList,ANY-method}
 \title{MVRangesList methods (centralized).}
 \usage{
 \S4method{coverage}{MVRangesList}(x)
@@ -52,6 +53,8 @@
   filterLowQual = TRUE, ...)
 
 \S4method{tallyVariants}{MVRangesList}(x, filterLowQual = TRUE, ...)
+
+\S4method{plot}{MVRangesList,ANY}(x, y, ...)
 }
 \arguments{
 \item{x}{an MVRangesList (for some methods)}
@@ -90,5 +93,11 @@ MVRangesList methods (centralized).
 `tallyVariants`        return a matrix of variant types by annotated region
 `locateVariants`       locates variants within genes, tRNA, rRNA, or D-loop
 `summarizeVariants`    attempts mass functional annotation of variant sites
+}
+
+\section{Visualization methods}{
+
+
+`plot`                 creates circular plot of mitochondrial variant calls
 }
 

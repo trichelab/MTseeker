@@ -43,6 +43,10 @@ MVRanges <- function(vr, coverage) new("MVRanges", vr, coverage=coverage)
 #' `tallyVariants` returns a named vector of variant types by annotated region.
 #' `summarizeVariants` uses MitImpact to attempt annotation of coding variants.
 #'
+#' @section Visualization methods:
+#'
+#' `plot` creates a circular plot of mitochondrial variant calls with annotation
+#'
 #' @param x             an MVRanges
 #' @param object        an MVRanges
 #' @param annotations   an MVRanges
@@ -263,3 +267,9 @@ setMethod("summarizeVariants", signature(query="MVRanges","missing","missing"),
             do.call(rbind, hits)
 
           })
+
+
+#' @rdname    MVRanges-methods
+#' @export
+setMethod("plot", signature(x="MVRanges"), 
+          function(x, ...) mtCircos(x, ...))
