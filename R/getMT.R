@@ -76,6 +76,7 @@ getMT <- function(bam, filter=TRUE, parallel=FALSE, plotMAPQ=FALSE, ...) {
   idxStats <- idxstatsBam(bamfile)
   rownames(idxStats) <- idxStats$seqnames
   mtReadCount <- idxStats[chrM, "mapped"] 
+  nucReadCount <- sum(subset(idxStats, seqnames != chrM)$mapped)
   mtFrac <- mtReadCount / sum(idxStats[, "mapped"])
   message(bam, " maps ", mtReadCount, " unique reads (~",
           round(mtFrac * 100, 1), "%) to ", chrM, ".")
@@ -106,6 +107,9 @@ getMT <- function(bam, filter=TRUE, parallel=FALSE, plotMAPQ=FALSE, ...) {
   # MAlignments == wrapped GAlignments
   mal <- MAlignments(gal=mtReads, bam=bam)
   attr(mal, "coverage") <- coverage(mal)
+  attr(mal, "nucReads") <- nucReadCount
+  attr(mal, "mtReads") <- mtReadCount
+  attr(mal, "mtVsNuc") <- mtReadCount/nucReadCount
   return(mal)
 
 }

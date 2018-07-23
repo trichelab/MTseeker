@@ -23,14 +23,19 @@ MAlignmentsList <- function(...) {
                            reads=sapply(..., length),
                            readLength=sapply(..., runLength), 
                            genomeSize=sapply(..., runValue), 
-                           genome=unname(sapply(..., genome)))
+                           genome=unname(sapply(..., genome)),
+                           nuclearReads=unname(sapply(..., attr, "nucReads")),
+                           mitoVsNuclear=unname(sapply(..., attr, "mtVsNuc")))
+
   # options(stringsAsFactors) fix
   if (is.factor(mdat$cache$BAM)) {
     mdat$cache$BAM <- levels(mdat$cache$BAM)[mdat$cache$BAM] 
   }
   mdat$cache$genomeCoverage <- with(mdat$cache, 
                                     round((reads*readLength) / genomeSize))
-  mdat$summaryCols <- c("reads", "readLength", "genomeSize", "genomeCoverage")
+  mdat$summaryCols <- c("reads", "readLength", 
+                        "genomeSize", "genomeCoverage", 
+                        "nuclearReads", "mitoVsNuclear")
 
   # because otherwise this clobbers it: 
   gal <- GenomicAlignments:::GAlignmentsList(...)
