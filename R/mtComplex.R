@@ -7,16 +7,14 @@
 #' 
 #' @param variants  an MVRanges or MVRangesList
 #' @param defColor  default color (#c9eded is standard) 
-#' @param fileName  if desired, a filename to write out an rsvg png
 #' @param verbose   be verbose, for debugging? (FALSE)
 #' 
 #' @return          invisibly, the temporary file to which the SVG was written
 #'
-#' @import rsvg
 #' @import xml2
 #' 
 #' @export 
-mtComplex <- function(variants,defColor="#c9eded",fileName=NULL,verbose=FALSE){
+mtComplex <- function(variants, defColor="#c9eded", verbose=FALSE){
 
   data(mtAnno.rCRS)
   SVGfile <- system.file("extdata", "mtComplexes.svg", package="MTseeker")
@@ -62,8 +60,6 @@ mtComplex <- function(variants,defColor="#c9eded",fileName=NULL,verbose=FALSE){
 
   write_xml(SVG, tmp) 
   browseURL(tmp) 
-
-  if (!is.null(fileName)) rsvg_png(tmp, fileName)
   invisible(tmp)
 
 }

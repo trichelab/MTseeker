@@ -1,8 +1,8 @@
 Package: MTseeker
 Type: Package
 Title: Bioconductor tools for mitochondrial variant calling
-Version: 0.9.31
-Date: 2018-07-22
+Version: 0.9.33
+Date: 2018-07-23
 Author: Tim Triche, Jr., Ben Johnson, Tim Vickers, Noor Sohail
 Maintainer: Tim Triche, Jr. <tim.triche@vai.org>
 Description: Variant analysis tools for mitochondria. 
@@ -15,7 +15,6 @@ Depends:
     jsonlite,
     viridis 
 Imports:
-    rsvg,
     xml2,
     gmapR,
     IRanges,
@@ -26,5 +25,7 @@ Imports:
     BiocGenerics,
     GenomicRanges,
     GenomicAlignments
+Suggests:
+    rsvg
 License: GPL-3.0
 RoxygenNote: 6.0.1
