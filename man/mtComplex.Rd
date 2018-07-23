@@ -4,15 +4,12 @@
 \alias{mtComplex}
 \title{plot the (putative) functional impact of mutations to ETP genes as SVG}
 \usage{
-mtComplex(variants, defColor = "#c9eded", fileName = NULL,
-  verbose = FALSE)
+mtComplex(variants, defColor = "#c9eded", verbose = FALSE)
 }
 \arguments{
 \item{variants}{an MVRanges or MVRangesList}
 
 \item{defColor}{default color (#c9eded is standard)}
-
-\item{fileName}{if desired, a filename to write out an rsvg png}
 
 \item{verbose}{be verbose, for debugging? (FALSE)}
 }
