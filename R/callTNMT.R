@@ -23,7 +23,7 @@ callTNMT <- function(tmal, nmal,...) {
     stop("callTNMT is only meant for tumor-normal pairs with equal read length")
   }
   mtChr <- grep("(MT|chrM|NC_012920.1|rCRS)", seqlevelsInUse(tmal), value=TRUE)
-  mvr <- callTnMtVars(BAMS=c(tumor=fileName(tmal), normal=filename(nmal)),
+  mvr <- callTnMtVars(BAMS=c(tumor=fileName(tmal), normal=fileName(nmal)),
                       GENOME=unname(unique(genome(tmal))),
                       SIZE=runLength(tmal),
                       COV=coverage(tmal),
