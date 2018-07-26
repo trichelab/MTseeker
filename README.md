@@ -1,47 +1,71 @@
 # MTseeker
 
+MTseeker is a toolkit for mitochondrial variant analysis in the 
+[Bioconductor](http://bioconductor.org/) environment. Given suitably aligned 
+reads, it will call variants (and/or mitochondrial copy number), plot them for 
+multiple samples, and provide basic functional annotation for coding variants.
+
 [![Build Status](https://travis-ci.org/trichelab/MTseeker/MTseeker.png?branch=master)](https://travis-ci.org/trichelab/MTseeker/MTseeker)  [![codecov](https://codecov.io/gh/trichelab/MTseeker/MTseeker/branch/master/graph/badge.svg)](https://codecov.io/gh/trichelab/MTseeker/MTseeker)
 
 ## How to install
 
 ```
-devtools::install_github("trichelab/MTseeker", username="yourGithubUsername", auth_token="yourGitHubUserTokenFromGithub.com/settings/tokens") 
+devtools::install_github("trichelab/MTseeker")
+# or:
+install.packages("BiocManager")
+BiocManager::install("trichelab/MTseeker")
 ```
 
-## ToDo items:
+## How it works
 
-### 1. Travis
+Visit the vignettes for more details, but suppose we have a bunch of renal 
+oncocytomas (known to be driven early in development by mitochondrial mutations)
+and matched adjacent normal kidney samples (let's call them "RO" and "NKS"). 
 
-Now you can go to [Travis](https://travis-ci.org/profile/trichelab/MTseeker) and turn on continuous integration for your new package. You may need to click the "Sync account" button to get your new package to show up in the list.
-
-If you have a codecov.io account, running your tests on Travis will trigger the code coverage job. No additional configuration is necessary
-
-### 2. Appveyor
-
-Go to [Appveyor's new project page](https://ci.appveyor.com/projects/new) and select your new repository from the list. Then you can go to the [badges](https://ci.appveyor.com/project/trichelab/MTseeker/MTseeker/settings/badges) page, copy the markdown code it provides, and paste it up with the other badges above. (Their badge API has a random token in it, so `skeletor` can't include it in the template for you.)
-
-## Installing
-
-The pre-release version of the package can be pulled from GitHub using the [devtools](https://github.com/hadley/devtools) package:
-
-```
-# install.packages("devtools")
-devtools::install_github("trichelab/MTseeker",
-                         username="yourGithubUsername", 
-                         auth_token="yourTokenFromGithub.com/settings/tokens",
-                         build_vignettes=TRUE)
+```{r}
+MTreads <- getMT(BAMfiles)
 ```
 
-Note that the access token and username are required as the repo is private.
+The first and simplest thing we might like to do is get mitochondrial reads
+from exome sequencing BAMs (or, really, any BAM -- it doesn't have to be any 
+particular sequencing technology, though at present we support human mitogenomes
+far better than any other organism). Above, the getMT function does that.
 
-## For developers
+Now we might also like to estimate from the mt/nuclear read support what the 
+rough ratio of mitochondria in the tumor tissue is compared to the normal
+tissue. Since we track the read support for each upon load, we can use that:
 
-The repository includes a Makefile to facilitate some common tasks.
+```{r}
+mVn <- Summary(MTreads)$mitoVsNuclear
+names(mVn) <- names(MTreads) 
+CN <- mVn[seq(2,22,2)]/mVn[seq(1,21,2)] 
+mtCN <- data.frame(subject=names(CN), CN=CN)
 
-### Running tests
+library(ggplot2) 
+library(ggthemes)
+p <- ggplot(mtCN, aes(x=subject, y=CN, fill=subject)) + 
+  geom_col() + theme_tufte() + ylim(0,5) + 
+  ylab("Tumor/normal mitochondrial ratio") + 
+  ggtitle("Mitochondrial retention in oncocytomas")
+# ggsave("inst/extdata/mtCN.png") 
+print(p) 
+```
+![mitochondrial CN](inst/extdata/mtCN.png)
 
-`$ make test`. Requires the [testthat](https://github.com/hadley/testthat) package. You can also specify a specific test file or files to run by adding a "file=" argument, like `$ make test file=logging`. `test_package` will do a regular-expression pattern match within the file names. See its documentation in the `testthat` package.
+Now we probably want to call variants, and then plot them (filtered): 
 
-### Updating documentation
+```{r}
+variants <- callMT(MTreads)
+plot(filt(variants))
+```
 
-`$ make doc`. Requires the [roxygen2](https://github.com/klutometis/roxygen) package.
+That looks like so: 
+
+![mitochondrial variants for 22 samples](inst/extdata/RO_NKS_filtered.png)
+
+It would be nice to have some idea what this means for each patient:
+
+![mitochondrial variant fallout in patient 1](inst/extdata/RO_1.png)
+
+More to come! But this is the basic idea. 
+
