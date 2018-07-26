@@ -1,4 +1,4 @@
-<img align="left" width="500" height="478" src="inst/extdata/mitoVarsSmall.png">
+<img align="left" width="500" height="478" src="inst/extdata/RO_NKS_filtered.png">
 
 # MTseeker
 
