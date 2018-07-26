@@ -1,4 +1,4 @@
-![mitochondrial variants for 22 samples](inst/extdata/mitoVarsSmall.png)
+<img align="left" width="500" height="478" src="inst/extdata/mitoVarsSmall.png">
 
 # MTseeker
 
@@ -8,7 +8,7 @@ reads, it will call variants (and/or mitochondrial copy number), plot them for
 multiple samples, and provide basic functional annotation for coding variants.  If we were cool people, it would have a mitochondrion stuffed into a hexagon,
 but we don't, so it doesn't... _yet_. 
 
-[![Build Status](https://travis-ci.org/trichelab/MTseeker/MTseeker.png?branch=master)](https://travis-ci.org/trichelab/MTseeker/MTseeker)  [![codecov](https://codecov.io/gh/trichelab/MTseeker/MTseeker/branch/master/graph/badge.svg)](https://codecov.io/gh/trichelab/MTseeker/MTseeker)
+[![Build Status](https://travis-ci.org/trichelab/MTseeker/MTseeker.png?branch=master)](https://travis-ci.org/trichelab/MTseeker/MTseeker)
 
 ## How to install
 
