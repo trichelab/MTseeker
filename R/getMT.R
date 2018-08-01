@@ -7,7 +7,7 @@
 #' nb. nb. nb. nb. nb. in the process of converting to rCRS, chrM becomes "chrM"
 #' 
 #' @param bam       a BAM filename, or DataFrame/SummarizedExperiment with $BAM
-#' @param filter    filter on bam$mtCovg? (default is TRUE, if bam is a DF/RSE)
+#' @param filter    filter on bam$mtCovg? (default is FALSE, don't filter)
 #' @param parallel  load multiple BAMs in parallel, if possible? (FALSE)
 #' @param plotMAPQ  plot distribution of mitochondrial mapping quality? (FALSE)
 #' @param ...       additional args to pass scanBamParam(), such as mapqFilter
@@ -16,7 +16,7 @@
 #' @import Rsamtools
 #'
 #' @export
-getMT <- function(bam, filter=TRUE, parallel=FALSE, plotMAPQ=FALSE, ...) {
+getMT <- function(bam, filter=FALSE, parallel=FALSE, plotMAPQ=FALSE, ...) {
 
   # for lists/DataFrames/SEs of data:
   if (is(bam,"SummarizedExperiment")|is(bam,"DataFrame")|is(bam,"data.frame")) {

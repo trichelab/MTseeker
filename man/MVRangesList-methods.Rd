@@ -23,7 +23,8 @@
 \usage{
 \S4method{coverage}{MVRangesList}(x)
 
-\S4method{counts}{MVRangesList,RangedSummarizedExperiment}(object) <- value
+
+  \S4method{counts}{MVRangesList,RangedSummarizedExperiment}(object) <- value
 
 \S4method{counts}{MVRangesList}(object)
 
@@ -35,8 +36,8 @@
 
 \S4method{encoding}{MVRangesList}(x)
 
-\S4method{predictCoding}{MVRangesList,missing,missing,missing}(query, subject,
-  seqSource, varAllele, ...)
+\S4method{predictCoding}{MVRangesList,missing,missing,missing}(query,
+  subject, seqSource, varAllele, ...)
 
 \S4method{show}{MVRangesList}(object)
 

@@ -7,8 +7,8 @@
 \usage{
 callMT(mal, ..., parallel = FALSE, verbose = FALSE)
 
-callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM", COV = NULL,
-  verbose = F)
+callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM",
+  COV = NULL, verbose = F)
 }
 \arguments{
 \item{mal}{an MAlignments (or, potentially, an MAlignmentsList)}

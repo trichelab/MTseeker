@@ -55,8 +55,8 @@
 \S4method{predictCoding}{MVRanges,missing,missing,missing}(query, subject,
   seqSource, varAllele, ...)
 
-\S4method{summarizeVariants}{MVRanges,missing,missing}(query, subject, mode,
-  ...)
+\S4method{summarizeVariants}{MVRanges,missing,missing}(query, subject,
+  mode, ...)
 
 \S4method{plot}{MVRanges,ANY}(x, y, ...)
 }

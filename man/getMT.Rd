@@ -4,12 +4,12 @@
 \alias{getMT}
 \title{grab the mitochondrial reads from a BAM and estimate their fraction}
 \usage{
-getMT(bam, filter = TRUE, parallel = FALSE, plotMAPQ = FALSE, ...)
+getMT(bam, filter = FALSE, parallel = FALSE, plotMAPQ = FALSE, ...)
 }
 \arguments{
 \item{bam}{a BAM filename, or DataFrame/SummarizedExperiment with $BAM}
 
-\item{filter}{filter on bam$mtCovg? (default is TRUE, if bam is a DF/RSE)}
+\item{filter}{filter on bam$mtCovg? (default is FALSE, don't filter)}
 
 \item{parallel}{load multiple BAMs in parallel, if possible? (FALSE)}
 

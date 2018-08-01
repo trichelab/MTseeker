@@ -4,8 +4,9 @@
 \alias{mtCircos}
 \title{plot a canonical human (or, in principle, any) mitochondrial genome}
 \usage{
-mtCircos(variants = NULL, outside = NULL, inside = NULL, outcol = NULL,
-  incol = NULL, anno = NULL, how = c("matrix", "VAF"), ...)
+mtCircos(variants = NULL, outside = NULL, inside = NULL,
+  outcol = NULL, incol = NULL, anno = NULL, how = c("matrix",
+  "VAF"), ...)
 }
 \arguments{
 \item{variants}{optional MVRanges or MVRangesList to split by strand & plot}

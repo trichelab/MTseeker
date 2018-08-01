@@ -4,8 +4,8 @@
 \alias{injectMtVariants}
 \title{Inject (one or more) variants against rCRS.}
 \usage{
-injectMtVariants(mvr, gr = NULL, xlate = TRUE, canon = 0.99, refX = 1,
-  altX = 1)
+injectMtVariants(mvr, gr = NULL, xlate = TRUE, canon = 0.99,
+  refX = 1, altX = 1)
 }
 \arguments{
 \item{mvr}{An MVRanges, usually from callMT, often subsetted}
