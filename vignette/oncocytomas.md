@@ -66,7 +66,7 @@ Now let's have some fun:
 
 ```{r makeSVG} 
 data(variants, package="MTseeker")
-SVG <- mtComplexes(variants[[2]]) 
+SVG <- mtComplex(variants[[2]]) 
 library(rsvg) 
 rsvg_pdf("RO_1.functionalAnnot.pdf") 
 ```
