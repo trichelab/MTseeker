@@ -1,12 +1,13 @@
 #' convert mitochondrial variant calls to HGVS format for naming
 #'
 #' @param x         an MVRanges (or, in a pinch, a GRanges)
+#' @param asMVR     return a renamed MVRanges? (default is FALSE)
 #' @param verbose   be yappy? (default is FALSE) 
 #' 
-#' @return          proper HGVS names for the MVRanges (or GRanges)
+#' @return          proper HGVS names for the *Ranges (or a renamed *Ranges)
 #'
 #' @export
-mtHGVS <- function(x, verbose=FALSE) { 
+mtHGVS <- function(x, asMVR=FALSE, verbose=FALSE) { 
 
   # NCBI recommendation is ASSEMBLY:m.HGVS
   pre <- paste(unique(genome(x)), "m.", sep=":") 
@@ -71,6 +72,12 @@ mtHGVS <- function(x, verbose=FALSE) {
   }
 
   # adds prefix
-  return(paste0(pre, nms))
+  label <- paste0(pre, nms)
+  if (asMVR) {
+    names(x) <- label
+    return(x) 
+  } else { 
+    return(label) 
+  }
 
 }
