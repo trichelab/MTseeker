@@ -4,13 +4,15 @@
 \alias{mtHGVS}
 \title{convert mitochondrial variant calls to HGVS format for naming}
 \usage{
-mtHGVS(x)
+mtHGVS(x, verbose = FALSE)
 }
 \arguments{
 \item{x}{an MVRanges (or, in a pinch, a GRanges)}
+
+\item{verbose}{be yappy? (default is FALSE)}
 }
 \value{
-a properly named MVRanges (or, in a pinch, GRanges)
+proper HGVS names for the MVRanges (or GRanges)
 }
 \description{
 convert mitochondrial variant calls to HGVS format for naming

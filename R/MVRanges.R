@@ -16,7 +16,7 @@ setClass("MVRanges",
 #' @return            an MVRanges
 #' 
 #' @export
-MVRanges <- function(vr, coverage) new("MVRanges", vr, coverage=coverage)
+MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 
 
 #' MVRanges methods (centralized).
@@ -182,6 +182,7 @@ setMethod("locateVariants",
                 "endCodon" %in% names(mcols(query))) {
               return(query) # done 
             }
+            if (length(query) == 0) return(NULL)
 
             data("mtAnno.rCRS", package="MTseeker")
             metadata(query)$annotation <- mtAnno
