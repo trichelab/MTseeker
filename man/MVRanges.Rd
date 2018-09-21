@@ -4,7 +4,7 @@
 \alias{MVRanges}
 \title{wrap a VRanges for mitochondrial use}
 \usage{
-MVRanges(vr, coverage)
+MVRanges(vr, coverage = NA_real_)
 }
 \arguments{
 \item{vr}{the VRanges}
