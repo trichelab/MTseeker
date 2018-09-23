@@ -5,7 +5,7 @@
 \title{build and install GmapGenome.[organism].[mtGenome], mostly for rCRS}
 \usage{
 indexMtGenome(mtGenome = "rCRS", fa = NULL, organism = "Hsapiens",
-  destDir = NULL, install = TRUE)
+  destDir = NULL, install = TRUE, unlink = FALSE)
 }
 \arguments{
 \item{mtGenome}{mitochondrial reference genome to index (default is rCRS)}
@@ -17,6 +17,8 @@ indexMtGenome(mtGenome = "rCRS", fa = NULL, organism = "Hsapiens",
 \item{destDir}{optional destination for the package ($HOME is default)}
 
 \item{install}{install the package after creation? (default is TRUE)}
+
+\item{unlink}{if an index package already exists, remove it? (FALSE)}
 }
 \value{
 the path to the created package as a character string

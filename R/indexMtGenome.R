@@ -12,6 +12,7 @@
 #' @param  organism   organism whose mitochondrial genome is indexed (Hsapiens) 
 #' @param  destDir    optional destination for the package ($HOME is default)
 #' @param  install    install the package after creation? (default is TRUE) 
+#' @param  unlink     if an index package already exists, remove it? (FALSE)
 #'
 #' @return            the path to the created package as a character string
 #' 
@@ -19,7 +20,7 @@
 #'
 #' @export
 indexMtGenome <- function(mtGenome="rCRS", fa=NULL, organism="Hsapiens", 
-                          destDir=NULL, install=TRUE){
+                          destDir=NULL, install=TRUE, unlink=FALSE) {
 
   if (is.null(fa)) { 
     fa <- system.file(paste0("extdata/", mtGenome, ".fa"), package="MTseeker")
@@ -33,6 +34,14 @@ indexMtGenome <- function(mtGenome="rCRS", fa=NULL, organism="Hsapiens",
   if (is.null(destDir)) destDir <- Sys.getenv("HOME") 
   pkgName <- paste("GmapGenome", organism, mtGenome, sep=".")
   pkgPath <- paste(destDir, pkgName, sep="/")
+  if (dir.exists(pkgPath) & unlink) {
+    unlink(pkgPath, recursive=TRUE) 
+    if (pkgName %in% rownames(installed.packages()) & install) {
+      message("Removing installed ", pkgName, "...") 
+      unloadNamespace(pkgName)
+      remove.packages(pkgName)
+    }
+  }
   message("Building ", pkgName, " in ", pkgPath)
   makeGmapGenomePackage(gmapGenomeRef, 
                         version="1.0", 
