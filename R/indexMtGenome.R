@@ -28,20 +28,23 @@ indexMtGenome <- function(mtGenome="rCRS", fa=NULL, organism="Hsapiens",
   faf <- FastaFile(fa)
   fai <- scanFaIndex(fa)
   message("Found contigs named ", paste(seqlevels(fai), collapse=", "), "...")
-  gmapGenomeRef <- GmapGenome(faf, create=TRUE)
-  show(gmapGenomeRef)
 
   if (is.null(destDir)) destDir <- Sys.getenv("HOME") 
   pkgName <- paste("GmapGenome", organism, mtGenome, sep=".")
   pkgPath <- paste(destDir, pkgName, sep="/")
-  if (dir.exists(pkgPath) & unlink) {
-    unlink(pkgPath, recursive=TRUE) 
+  cachePath <- paste(destDir, ".local/share/gmap")
+  if (unlink) { 
+    if (dir.exists(pkgPath)) unlink(pkgPath, recursive=TRUE) 
+    if (dir.exists(cachePath)) unlink(cachePath, recursive=TRUE) 
     if (pkgName %in% rownames(installed.packages()) & install) {
       message("Removing installed ", pkgName, "...") 
       unloadNamespace(pkgName)
       remove.packages(pkgName)
     }
   }
+  gmapGenomeRef <- GmapGenome(faf, create=TRUE)
+  show(gmapGenomeRef)
+
   message("Building ", pkgName, " in ", pkgPath)
   makeGmapGenomePackage(gmapGenomeRef, 
                         version="1.0", 
