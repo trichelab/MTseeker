@@ -91,6 +91,7 @@ callMtVars <- function(BAM,SIZE=75,GENOME="rCRS",CHR="chrM",COV=NULL,verbose=F){
 
   # load the index (usually, rCRS skeleton key)
   try(attachNamespace(gmapGenome), silent=TRUE)
+  # BE CAREFUL HERE: this can break variant calling 
   whichRanges <- as(seqinfo(get(gmapGenome))[CHR], "GRanges")
 
   # for accounting purposes: 

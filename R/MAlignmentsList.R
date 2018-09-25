@@ -34,11 +34,17 @@ MAlignmentsList <- function(...) {
   mdat$cache$genomeCoverage <- with(mdat$cache, 
                                     round((reads*readLength) / genomeSize))
   mdat$summaryCols <- c("reads", "readLength", 
-                        "genomeSize", "genomeCoverage", 
-                        "nuclearReads", "mitoVsNuclear")
+                        "genomeSize", "genomeCoverage")
 
-  # because otherwise this clobbers it: 
+  # not relevant if only chrM reads  
+  if (any(mdat$cache$nuclearReads > 0)) {
+    mdat$summaryCols <- append(mdat$summaryCols, 
+                               c("nuclearReads","mitoVsNuclear"))
+  }
+
+  # if cache is not prepped beforehand, this will clobber it: 
   gal <- GenomicAlignments:::GAlignmentsList(...)
+  # and no, I don't entirely understand why
 
   # name entries if possible
   if (is.null(names(gal))) {
@@ -72,7 +78,7 @@ NULL
 #' @export
 setMethod("coverage", signature(x="MAlignmentsList"),
           function(x) {
-            covg <- metadata(x)$cache$coverage
+            covg <- metadata(x)$cache$genomeCoverage
             names(covg) <- names(x)
             return(covg)
           })
@@ -119,7 +125,7 @@ setMethod("fileName", signature(object="MAlignmentsList"),
 #' @export
 setMethod("Summary", signature(x="MAlignmentsList"),
           function(x) {
-            metadata(x)$cache[, metadata(x)$summaryCols]
+            DataFrame(metadata(x)$cache[, metadata(x)$summaryCols])
           })
 
 

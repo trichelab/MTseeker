@@ -87,7 +87,9 @@ setMethod("snpCall", signature(object="MVRanges"),
 #' @export
 setMethod("pos", signature(x="MVRanges"), 
           function(x) {
-            sapply(apply(cbind(start(x),end(x)),1, unique), paste, collapse="-")
+            .getse <- function(y) cbind(start(y), end(y))
+            .condense <- function(y) paste(unique(y), collapse="_")
+            apply(.getse(granges(x)), 1, .condense)
           })
 
 

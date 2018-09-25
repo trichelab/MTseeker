@@ -19,7 +19,7 @@ mtHGVS <- function(x, asMVR=FALSE, verbose=FALSE) {
   }
 
   # baseline notation, assuming mostly SNVs 
-  nms <- paste0(gsub("\\-", "_", pos(x)), ref(x), ">", alt(x))
+  nms <- paste0(pos(x), ref(x), ">", alt(x))
 
   # helper fn
   psub <- function(x, y) { 
