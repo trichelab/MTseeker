@@ -41,7 +41,9 @@ mtCircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
     }
   }
   dat <- data.frame(name=names(anno), start=start(anno), end=end(anno))
-  circos.par("clock.wise"=FALSE, start.degree=90, gap.degree=0)
+  circos.par("clock.wise"=FALSE, "start.degree"=90, "gap.degree"=0, 
+             "track.margin"=c(0.005, 0.005), "cell.padding"=c(0.005,0,0.005,0), 
+             "points.overflow.warning"=FALSE)
   circos.genomicInitialize(data=dat, plotType=NULL, major.by=16569)
 
   if (!is.null(variants)) {
