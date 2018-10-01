@@ -1,7 +1,7 @@
 Package: MTseeker
 Type: Package
 Title: Bioconductor tools for mitochondrial variant calling
-Version: 0.9.45
+Version: 0.9.46
 Date: 2018-10-01
 Author: Tim Triche, Jr., Ben Johnson, Tim Vickers, Noor Sohail
 Maintainer: Tim Triche, Jr. <tim.triche@vai.org>
