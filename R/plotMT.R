@@ -19,7 +19,7 @@
 #' @export
 plotMT <- function(mtCalls, filterVAF=TRUE, rot=-1, title=NULL) {
 
-  if (!is(mtCalls, "VRanges")) stop("plotMT() expects a VRanges object.")
+  if (!is(mtCalls, "VRanges")) stop("plotMT() expects an MVRanges object.")
   if (filterVAF == TRUE) {
     mtCalls <- subset(mtCalls, 
                       mtCalls$VAF!=1 & mtCalls$VAF!=0 & mtCalls$PASS==1)

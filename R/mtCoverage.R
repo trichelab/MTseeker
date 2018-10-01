@@ -19,10 +19,13 @@
 #' 
 #' @export
 mtCoverage <- function(x, ...) { 
-  message("You may find plotMtCoverage useful to visualize mtCoverage results.")
-  res <- switch(class(x), 
-                MVRanges=coverage(as(x, "VRanges")),
-                MAlignments=coverage(as(x, "GAlignments")))
+  if (is(x, "VRanges")) {
+    res <- coverage(as(x, "VRanges"))
+  } else if (is(x, "GAlignments")) {
+    res <- coverage(as(x, "GAlignments"))
+  } else { 
+    stop("Don't know how to compute MT coverage for a ", class(x))
+  }
   return(res)
 } 
 
@@ -30,15 +33,31 @@ mtCoverage <- function(x, ...) {
 # helper fn
 plotMtCoverage <- function(x, ...) { 
  
-  if (is(x, "MAlignments")) x <- mtCoverage(x)
-
+  if (is(x, "MAlignments") | is(x, "MVRanges")) x <- mtCoverage(x)
+  message("Plotting mitochondrial coverage...")
   data(mtAnno.rCRS)
   anno <- mtAnno #.rCRS
+  dat <- data.frame(name=names(anno), start=start(anno), end=end(anno))
   CHR <- grep("(chrM|MT)", names(x), value=TRUE) 
   covg <- x[[CHR]]
   ymax <- max(covg) 
+  circos.clear() 
+  circos.par("clock.wise"=FALSE, "start.degree"=90, "gap.degree"=0, 
+             "track.margin"=c(0.005, 0.005), "cell.padding"=c(0.005,0,0.005,0), 
+             "points.overflow.warning"=FALSE)
+  circos.genomicInitialize(data=dat, plotType=NULL, major.by=16569)
 
-  pfun <- function(x, y) {
+  # outside track: coverage
+  colr <- colorRamp2(c(0,20,40,max(covg)), c("red","black","darkgreen","green"))
+  p <- function(region, value, ...) { # {{{
+    circos.genomicLines(region, value, col=colr(value), type="h")
+  } # }}}
+  circos.genomicTrack(.cov(covg, anno), track.height=0.15, ylim=c(0,ymax),
+                      bg.border=NA, panel.fun=p)
+  circos.yaxis("right", labels.cex=0.5)
+
+  # main track, gene names and such
+  pfunGenes <- function(x, y) { # {{{
     xlim <- CELL_META$xlim
     ylim <- CELL_META$ylim
     gr <- anno[CELL_META$sector.index]
@@ -51,25 +70,11 @@ plotMtCoverage <- function(x, ...) {
                   cex=.textcex(gr), font=.textbold(gr), facing="clockwise", 
                   niceFacing=TRUE)
     }
-  }
-  dat <- data.frame(name=names(anno), start=start(anno), end=end(anno))
-
-  circos.clear() 
-  circos.par("clock.wise"=FALSE, start.degree=90, gap.degree=0)
-  circos.genomicInitialize(data=dat, plotType=NULL, major.by=16569)
-  # outside track: coverage
-  colr <- colorRamp2(c(0,20,40,max(covg)), c("red","black","darkgreen","green"))
-  circos.genomicTrack(.cov(covg, anno), track.height=0.15, ylim=c(0, max(covg)),
-                      bg.border=NA, panel.fun = function(region, value, ...) {
-                        circos.genomicLines(region, value, col=colr(value), 
-                                            type="h")
-                      })
-  circos.yaxis("right")
-  # main track, gene names and such
-  circos.track(panel.fun=pfun, ylim=c(-1,1), track.height=0.5, 
+  } # }}}
+  circos.track(panel.fun=pfunGenes, ylim=c(-1,1), track.height=0.5, 
                track.margin=c(0,0), bg.border=NA)
 
-  res <- list(anno=dat, pfun=pfun)
+  res <- list(anno=dat)
   invisible(res)
 }
 
