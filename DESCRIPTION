@@ -28,7 +28,8 @@ Imports:
     Biostrings,
     BiocGenerics,
     GenomicRanges,
-    GenomicAlignments
+    GenomicAlignments,
+    SummarizedExperiment
 Suggests:
     pkgdown,
     knitr,
