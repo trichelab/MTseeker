@@ -17,6 +17,8 @@
 #' 
 #' @return          invisibly, a list: `anno` (data.frame) + `pfun` (panel.fun)
 #'
+#' @import VariantTools
+#' @import rtracklayer
 #' @import circlize
 #' @import viridis
 #' 
