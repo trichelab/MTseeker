@@ -1,0 +1,19 @@
+language: r
+
+cache: packages
+
+warnings_are_errors: false
+
+r_build_args: "--resave-data"
+
+r_check_args: ""
+
+bioc_packages: 
+  - gmapR
+  - circlize 
+  - Homo.sapiens
+  - VariantTools
+  - GenomicRanges
+  - GenomicAlignments 
+  - VariantAnnotation
+  - SummarizedExperiment
