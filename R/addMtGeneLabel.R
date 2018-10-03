@@ -6,6 +6,7 @@
 #' 
 #' @return          a coordinate-sorted VRanges with additional annotations
 #' 
+#' @import rtracklayer
 #' @import VariantTools
 #'
 #' @export 

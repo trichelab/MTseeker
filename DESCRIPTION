@@ -13,10 +13,6 @@ Description: Variant analysis tools for mitochondrial genetics.
 biocViews: Genetics, Metabolomics, VariantAnnotation
 Depends:
     Homo.sapiens,
-    VariantAnnotation,
-    VariantTools,
-    rtracklayer,
-    ggthemes,
     jsonlite,
     viridis 
 Imports:
@@ -27,8 +23,11 @@ Imports:
     Rsamtools,
     S4Vectors,
     Biostrings,
+    rtracklayer,
+    VariantTools,
     BiocGenerics,
     GenomicRanges,
+    VariantAnnotation,
     GenomicAlignments,
     SummarizedExperiment
 Suggests:
