@@ -14,7 +14,9 @@ setClass("MVRanges",
 #' @param   coverage  estimated coverage
 #'
 #' @return            an MVRanges
-#' 
+#'
+#' @import BiocGenerics
+#'
 #' @export
 MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 

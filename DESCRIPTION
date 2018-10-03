@@ -10,6 +10,7 @@ Authors@R: c(person("Tim", "Triche", role = c("cre", "aut"),
              person("Noor", "Sohail", role = "aut"))
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
 Description: Variant analysis tools for mitochondrial genetics. 
+biocViews: Genetics, Metabolomics, VariantAnnotation
 Depends:
     Homo.sapiens,
     VariantAnnotation,
