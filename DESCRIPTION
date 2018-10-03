@@ -1,11 +1,15 @@
 Package: MTseeker
 Type: Package
-Title: Bioconductor tools for mitochondrial variant calling
-Version: 0.9.46
-Date: 2018-10-01
+Title: Bioconductor Tools for Mitochondrial Variant Analysis
+Version: 0.9.47
+Date: 2018-10-03
 Author: Tim Triche, Jr., Ben Johnson, Tim Vickers, Noor Sohail
+Authors@R: c(person("Tim", "Triche", role = c("cre", "aut"),
+                    email = "tim.triche@gmail.com"),
+             person("Ben", "Johnson", role = "aut"),
+             person("Noor", "Sohail", role = "aut"))
 Maintainer: Tim Triche, Jr. <tim.triche@vai.org>
-Description: Variant analysis tools for mitochondria. 
+Description: Variant analysis tools for mitochondrial genetics. 
 Depends:
     Homo.sapiens,
     VariantAnnotation,
@@ -26,8 +30,11 @@ Imports:
     GenomicRanges,
     GenomicAlignments
 Suggests:
+    pkgdown,
     knitr,
+    radix, 
     rsvg
-License: GPL-3.0
+License: GPL-3
+Encoding: UTF-8 
 RoxygenNote: 6.1.0
 VignetteBuilder: knitr

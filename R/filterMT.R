@@ -7,8 +7,8 @@
 #' Triska (Cancer Res, in revision) suggests a small number of masked regions 
 #' where homopolymers can be a problem; these are avoided if fpFilter
 #' 
-#' The NuMT filtration step (Ju, in Genome Research 2015, suggests a 2.5% VAF 
-#' cutoff to avoid false positive calls from nuclear-mitochondrial translocated
+#' The NuMT filtration step (Ju, in eLife 2014, suggests a variant allele cutoff
+#' of 0.03 to avoid false positive calls from nuclear-mitochondrial translocated
 #' or 'NuMT' fragments) is also a useful tool to cut down on nonsensical calls,
 #' although it may be important to use caution as low heteroplasmy can also 
 #' resolve into apparent near-homoplasmy at the single-cell level, at least in
@@ -23,7 +23,7 @@
 #' @param DFSE        a DataFrame/SummarizedExperiment with colData()$`mtCovg`
 #' @param minCovg     minimum covg (20, cf. Griffin, Genetics in Medicine 2014)
 #' @param fpFilter    apply Triska's homopolymer false positive filter? (FALSE)
-#' @param NuMT        apply the 2.5% VAF NuMT filter from Ju (GR 2015)? (FALSE)
+#' @param NuMT        apply the 0.03 VAF NuMT filter from Ju (GR 2015)? (FALSE)
 #'
 #' @import SummarizedExperiment
 #' @import S4Vectors
