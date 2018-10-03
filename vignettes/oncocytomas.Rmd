@@ -1,3 +1,14 @@
+  ---
+  title: "Renal oncocytoma example"
+  author: "Tim Triche, Jr."
+  package: MTseeker 
+  output: 
+    BiocStyle::html_document
+  vignette: >
+    %\VignetteIndexEntry{Vignette Title}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}  
+  ---
 # MTseeker: mitochondrial variant calling, visualization, and annotation in R 
 
 MTseeker works best when given some interesting mitochondria to work with.
@@ -5,7 +16,7 @@ MTseeker works best when given some interesting mitochondria to work with.
 First we need to load the oncocytoma BAMs. We don't actually do this here, 
 since they are several gigabytes apiece, but notice that all of them have 
 been aligned with BWA against the canonical rCRS mitogenome by splicing it 
-into hg19.  As opposed to GRCh37, which is what we should have done.
+into hg19. (As opposed to GRCh37, which is what we should have done...)
 
 ```{r loadBams, eval=FALSE} 
 library(MTseeker)
