@@ -33,6 +33,7 @@ Imports:
     GenomicAlignments,
     SummarizedExperiment
 Suggests:
+    MTseekerData,
     BiocStyle,
     rmarkdown,
     pkgdown,

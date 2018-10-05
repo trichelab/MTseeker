@@ -2,7 +2,7 @@
 % Please edit documentation in R/indexMtGenome.R
 \name{indexMtGenome}
 \alias{indexMtGenome}
-\title{build and install GmapGenome.[organism].[mtGenome], mostly for rCRS}
+\title{build and install GmapGenome.[organism].[mtGenome], currently Hsapiens.rCRS}
 \usage{
 indexMtGenome(mtGenome = "rCRS", fa = NULL, organism = "Hsapiens",
   destDir = NULL, install = TRUE, unlink = FALSE)
@@ -24,10 +24,17 @@ indexMtGenome(mtGenome = "rCRS", fa = NULL, organism = "Hsapiens",
 the path to the created package as a character string
 }
 \description{
-gmapR needs a reference genome index against which to call variants.
-We support (only) rCRS as that reference (at least for the time being). 
-This function creates and installs a reference Gmap index, by default rCRS.
-In principle, hg19 and mm10 are supported, but in practice, support is poor.
+gmapR needs a reference genome index in order for it to call any variants.
+We support rCRS (and only rCRS) as that reference, at least for the moment.
+This function creates & installs a reference (rCRS, the default) Gmap index.
+In principle, hg19 and mm10 could be supported; in practice, support is poor.
+(Also, the Yoruban chrM in hg19 is a terrible reference for variant calling.)
+We would be grateful for a patch to add mm10/GRCm38 support; eventually, we 
+plan to add it in ourselves (as one might have guessed from Mouse Mitocarta).
+}
+\details{
 Note: this function creates a "skeleton key" rCRS index for contigs named
 'chrM', 'MT', 'rCRS', 'NC_012920.1', and/or 'gi|251831106|ref|NC_012920.1|'.
+The point of this kludge is to allow gmapR to call variants against various
+styles of contig names, whether NCBI, UCSC, Genbank, or colloquial rCRS.
 }
