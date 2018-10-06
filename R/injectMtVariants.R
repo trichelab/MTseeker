@@ -14,6 +14,11 @@
 #' 
 #' @import GenomicRanges 
 #'
+#' @examples
+#' library(MTseekerData)
+#' data(RONKSvariants)
+#' injectMtVariants(RONKSvariants$RO_2)
+#'
 #' @export
 injectMtVariants <- function(mvr, gr=NULL, xlate=TRUE, 
                              canon=.99, refX=1, altX=1) {

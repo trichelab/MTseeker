@@ -19,3 +19,9 @@ proper HGVS names for the *Ranges (or a renamed *Ranges)
 \description{
 convert mitochondrial variant calls to HGVS format for naming
 }
+\examples{
+library(MTseekerData) 
+data(RONKSvariants) 
+mtHGVS(RONKSvariants$RO_1)
+
+}
