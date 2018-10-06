@@ -19,12 +19,13 @@
 #' @import GenomicAlignments
 #'
 #' @examples
+#' library(MTseekerData)
+#' data(RONKSreads)
 #' \donttest{
 #'   # requires the BAMs
-#'   library(MTseekerData)
-#'   data(RONKSreads)
 #'   RONKSvariants <- callMT(RONKSreads) 
 #' }
+#' head(RONKSvariants$RO_1) 
 #' 
 #' @export
 callMT <- function(mal, ..., parallel=FALSE, verbose=FALSE) {

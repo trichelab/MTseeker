@@ -27,3 +27,12 @@ nb. nb. nb. for the time being, this function ONLY supports rCRS/GRCh/hg38!
 nb. nb. nb. nb. both chrM and mtGenome are now autodetected from BAM headers
 nb. nb. nb. nb. nb. in the process of converting to rCRS, chrM becomes "chrM"
 }
+\examples{
+library(MTseekerData)
+data(RONKSreads)
+\donttest{
+  RONKSreads <- getMT(BAMs)
+} 
+RONKSreads
+
+}

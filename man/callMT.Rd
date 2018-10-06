@@ -42,11 +42,12 @@ FIXME: figure out a way to reprocess extracted chrM/MT reads against rCRS,
        regardless of what reference they were originally aligned against.
 }
 \examples{
+library(MTseekerData)
+data(RONKSreads)
 \donttest{
   # requires the BAMs
-  library(MTseekerData)
-  data(RONKSreads)
   RONKSvariants <- callMT(RONKSreads) 
 }
+head(RONKSvariants$RO_1) 
 
 }

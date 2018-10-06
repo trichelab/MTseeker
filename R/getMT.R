@@ -17,6 +17,14 @@
 #' @import GenomicAlignments
 #' @import Rsamtools
 #'
+#' @examples
+#' library(MTseekerData)
+#' data(RONKSreads)
+#' \donttest{
+#'   RONKSreads <- getMT(BAMs)
+#' } 
+#' RONKSreads
+#'
 #' @export
 getMT <- function(bam, filter=FALSE, parallel=FALSE, plotMAPQ=FALSE, ...) {
 
