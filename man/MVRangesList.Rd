@@ -15,3 +15,9 @@ the MVRangesList
 \description{
 wrap a VRangesList for mitochondrial use
 }
+\examples{
+library(MTseekerData)
+data(RONKSvariants)
+show(RONKSvariants)
+
+}

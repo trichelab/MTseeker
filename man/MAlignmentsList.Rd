@@ -15,3 +15,9 @@ an MAlignments
 \description{
 wrap a GAlignmentsList for viewing
 }
+\examples{
+library(MTseekerData)
+data(RONKSreads)
+show(RONKSreads)
+
+}

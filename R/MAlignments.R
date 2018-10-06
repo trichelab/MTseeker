@@ -17,7 +17,12 @@ setClass("MAlignments",
 #' @return            an MAlignments 
 #' 
 #' @import            GenomicAlignments
-#' 
+#'
+#' @examples
+#' library(MTseekerData)
+#' data(RONKSreads)
+#' show(RONKSreads$RO_1)
+#'
 #' @export
 MAlignments <- function(gal, bam) { 
   if (!is(gal, "GAlignments")) stop("gal must be a GAlignments. Exiting.")

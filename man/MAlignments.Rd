@@ -17,3 +17,9 @@ an MAlignments
 \description{
 wrap a GAlignments for easier stats
 }
+\examples{
+library(MTseekerData)
+data(RONKSreads)
+show(RONKSreads$RO_1)
+
+}

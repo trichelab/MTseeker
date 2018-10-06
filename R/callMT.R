@@ -18,6 +18,14 @@
 #' @import VariantTools
 #' @import GenomicAlignments
 #'
+#' @examples
+#' \donttest{
+#'   # requires the BAMs
+#'   library(MTseekerData)
+#'   data(RONKSreads)
+#'   RONKSvariants <- callMT(RONKSreads) 
+#' }
+#' 
 #' @export
 callMT <- function(mal, ..., parallel=FALSE, verbose=FALSE) {
 

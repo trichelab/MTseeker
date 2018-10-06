@@ -15,6 +15,11 @@ setClass("MVRangesList", contains="SimpleVRangesList")
 #'
 #' @return        the MVRangesList
 #' 
+#' @examples
+#' library(MTseekerData)
+#' data(RONKSvariants)
+#' show(RONKSvariants)
+#'
 #' @export
 MVRangesList <- function(...) {
   new("MVRangesList", GenomicRangesList(...), elementType = "MVRanges")

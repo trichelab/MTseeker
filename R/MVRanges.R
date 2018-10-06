@@ -17,6 +17,11 @@ setClass("MVRanges",
 #'
 #' @import BiocGenerics
 #'
+#' @examples
+#' library(MTseekerData)
+#' data(RONKSvariants)
+#' show(RONKSvariants$RO_1)
+#'
 #' @export
 MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 
@@ -60,6 +65,9 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #' @aliases locateVariants getAnnotations predictCoding genes
 #' @aliases snpCall annotation tallyVariants summarizeVariants
 #' 
+#' @importFrom          GenomicFeatures genes
+#' @importFrom          Biobase snpCall
+#'
 #' @name                MVRanges-methods
 NULL
 

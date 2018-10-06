@@ -41,3 +41,12 @@ an MVRanges (or, potentially, an MVRangesList)
 FIXME: figure out a way to reprocess extracted chrM/MT reads against rCRS,
        regardless of what reference they were originally aligned against.
 }
+\examples{
+\donttest{
+  # requires the BAMs
+  library(MTseekerData)
+  data(RONKSreads)
+  RONKSvariants <- callMT(RONKSreads) 
+}
+
+}
