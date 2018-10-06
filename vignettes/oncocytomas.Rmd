@@ -1,22 +1,17 @@
-  ---
-  title: "Renal oncocytoma example"
-  author: "Tim Triche, Jr."
-  package: MTseeker 
-  output: 
-    BiocStyle::html_document
-  vignette: >
-    %\VignetteIndexEntry{Vignette Title}
-    %\VignetteEngine{knitr::rmarkdown}
-    %\VignetteEncoding{UTF-8}  
-  ---
 # MTseeker: mitochondrial variant calling, visualization, and annotation in R 
 
-MTseeker works best when given some interesting mitochondria to work with.
+MTseeker works best when given some interesting mitochondrial data to work with.
+Renal oncocytomas are great big pink cells that are jammed full of defective 
+mitochondria, and sometimes progress to genomically unstable chromophobe renal
+cell carcinomas (kidney cancer) in unlucky hosts. Nobody seems to be entirely 
+sure what role mitochondrial variants play in their evolution, but the cells 
+have thousands of mitochondria stuffed into them. So that's what we'll study.
 
-First we need to load the oncocytoma BAMs. We don't actually do this here, 
+First we needed to load the oncocytoma BAMs. We don't actually do this here, 
 since they are several gigabytes apiece, but notice that all of them have 
 been aligned with BWA against the canonical rCRS mitogenome by splicing it 
-into hg19. (As opposed to GRCh37, which is what we should have done...)
+into hg19. (As opposed to GRCh37, which is what we should have done... but
+the point is that any modern GRCh assembly *or* a spliced rCRS contig works.)
 
 ```{r loadBams, eval=FALSE} 
 library(MTseeker)
@@ -38,14 +33,20 @@ options("mc.cores"=detectCores())
 MTreads <- getMT(BAMs, filter=FALSE) 
 names(MTreads) <- sapply(strsplit(fileName(MTreads), "\\."), `[`, 1)
 # saveRDS(MTreads, file="oncocytoma_and_matched_normal_MTreads.rds")
-
 ```
+
+Since realigning 22 whole exomes and extracting/counting reads takes a while,
+we created the MTseekerData package to hold the output from doing the above. 
+The _RONKSreads_ and _RONKSvariants_ data objects hold what you might expect 
+them to hold, at least once you find out that RONKS stands for _R_enal 
+_O_ncocytoma and _N_ormal _K_idney _S_amples from the same patients. 
 
 We'd like to compute the relative mitochondrial copy number for each:
 
-```{r computeCN, eval=FALSE}
-MTreads <- readRDS("MTreads.rds")
-mVn <- Summary(MTreads)$mitoVsNuclear
+```{r computeCN}
+library(MTseekerData)
+data(RONKSreads, package="MTseekerData")
+mVn <- Summary(RONKSreads)$mitoVsNuclear
 names(mVn) <- names(MTreads) 
 CN <- mVn[seq(2,22,2)]/mVn[seq(1,21,2)] 
 mtCN <- data.frame(subject=names(CN), CN=CN)
@@ -59,7 +60,13 @@ p <- ggplot(mtCN, aes(x=subject, y=CN, fill=subject)) +
 ggsave("mtCN.png") 
 ```
 
-Obviously it's not much good to have a variant caller that can't call variants.
+Obviously it's not much good to have a variant caller that can't call variants,
+so we demonstrate that here. (Note: tumor/normal calls, haplogroup inference,
+and soft-backfiltering of haplogroup-determining variants are works in progress,
+so we do not currently demonstrate them here, although the fpFilter datasets 
+are useful for these purposes)
+
+gmapR can be a bit fiesty, so we simply document the process below: 
 
 ```{r callVariants, eval=FALSE} 
 variants <- callMT(MTreads)
@@ -69,11 +76,19 @@ saveRDS(variants, file="oncocytoma_and_matched_normal_variants.rds")
 Show off the results:
 
 ```{r plotVariants} 
-data(variants, package="MTseeker")
-plot(filt(variants))
+data(RONKSvariants, package="MTseekerData")
+plot(filt(subset(RONKSvariants)))
 ```
 
-Now let's have some fun:
+The mitochondrial variant plots are structured sort of like tree rings, in that
+each sample is a "ring" and each point along the circle is annotated against
+a region of the mitochondrial genome. The filt() method drops variants that do
+not pass remedial quality filters, but it is advisable to also filter on VAF 
+(0.03, or 3%, is a recommended floor to keep out NuMT nuclear-mitochondrial 
+integrations; see Ju et al, eLife 2014, for more on this subject) and mask off
+regions of frequent homopolymer miscalls, and also haplogroup-related variants.
+
+Now let's plot a cartoon of the putative functional impact in one patient (RO1):
 
 ```{r makeSVG} 
 data(variants, package="MTseeker")
@@ -82,4 +97,15 @@ library(rsvg)
 rsvg_pdf("RO_1.functionalAnnot.pdf") 
 ```
 
-And there you have it.
+We would like to add a biohazard/mutagen symbol to complexes within the electron
+transport chain (ETC) that are impacted by nonsynonymous variants, and this is 
+in progress; the output is Scalable Vector Graphics (SVG) based on an image 
+created and shared by Tim Vickers at Washington University in St. Louis. Any
+suggestions regarding how to scale this visual up to populations of cells, 
+people, or organisms are welcome; some components (such as in Complex II) have 
+migrated to the nuclear genome in humans, while others are retained in mtDNA in 
+humans but lost to nuclear genomes in other eukaryotes. Moreover, tendencies 
+for particular diseases or conditions to hit particular complexes are of both
+biological and medical interest, which is why we added this in the first place.
+
+We hope you enjoy working with mitochondrial genomes as much as we have. 
