@@ -18,3 +18,9 @@ assigns attr('fixedMeta') from the result. If no fixing is required, the
 object's existing metadata is used. The object (with fixed metadata) is 
 then returned. If automatic fixes are impossible, a message is generated.
 }
+\examples{
+library(MTseekerData)
+data(RONKSreads)
+fixed <- fixMetadata(RONKSreads)
+
+}
