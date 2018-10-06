@@ -67,6 +67,7 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #' 
 #' @importFrom          GenomicFeatures genes
 #' @importFrom          Biobase snpCall
+#' @importFrom          graphics plot 
 #'
 #' @examples
 #' library(MTseekerData)

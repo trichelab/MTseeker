@@ -20,9 +20,11 @@ Depends:
 Imports:
     xml2,
     gmapR,
+    methods,
     IRanges,
     Biobase,
     circlize,
+    graphics,
     Rsamtools,
     S4Vectors,
     Biostrings,
