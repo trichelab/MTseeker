@@ -71,6 +71,9 @@
 
 \item{filterLowQual}{boolean; drop non-PASSing variants from locateVariants?}
 }
+\value{
+the return value depends on the method invoked.
+}
 \description{
 Many of these methods can be dispatched from an MVRangesList OR an MVRanges.
 In such cases, the method will usually, but not always, be apply()ed.

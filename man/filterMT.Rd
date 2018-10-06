@@ -15,6 +15,9 @@ filterMT(DFSE, minCovg = 20, fpFilter = FALSE, NuMT = FALSE)
 
 \item{NuMT}{apply the 0.03 VAF NuMT filter from Ju (GR 2015)? (FALSE)}
 }
+\value{
+a filtered SE or data.frame
+}
 \description{
 Griffin et al. (Genetics in Medicine 2014) recommends 20x coverage for mtDNA
 sequencing to have comparable error rates to Sanger sequencing.  By default, 

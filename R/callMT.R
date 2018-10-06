@@ -12,6 +12,8 @@
 #' @param parallel    try to run in parallel? (FALSE; this is super unstable)
 #' @param verbose     be verbose? (FALSE; turn on for debugging purposes)
 #'
+#' @return            an MVRanges (or, potentially, an MVRangesList) 
+#' 
 #' @import gmapR
 #' @import VariantTools
 #' @import GenomicAlignments

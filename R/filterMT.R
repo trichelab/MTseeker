@@ -25,6 +25,8 @@
 #' @param fpFilter    apply Triska's homopolymer false positive filter? (FALSE)
 #' @param NuMT        apply the 0.03 VAF NuMT filter from Ju (GR 2015)? (FALSE)
 #'
+#' @return            a filtered SE or data.frame 
+#' 
 #' @import SummarizedExperiment
 #' @import S4Vectors
 #'

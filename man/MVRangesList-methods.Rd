@@ -70,6 +70,9 @@
 
 \item{filterLowQual}{opt. for `granges`/`summarizeVariants`/`tallyVariants`}
 }
+\value{
+the return value depends on the method invoked.
+}
 \description{
 MVRangesList methods (centralized).
 }

@@ -53,6 +53,8 @@ MVRangesList <- function(...) {
 #' @param annotations   an MVRangesList (for getAnnotations)
 #' @param filterLowQual opt. for `granges`/`summarizeVariants`/`tallyVariants`
 #'
+#' @return              the return value depends on the method invoked.
+#' 
 #' @name  MVRangesList-methods
 NULL
 

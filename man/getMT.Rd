@@ -17,6 +17,9 @@ getMT(bam, filter = FALSE, parallel = FALSE, plotMAPQ = FALSE, ...)
 
 \item{...}{additional args to pass scanBamParam(), such as mapqFilter}
 }
+\value{
+an MAlignments or MAlignmentsList object
+}
 \description{
 nb. this could probably be done faster for a list of BAMs but it's not
 nb. nb. this returns NuMt-depleted mitochondrial GenomicAlignments

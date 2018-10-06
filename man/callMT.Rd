@@ -31,6 +31,9 @@ callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM",
 
 \item{verbose}{be chatty? (FALSE)}
 }
+\value{
+an MVRanges (or, potentially, an MVRangesList)
+}
 \description{
 `callMtVars` is a helper function for callMT
 }

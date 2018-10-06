@@ -6,6 +6,8 @@
 #' @param nmal        normal MAlignments
 #' @param ...         other optional arguments to pass to callVariants
 #'
+#' @return            an MVRanges (or, potentially, an MVRangesList) 
+#'
 #' @import gmapR
 #' @import VariantTools
 #' @import GenomicAlignments
