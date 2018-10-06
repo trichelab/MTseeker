@@ -40,3 +40,7 @@ throughput mitochondrial sequence variant analysis at the time of writing
 the user is expected to determine what additional filters to apply. We
 could envision changing these defaults down the road as standards congeal.
 }
+\examples{
+filterMT(data.frame(sample="foo", mtCovg=1000))
+
+}
