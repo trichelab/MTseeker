@@ -8,6 +8,10 @@
 #' 
 #' @return        methods for the class[es], union'ed into a character vector
 #' 
+#' @examples
+#' s4methods("MVRangesList")
+#' s4methods("MAlignmentsList")
+#'
 #' @export
 s4Methods <- function(...) {
   methods <- showMethods(classes=as.character(...), printTo=FALSE)

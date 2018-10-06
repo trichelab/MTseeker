@@ -36,3 +36,11 @@ or alternatively, add sectors/dendrograms inside of this "framed" version.
 \details{
 FIXME: add variant type coloration (del=blue, SNV=black, ins=red)
 }
+\examples{
+library(MTseekerData)
+data(RONKSvariants) 
+mtCircos(RONKSvariants)
+# same as plot(RONKSvariants)
+title("Renal oncocytomas and normal kidney samples")
+
+}

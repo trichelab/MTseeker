@@ -12,7 +12,12 @@
 #' @return          invisibly, the temporary file to which the SVG was written
 #'
 #' @import xml2
-#' 
+#'
+#' @examples
+#' library(MTseekerData)
+#' data(RONKSvariants) 
+#' mtComplex(RONKSvariants$RO_1)
+#'
 #' @export 
 mtComplex <- function(variants, defColor="#c9eded", verbose=FALSE){
 
