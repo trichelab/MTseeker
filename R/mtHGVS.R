@@ -13,7 +13,7 @@ mtHGVS <- function(x, asMVR=FALSE, verbose=FALSE) {
   pre <- paste(unique(genome(x)), "m.", sep=":") 
 
   # for plotting purposes
-  if (class(x) == "GRanges") {
+  if (is(x, "GRanges") & !is(x, "VRanges")) {
     return(paste0(pre, sapply(apply(cbind(start(x), end(x)), 1, unique), 
                               paste, collapse="-")))
   }

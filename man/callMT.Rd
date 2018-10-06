@@ -8,7 +8,7 @@
 callMT(mal, ..., parallel = FALSE, verbose = FALSE)
 
 callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM",
-  COV = NULL, verbose = F)
+  COV = NULL, verbose = FALSE)
 }
 \arguments{
 \item{mal}{an MAlignments (or, potentially, an MAlignmentsList)}
@@ -28,6 +28,8 @@ callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM",
 \item{CHR}{the mt contig name (for callMtVars; default is chrM)}
 
 \item{COV}{average read coverage (so we don't have to countBam)}
+
+\item{verbose}{be chatty? (FALSE)}
 }
 \description{
 `callMtVars` is a helper function for callMT
