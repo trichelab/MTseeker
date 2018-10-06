@@ -22,3 +22,9 @@ transport chain, and that's where coding mitochondrial DNA mutations will
 usually hit (we aren't plotting the mitoribosome or tRNAs just yet). So why
 reinvent the wheel (and possibly make it square)?
 }
+\examples{
+library(MTseekerData)
+data(RONKSvariants) 
+mtComplex(RONKSvariants$RO_1)
+
+}

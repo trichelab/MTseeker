@@ -18,3 +18,8 @@ Mostly for debugging and making architectural choices, e.g. about coverage()
 \details{
 Note: this is borrowed from Hadley, who borrowed it from a BioC workshop!
 }
+\examples{
+s4methods("MVRangesList")
+s4methods("MAlignmentsList")
+
+}

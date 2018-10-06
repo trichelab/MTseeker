@@ -16,7 +16,18 @@
 #' @return          an RleList
 #' 
 #' @import GenomicAlignments 
-#' 
+#'
+#' @examples
+#' library(MTseekerData)
+#'
+#' data(RONKSreads)
+#' mtCoverage(RONKSreads$RO_1)
+#' plotMtCoverage(RONKSreads$RO_1)
+#'
+#' data(RONKSvariants)
+#' mtCoverage(RONKSvariants$RO_1)
+#' plotMtCoverage(RONKSvariants$RO_1)
+#'
 #' @export
 mtCoverage <- function(x, ...) { 
   if (is(x, "VRanges")) {
@@ -30,7 +41,11 @@ mtCoverage <- function(x, ...) {
 } 
 
 
-# helper fn
+#' @rdname    mtCoverage
+#' 
+#' plot mitochondrial read coverage
+#' 
+#' @export
 plotMtCoverage <- function(x, ...) { 
  
   if (is(x, "MAlignments") | is(x, "MVRanges")) x <- mtCoverage(x)

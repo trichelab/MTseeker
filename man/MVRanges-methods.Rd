@@ -71,6 +71,9 @@
 
 \item{filterLowQual}{boolean; drop non-PASSing variants from locateVariants?}
 }
+\value{
+the return value depends on the method invoked.
+}
 \description{
 Many of these methods can be dispatched from an MVRangesList OR an MVRanges.
 In such cases, the method will usually, but not always, be apply()ed.
@@ -104,3 +107,10 @@ In such cases, the method will usually, but not always, be apply()ed.
 `plot` creates a circular plot of mitochondrial variant calls with annotation
 }
 
+\examples{
+library(MTseekerData)
+data(RONKSvariants)
+annotation(RONKSvariants$RO_1)
+plot(snpCall(RONKSvariants$RO_1))
+
+}

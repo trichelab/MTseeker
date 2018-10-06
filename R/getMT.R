@@ -12,8 +12,18 @@
 #' @param plotMAPQ  plot distribution of mitochondrial mapping quality? (FALSE)
 #' @param ...       additional args to pass scanBamParam(), such as mapqFilter
 #'
+#' @return          an MAlignments or MAlignmentsList object
+#' 
 #' @import GenomicAlignments
 #' @import Rsamtools
+#'
+#' @examples
+#' library(MTseekerData)
+#' data(RONKSreads)
+#' \donttest{
+#'   RONKSreads <- getMT(BAMs)
+#' } 
+#' RONKSreads
 #'
 #' @export
 getMT <- function(bam, filter=FALSE, parallel=FALSE, plotMAPQ=FALSE, ...) {

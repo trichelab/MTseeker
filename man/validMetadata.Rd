@@ -22,3 +22,9 @@ This function performs some sanity checks on the caches so that the above
 problems are unlikely to occur, provided that checkMetadataCache() is called
 at sensible times. This function is NOT a replacement for validObject().
 }
+\examples{
+library(MTseekerData)
+data(RONKSreads) 
+if(validMetadata(RONKSreads)) message("RONKSreads has valid metadata")
+
+}

@@ -27,3 +27,9 @@ The GRanges, with ref/var DNA and AA and
 FIXME: this function could most likely be orders of magnitude faster.
 FIXME: this ONLY considers variants injected against rCRS, not RSRS or hg19.
 }
+\examples{
+library(MTseekerData)
+data(RONKSvariants)
+injectMtVariants(RONKSvariants$RO_2)
+
+}

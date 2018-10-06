@@ -15,6 +15,9 @@ filterMT(DFSE, minCovg = 20, fpFilter = FALSE, NuMT = FALSE)
 
 \item{NuMT}{apply the 0.03 VAF NuMT filter from Ju (GR 2015)? (FALSE)}
 }
+\value{
+a filtered SE or data.frame
+}
 \description{
 Griffin et al. (Genetics in Medicine 2014) recommends 20x coverage for mtDNA
 sequencing to have comparable error rates to Sanger sequencing.  By default, 
@@ -36,4 +39,8 @@ throughput mitochondrial sequence variant analysis at the time of writing
 (2018), the default for this function is to filter on coverage only, as 
 the user is expected to determine what additional filters to apply. We
 could envision changing these defaults down the road as standards congeal.
+}
+\examples{
+filterMT(data.frame(sample="foo", mtCovg=1000))
+
 }

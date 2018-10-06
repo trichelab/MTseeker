@@ -17,6 +17,11 @@ setClass("MVRanges",
 #'
 #' @import BiocGenerics
 #'
+#' @examples
+#' library(MTseekerData)
+#' data(RONKSvariants)
+#' show(RONKSvariants$RO_1)
+#'
 #' @export
 MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 
@@ -55,8 +60,20 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #' @param query         an MVRanges
 #' @param filterLowQual boolean; drop non-PASSing variants from locateVariants?
 #'
+#' @return              the return value depends on the method invoked.
+#' 
 #' @aliases locateVariants getAnnotations predictCoding genes
 #' @aliases snpCall annotation tallyVariants summarizeVariants
+#' 
+#' @importFrom          GenomicFeatures genes
+#' @importFrom          Biobase snpCall
+#' @importFrom          graphics plot 
+#'
+#' @examples
+#' library(MTseekerData)
+#' data(RONKSvariants)
+#' annotation(RONKSvariants$RO_1)
+#' plot(snpCall(RONKSvariants$RO_1))
 #' 
 #' @name                MVRanges-methods
 NULL

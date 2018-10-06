@@ -17,10 +17,22 @@ getMT(bam, filter = FALSE, parallel = FALSE, plotMAPQ = FALSE, ...)
 
 \item{...}{additional args to pass scanBamParam(), such as mapqFilter}
 }
+\value{
+an MAlignments or MAlignmentsList object
+}
 \description{
 nb. this could probably be done faster for a list of BAMs but it's not
 nb. nb. this returns NuMt-depleted mitochondrial GenomicAlignments
 nb. nb. nb. for the time being, this function ONLY supports rCRS/GRCh/hg38!
 nb. nb. nb. nb. both chrM and mtGenome are now autodetected from BAM headers
 nb. nb. nb. nb. nb. in the process of converting to rCRS, chrM becomes "chrM"
+}
+\examples{
+library(MTseekerData)
+data(RONKSreads)
+\donttest{
+  RONKSreads <- getMT(BAMs)
+} 
+RONKSreads
+
 }

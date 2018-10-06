@@ -5,6 +5,10 @@
 #'
 #' @return      a list with elements of x overlapping features on each strand
 #' 
+#' @examples
+#' data(RONKSvariants, package="MTseekerData")
+#' byStrand(RONKSvariants)
+#' 
 #' @export 
 byStrand <- function(x, anno=NULL) { 
 

@@ -25,3 +25,15 @@ that may be of interest when interpreting results.
 \details{
 plotMtCoverage does what one might expect, and plots read coverage.
 }
+\examples{
+library(MTseekerData)
+
+data(RONKSreads)
+mtCoverage(RONKSreads$RO_1)
+plotMtCoverage(RONKSreads$RO_1)
+
+data(RONKSvariants)
+mtCoverage(RONKSvariants$RO_1)
+plotMtCoverage(RONKSvariants$RO_1)
+
+}

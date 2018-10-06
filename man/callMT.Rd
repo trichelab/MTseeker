@@ -31,10 +31,23 @@ callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM",
 
 \item{verbose}{be chatty? (FALSE)}
 }
+\value{
+an MVRanges (or, potentially, an MVRangesList)
+}
 \description{
 `callMtVars` is a helper function for callMT
 }
 \details{
 FIXME: figure out a way to reprocess extracted chrM/MT reads against rCRS,
        regardless of what reference they were originally aligned against.
+}
+\examples{
+library(MTseekerData)
+data(RONKSreads)
+\donttest{
+  # requires the BAMs
+  RONKSvariants <- callMT(RONKSreads) 
+}
+head(RONKSvariants$RO_1) 
+
 }

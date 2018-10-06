@@ -38,23 +38,26 @@ the point is that any modern GRCh assembly *or* a spliced rCRS contig works.)
 ```{r loadBams, eval=FALSE} 
 library(MTseeker)
 
-# we use SamBlaster... a lot... in my lab.
-BAMfiles <- grep("(split|disc)", value=T, invert=T, list.files(patt=".bam$"))
-names(BAMfiles) <- sapply(strsplit(BAMfiles, "\\."), `[`, 1)
-BAMs <- data.frame(BAM=BAMfiles, 
-                   Sample_Group=ifelse(grepl("NKS",BAMfiles), "normal","tumor"))
-rownames(BAMs) <- sub("NKS", "normal", sub("RO", "oncocytoma", rownames(BAMs)))
-BAMs$subject <- as.integer(sapply(strsplit(BAMs$BAM, "(_|\\.)"), `[`, 2))
+if (FALSE) { 
+  # we use SamBlaster... a lot... in my lab.
+  BAMfiles <- grep("(split|disc)", value=T, invert=T, list.files(patt=".bam$"))
+  names(BAMfiles) <- sapply(strsplit(BAMfiles, "\\."), `[`, 1)
+  BAMs <- data.frame(BAM=BAMfiles, 
+                     Sample_Group=ifelse(grepl("NKS", BAMfiles), 
+                                         "normal","tumor"))
+  rownames(BAMs) <- sub("NKS", "normal", sub("RO","oncocytoma", rownames(BAMs)))
+  BAMs$subject <- as.integer(sapply(strsplit(BAMs$BAM, "(_|\\.)"), `[`, 2))
 
-# we merged all the BAMs after-the-fact, so...
-BAMs <- subset(BAMs, grepl("merged", BAMs$BAM))
-BAMs <- BAMs[order(BAMs$subject), ]
+  # we merged all the BAMs after-the-fact, so...
+  BAMs <- subset(BAMs, grepl("merged", BAMs$BAM))
+  BAMs <- BAMs[order(BAMs$subject), ]
 
-library(parallel) 
-options("mc.cores"=detectCores())
-MTreads <- getMT(BAMs, filter=FALSE) 
-names(MTreads) <- sapply(strsplit(fileName(MTreads), "\\."), `[`, 1)
-# saveRDS(MTreads, file="oncocytoma_and_matched_normal_MTreads.rds")
+  library(parallel) 
+  options("mc.cores"=detectCores())
+  MTreads <- getMT(BAMs, filter=FALSE) 
+  names(MTreads) <- sapply(strsplit(fileName(MTreads), "\\."), `[`, 1)
+  saveRDS(MTreads, file="oncocytoma_and_matched_normal_MTreads.rds")
+}
 ```
 
 Since realigning 22 whole exomes and extracting/counting reads takes a while,
@@ -72,7 +75,7 @@ We'd like to compute the relative mitochondrial copy number for each:
 library(MTseekerData)
 data(RONKSreads, package="MTseekerData")
 mVn <- Summary(RONKSreads)$mitoVsNuclear
-names(mVn) <- names(MTreads) 
+names(mVn) <- names(RONKSreads) 
 CN <- mVn[seq(2,22,2)]/mVn[seq(1,21,2)] 
 mtCN <- data.frame(subject=names(CN), CN=CN)
 
@@ -96,8 +99,10 @@ are useful for these purposes)
 gmapR can be a bit fiesty, so we simply document the process below: 
 
 ```{r callVariants, eval=FALSE} 
-variants <- callMT(MTreads)
-saveRDS(variants, file="oncocytoma_and_matched_normal_variants.rds")
+if (FALSE) { 
+  variants <- callMT(RONKSreads)
+  saveRDS(variants, file="oncocytoma_and_matched_normal_variants.rds")
+}
 ```
 
 For this vignette, we have stored the results in the MTseekerData package:

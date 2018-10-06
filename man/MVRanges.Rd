@@ -17,3 +17,9 @@ an MVRanges
 \description{
 wrap a VRanges for mitochondrial use
 }
+\examples{
+library(MTseekerData)
+data(RONKSvariants)
+show(RONKSvariants$RO_1)
+
+}

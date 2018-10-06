@@ -15,6 +15,11 @@ setClass("MVRangesList", contains="SimpleVRangesList")
 #'
 #' @return        the MVRangesList
 #' 
+#' @examples
+#' library(MTseekerData)
+#' data(RONKSvariants)
+#' show(RONKSvariants)
+#'
 #' @export
 MVRangesList <- function(...) {
   new("MVRangesList", GenomicRangesList(...), elementType = "MVRanges")
@@ -53,6 +58,8 @@ MVRangesList <- function(...) {
 #' @param annotations   an MVRangesList (for getAnnotations)
 #' @param filterLowQual opt. for `granges`/`summarizeVariants`/`tallyVariants`
 #'
+#' @return              the return value depends on the method invoked.
+#' 
 #' @name  MVRangesList-methods
 NULL
 

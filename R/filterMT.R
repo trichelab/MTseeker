@@ -25,8 +25,13 @@
 #' @param fpFilter    apply Triska's homopolymer false positive filter? (FALSE)
 #' @param NuMT        apply the 0.03 VAF NuMT filter from Ju (GR 2015)? (FALSE)
 #'
+#' @return            a filtered SE or data.frame 
+#' 
 #' @import SummarizedExperiment
 #' @import S4Vectors
+#'
+#' @examples
+#' filterMT(data.frame(sample="foo", mtCovg=1000))
 #'
 #' @export
 filterMT <- function(DFSE, minCovg=20, fpFilter=FALSE, NuMT=FALSE) {
@@ -61,8 +66,8 @@ filterMT <- function(DFSE, minCovg=20, fpFilter=FALSE, NuMT=FALSE) {
 
   if (NuMT) {
     if (is(res, "SummarizedExperiment")) {
-      message("Discarding calls with VAF < 2.5% to avoid NuMT contamination...")
-      res <- subset(res, res$VAF >= 0.025)
+      message("Discarding calls with VAF < 3% to avoid NuMT contamination...")
+      res <- subset(res, res$VAF >= 0.03)
     }  
   }
 

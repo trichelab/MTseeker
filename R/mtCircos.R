@@ -21,6 +21,13 @@
 #' @import rtracklayer
 #' @import circlize
 #' @import viridis
+#'
+#' @examples 
+#' library(MTseekerData)
+#' data(RONKSvariants) 
+#' mtCircos(RONKSvariants)
+#' # same as plot(RONKSvariants)
+#' title("Renal oncocytomas and normal kidney samples")
 #' 
 #' @export 
 mtCircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL, 

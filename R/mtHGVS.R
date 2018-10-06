@@ -6,6 +6,11 @@
 #' 
 #' @return          proper HGVS names for the *Ranges (or a renamed *Ranges)
 #'
+#' @examples
+#' library(MTseekerData) 
+#' data(RONKSvariants) 
+#' mtHGVS(RONKSvariants$RO_1)
+#' 
 #' @export
 mtHGVS <- function(x, asMVR=FALSE, verbose=FALSE) { 
 

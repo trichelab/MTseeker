@@ -17,3 +17,8 @@ a list with elements of x overlapping features on each strand
 \description{
 simple helper function to split a *RangesList by the strand of its mt target
 }
+\examples{
+data(RONKSvariants, package="MTseekerData")
+byStrand(RONKSvariants)
+
+}

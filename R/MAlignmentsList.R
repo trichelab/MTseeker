@@ -14,6 +14,11 @@ setClass("MAlignmentsList", contains="GAlignmentsList")
 #' 
 #' @import            GenomicAlignments
 #' 
+#' @examples
+#' library(MTseekerData)
+#' data(RONKSreads)
+#' show(RONKSreads)
+#'
 #' @export
 MAlignmentsList <- function(...) {
 

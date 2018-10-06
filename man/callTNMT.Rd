@@ -26,6 +26,9 @@ callTnMtVars(BAMS, SIZE, COV, GENOME = "rCRS", CHR = "chrM")
 
 \item{CHR}{the mt contig name (default is chrM)}
 }
+\value{
+an MVRanges (or, potentially, an MVRangesList)
+}
 \description{
 call mitochondrial tumor/normal variants from an MAlignments[List] object
 }
