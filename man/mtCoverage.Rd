@@ -36,4 +36,10 @@ data(RONKSvariants)
 mtCoverage(RONKSvariants$RO_1)
 plotMtCoverage(RONKSvariants$RO_1)
 
+par(mfrow=c(1,2))
+plotMtCoverage(RONKSreads$NKs_1)
+title("Read coverage for normal kidney sample 1") 
+plotMtCoverage(RONKSreads$RO_1)
+title("Read coverage for renal oncocytoma sample 1") 
+
 }
