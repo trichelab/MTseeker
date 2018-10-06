@@ -5,8 +5,9 @@
 MTseeker is a toolkit for mitochondrial variant analysis in the 
 [Bioconductor](http://bioconductor.org/) environment. Given suitably aligned 
 reads, it will call variants (and/or mitochondrial copy number), plot them for 
-multiple samples, and provide basic functional annotation for coding variants.  If we were cool people, it would have a mitochondrion stuffed into a hexagon,
-but we don't, so it doesn't... _yet_. 
+multiple samples, and provide basic functional annotation for coding variants.    
+
+If we were cool people, it would have a mitochondrion stuffed into a hexagon, but we aren't, so it doesn't... _yet_. 
 
 [![Build Status](https://travis-ci.org/trichelab/MTseeker/MTseeker.png?branch=master)](https://travis-ci.org/trichelab/MTseeker/MTseeker)
 
