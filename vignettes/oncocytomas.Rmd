@@ -1,4 +1,23 @@
-# MTseeker: mitochondrial variant calling, visualization, and annotation in R 
+---
+title: "MTseeker example"
+shorttitle: "MTseeker guide"
+author: 
+  - Tim Triche, Jr. 
+  - Noor Sohail 
+package: MTseeker
+abstract: >
+  An example of processing renal oncocytomas and matched normal
+  kidney samples with MTseeker, calling variants and plotting results.
+vignette: >
+  %\VignetteIndexEntry{MTseeker example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+---
+
+# Introduction
 
 MTseeker works best when given some interesting mitochondrial data to work with.
 Renal oncocytomas are great big pink cells that are jammed full of defective 
@@ -6,6 +25,9 @@ mitochondria, and sometimes progress to genomically unstable chromophobe renal
 cell carcinomas (kidney cancer) in unlucky hosts. Nobody seems to be entirely 
 sure what role mitochondrial variants play in their evolution, but the cells 
 have thousands of mitochondria stuffed into them. So that's what we'll study.
+
+
+# Loading data
 
 First we needed to load the oncocytoma BAMs. We don't actually do this here, 
 since they are several gigabytes apiece, but notice that all of them have 
@@ -41,6 +63,9 @@ The _RONKSreads_ and _RONKSvariants_ data objects hold what you might expect
 them to hold, at least once you find out that RONKS stands for _R_enal 
 _O_ncocytoma and _N_ormal _K_idney _S_amples from the same patients. 
 
+
+# Relative mitochondrial copy number changes
+
 We'd like to compute the relative mitochondrial copy number for each:
 
 ```{r computeCN}
@@ -60,6 +85,8 @@ p <- ggplot(mtCN, aes(x=subject, y=CN, fill=subject)) +
 ggsave("mtCN.png") 
 ```
 
+# Calling variants
+
 Obviously it's not much good to have a variant caller that can't call variants,
 so we demonstrate that here. (Note: tumor/normal calls, haplogroup inference,
 and soft-backfiltering of haplogroup-determining variants are works in progress,
@@ -73,10 +100,18 @@ variants <- callMT(MTreads)
 saveRDS(variants, file="oncocytoma_and_matched_normal_variants.rds")
 ```
 
+For this vignette, we have stored the results in the MTseekerData package:
+
+```{r loadVariants}
+library(MTseekerData)
+data(RONKSvariants, package="MTseekerData")
+```
+
+# Plotting variants
+
 Show off the results:
 
 ```{r plotVariants} 
-data(RONKSvariants, package="MTseekerData")
 plot(filt(subset(RONKSvariants)))
 ```
 
@@ -87,6 +122,9 @@ not pass remedial quality filters, but it is advisable to also filter on VAF
 (0.03, or 3%, is a recommended floor to keep out NuMT nuclear-mitochondrial 
 integrations; see Ju et al, eLife 2014, for more on this subject) and mask off
 regions of frequent homopolymer miscalls, and also haplogroup-related variants.
+
+
+# Plotting functional impacts
 
 Now let's plot a cartoon of the putative functional impact in one patient (RO1):
 
