@@ -28,6 +28,7 @@ Imports:
     Biostrings,
     rtracklayer,
     VariantTools,
+    GenomeInfoDb,
     Homo.sapiens,
     BiocGenerics,
     GenomicRanges,

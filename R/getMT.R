@@ -15,8 +15,9 @@
 #' @return          an MAlignments or MAlignmentsList object
 #' 
 #' @import GenomicAlignments
+#' @import GenomeInfoDb
 #' @import Rsamtools
-#'
+#' 
 #' @examples
 #' library(MTseekerData)
 #' data(RONKSreads)
