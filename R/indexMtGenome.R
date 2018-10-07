@@ -23,6 +23,7 @@
 #' @return            the path to the created package as a character string
 #' 
 #' @import gmapR
+#' @importFrom utils install.packages installed.packages remove.packages
 #'
 #' @export
 indexMtGenome <- function(mtGenome="rCRS", fa=NULL, organism="Hsapiens", 

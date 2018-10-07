@@ -85,7 +85,7 @@ p <- ggplot(mtCN, aes(x=subject, y=CN, fill=subject)) +
        geom_col() + theme_tufte() + ylim(0,5) + 
        ylab("Tumor/normal mitochondrial ratio") + 
        ggtitle("Mitochondrial retention in oncocytomas")
-ggsave("mtCN.png") 
+print(p)
 ```
 
 # Calling variants
@@ -133,11 +133,18 @@ regions of frequent homopolymer miscalls, and also haplogroup-related variants.
 
 Now let's plot a cartoon of the putative functional impact in one patient (RO1):
 
-```{r makeSVG} 
+```{r makeSVG}
 data(variants, package="MTseeker")
 SVG <- mtComplex(variants[[2]]) 
+```
+
+The above will bring up an image in a browser window like the one in the README.
+You can also generate a PDF file of the modified rendering if you prefer:
+
+```{r makePDF, eval=FALSE}
 library(rsvg) 
-rsvg_pdf("RO_1.functionalAnnot.pdf") 
+tmppdf <- paste(tempdir(), "RO_1.functionalAnnot.pdf", sep="/") 
+rsvg_pdf(tmppdf)
 ```
 
 We would like to add a biohazard/mutagen symbol to complexes within the electron

@@ -13,6 +13,7 @@
 #' @return          The GRanges, with ref/var DNA and AA and 
 #' 
 #' @import GenomicRanges 
+#' @importFrom utils data
 #'
 #' @examples
 #' library(MTseekerData)

@@ -22,6 +22,8 @@
 #' @import circlize
 #' @import viridis
 #'
+#' @importFrom grDevices col2rgb rgb
+#'
 #' @examples 
 #' library(MTseekerData)
 #' data(RONKSvariants) 
