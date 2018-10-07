@@ -65,10 +65,15 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #' @aliases locateVariants getAnnotations predictCoding genes
 #' @aliases snpCall annotation tallyVariants summarizeVariants
 #' 
-#' @importFrom          GenomicFeatures genes
-#' @importFrom          Biobase snpCall
-#' @importFrom          graphics plot 
+#' @importFrom          GenomicFeatures   genes
+#' @importFrom          Biobase           snpCall
+#' @importFrom          graphics          plot 
 #'
+#' @importMethodsFrom   VariantAnnotation filt 
+#' @importMethodsFrom   GenomicFeatures   genes
+#' @importMethodsFrom   Biostrings        type 
+#' @importMethodsFrom   IRanges           coverage
+#' 
 #' @examples
 #' library(MTseekerData)
 #' data(RONKSvariants)
@@ -178,6 +183,7 @@ setMethod("encoding", signature(x="MVRanges"),
 
 
 #' @rdname    MVRanges-methods
+#' @importFrom VariantAnnotation filt
 #' @export
 setMethod("filt", signature(x="MVRanges"), function(x) subset(x, x$PASS==TRUE))
 
