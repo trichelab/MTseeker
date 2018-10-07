@@ -48,7 +48,7 @@ MAlignmentsList <- function(...) {
   }
 
   # if cache is not prepped beforehand, this will clobber it: 
-  gal <- GenomicAlignments:::GAlignmentsList(...)
+  gal <- GenomicAlignments::GAlignmentsList(...)
   # and no, I don't entirely understand why
 
   # name entries if possible
