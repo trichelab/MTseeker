@@ -8,6 +8,8 @@
 #' 
 #' @return        methods for the class[es], union'ed into a character vector
 #' 
+#' @import        methods
+#' 
 #' @examples
 #' s4methods("MVRangesList")
 #' s4methods("MAlignmentsList")
