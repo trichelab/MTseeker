@@ -6,6 +6,8 @@
 \title{mitochondrial genome coverage for an MAlignments or MVRanges object}
 \usage{
 mtCoverage(x, ...)
+
+plotMtCoverage(x, ...)
 }
 \arguments{
 \item{x}{an MAlignments or MVRanges}

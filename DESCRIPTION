@@ -13,8 +13,6 @@ Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
 Description: Variant analysis tools for mitochondrial genetics. 
 biocViews: Genetics, Metabolomics, VariantAnnotation
 Depends:
-    Homo.sapiens,
-    jsonlite,
     viridis 
 Imports:
     xml2,
@@ -23,12 +21,14 @@ Imports:
     IRanges,
     Biobase,
     circlize,
+    jsonlite,
     graphics,
     Rsamtools,
     S4Vectors,
     Biostrings,
     rtracklayer,
     VariantTools,
+    Homo.sapiens,
     BiocGenerics,
     GenomicRanges,
     GenomicFeatures,

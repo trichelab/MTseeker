@@ -64,6 +64,8 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #' 
 #' @aliases locateVariants getAnnotations predictCoding genes
 #' @aliases snpCall annotation tallyVariants summarizeVariants
+#'
+#' @import              Homo.sapiens
 #' 
 #' @importFrom          GenomicFeatures   genes
 #' @importFrom          Biobase           snpCall
@@ -262,6 +264,7 @@ setMethod("predictCoding", # mitochondrial annotations kept internally
 
 
 #' @rdname    MVRanges-methods
+#' @import    jsonlite
 #' @export
 setMethod("summarizeVariants", signature(query="MVRanges","missing","missing"),
           function(query, ...) {

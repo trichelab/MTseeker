@@ -49,7 +49,7 @@ mtCoverage <- function(x, ...) {
 
 #' @rdname    mtCoverage
 #' 
-#' plot mitochondrial read coverage
+#' @import    circlize
 #' 
 #' @export
 plotMtCoverage <- function(x, ...) { 
