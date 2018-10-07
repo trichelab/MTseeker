@@ -2,6 +2,6 @@
 #' 
 #' @format a GRanges object
 #' 
-#' @aliases mtAnno
+#' @aliases mtAnno.rCRS
 #' 
-"mtAnno.rCRS"
+"mtAnno"
