@@ -100,8 +100,8 @@ gmapR can be a bit fiesty, so we simply document the process below:
 
 ```{r callVariants, eval=FALSE} 
 if (FALSE) { 
-  variants <- callMT(RONKSreads)
-  saveRDS(variants, file="oncocytoma_and_matched_normal_variants.rds")
+  RONKSvariants <- callMT(RONKSreads)
+  save(RONKSvariants, file="RONKSvariants.rda")
 }
 ```
 
@@ -134,8 +134,8 @@ regions of frequent homopolymer miscalls, and also haplogroup-related variants.
 Now let's plot a cartoon of the putative functional impact in one patient (RO1):
 
 ```{r makeSVG}
-data(variants, package="MTseeker")
-SVG <- mtComplex(variants[[2]]) 
+data(RONKSvariants, package="MTseekerData")
+SVG <- mtComplex(RONKSvariants[[2]]) 
 ```
 
 The above will bring up an image in a browser window like the one in the README.

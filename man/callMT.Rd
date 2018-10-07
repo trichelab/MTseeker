@@ -28,8 +28,6 @@ callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM",
 \item{CHR}{the mt contig name (for callMtVars; default is chrM)}
 
 \item{COV}{average read coverage (so we don't have to countBam)}
-
-\item{verbose}{be chatty? (FALSE)}
 }
 \value{
 an MVRanges (or, potentially, an MVRangesList)
