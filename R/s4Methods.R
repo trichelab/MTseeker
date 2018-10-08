@@ -12,8 +12,8 @@
 #' 
 #' @examples
 #' library(MTseeker) 
-#' s4methods("MVRangesList")
-#' s4methods("MAlignmentsList")
+#' s4Methods("MVRangesList")
+#' s4Methods("MAlignmentsList")
 #'
 #' @export
 s4Methods <- function(...) {
