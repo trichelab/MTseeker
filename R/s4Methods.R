@@ -11,6 +11,7 @@
 #' @import        methods
 #' 
 #' @examples
+#' library(MTseeker) 
 #' s4methods("MVRangesList")
 #' s4methods("MAlignmentsList")
 #'

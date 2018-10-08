@@ -161,7 +161,9 @@ mtCircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
 }
 
 # helper fn
-.darken <- function(hex, howMuch=1.25) rgb(t(col2rgb(hex)/howMuch), max=255)
+.darken <- function(hex, howMuch=1.25) {
+  rgb(t(col2rgb(hex)/howMuch), maxColorValue=255)
+}
 
 # helper fn
 .newsprint <- colorRamp2(c(0, 1), c("#FFFFFF", "#000000"))

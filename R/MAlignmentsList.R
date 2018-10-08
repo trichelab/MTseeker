@@ -1,6 +1,8 @@
 #' wraps a GAlignmentsList (made up of MAlignments) for nicer viewing
 #' 
 #' @import GenomicAlignments
+#' @import S4Vectors
+#' @import IRanges
 #' 
 #' @exportClass MAlignmentsList
 setClass("MAlignmentsList", contains="GAlignmentsList")
@@ -68,18 +70,21 @@ MAlignmentsList <- function(...) {
 
 #' MAlignmentsList methods (centralized).
 #'
+#' Depending on how a generic was originally designated, the arguments to 
+#' these methods can have various argument names, but all of them tend to 
+#' take an MAlignmentsList as their argument.
+#'
+#' @param x         an MAlignmentsList
+#' @param object    an MAlignmentsList
+#' 
+#' @return          various objects, as appropriate to the method 
+#'
 #' @name            MAlignmentsList-methods
 NULL
 
 
 #' @rdname          MAlignmentsList-methods
 #'
-#' @param x         an MAlignmentsList
-#' 
-#' @return          estimated coverage (numeric vector)
-#'
-#' @import          IRanges
-#' 
 #' @export
 setMethod("coverage", signature(x="MAlignmentsList"),
           function(x) {
@@ -91,12 +96,6 @@ setMethod("coverage", signature(x="MAlignmentsList"),
 
 #' @rdname          MAlignmentsList-methods
 #'
-#' @param x         an MAlignmentsList
-#' 
-#' @return          estimated coverage (numeric vector)
-#'
-#' @import          S4Vectors
-#' 
 #' @export
 setMethod("runLength", signature(x="MAlignmentsList"),
           function(x) {
@@ -107,10 +106,6 @@ setMethod("runLength", signature(x="MAlignmentsList"),
 
 
 #' @rdname          MAlignmentsList-methods
-#' 
-#' @param object    an MAlignmentsList
-#' 
-#' @return          BAM file summary for the MAlignmentsList 
 #' 
 #' @export
 setMethod("fileName", signature(object="MAlignmentsList"),
@@ -123,10 +118,6 @@ setMethod("fileName", signature(object="MAlignmentsList"),
 
 #' @rdname          MAlignmentsList-methods
 #' 
-#' @param x         an MAlignmentsList
-#' 
-#' @return          a DataFrame
-#'
 #' @export
 setMethod("Summary", signature(x="MAlignmentsList"),
           function(x) {
@@ -135,8 +126,6 @@ setMethod("Summary", signature(x="MAlignmentsList"),
 
 
 #' @rdname          MAlignmentsList-methods
-#'
-#' @param objects   an MAlignmentsList
 #' 
 #' @export
 setMethod("show", signature(object="MAlignmentsList"),

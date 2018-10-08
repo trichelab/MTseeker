@@ -58,9 +58,16 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #' @param object        an MVRanges
 #' @param annotations   an MVRanges
 #' @param query         an MVRanges
+#' @param mode          miscellaneous arguments
+#' @param y             another MVRanges
+#' @param varAllele     variant alleles
+#' @param subject       a GRanges, usually 
+#' @param seqSource     a BSgenome, usually 
+#' @param ...           miscellaneous args, passed through
+#' 
 #' @param filterLowQual boolean; drop non-PASSing variants from locateVariants?
 #'
-#' @return              the return value depends on the method invoked.
+#' @return              depends on the method invoked.
 #' 
 #' @aliases locateVariants getAnnotations predictCoding genes
 #' @aliases snpCall annotation tallyVariants summarizeVariants

@@ -24,22 +24,12 @@
 \item{x}{an MAlignmentsList}
 
 \item{object}{an MAlignmentsList}
-
-\item{x}{an MAlignmentsList}
-
-\item{x}{an MAlignmentsList}
-
-\item{objects}{an MAlignmentsList}
 }
 \value{
-estimated coverage (numeric vector)
-
-estimated coverage (numeric vector)
-
-BAM file summary for the MAlignmentsList
-
-a DataFrame
+various objects, as appropriate to the method
 }
 \description{
-MAlignmentsList methods (centralized).
+Depending on how a generic was originally designated, the arguments to 
+these methods can have various argument names, but all of them tend to 
+take an MAlignmentsList as their argument.
 }

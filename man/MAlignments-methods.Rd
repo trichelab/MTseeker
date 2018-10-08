@@ -29,31 +29,15 @@
 \arguments{
 \item{x}{an MAlignments}
 
-\item{x}{an MAlignments}
+\item{object}{an MAlignments}
 
-\item{x}{an MAlignments}
-
-\item{x}{an MAlignments}
-
-\item{x}{an MAlignments}
-
-\item{file}{an MAlignments}
-
-\item{bamRanges}{an MAlignments}
+\item{files}{an MAlignments}
 }
 \value{
-estimated coverage (numeric)
-
-read length
-
-genome size
-
-summary of x
-
-a BAM filename (string)
-
-a BAM header
+various things, as appropriate to the methods
 }
 \description{
-MAlignments methods (centralized).
+Depending on how a generic was originally designated, the arguments to 
+these methods can have various argument names, but all of them tend to 
+take an MAlignments as their argument.
 }

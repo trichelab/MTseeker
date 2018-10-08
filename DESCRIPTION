@@ -1,19 +1,23 @@
 Package: MTseeker
 Type: Package
 Title: Bioconductor Tools for Human Mitochondrial Variant Analysis
-Version: 0.99.8
-Author: Tim Triche, Jr., Ben Johnson, Tim Vickers, Noor Sohail
+Version: 0.99.9
+Author: Tim Triche [cre, aut], Noor Sohail [aut], Ben Johnson [aut], Tim Vickers [ctb], Azif Zubair [ctb]
 Authors@R: c(person("Tim", "Triche", role = c("cre", "aut"),
                     email = "tim.triche@gmail.com"),
              person("Noor", "Sohail", role = "aut"),
              person("Ben", "Johnson", role = "aut"),
-             person("Azif", "Zubair", role = "ctb"),
-             person("Tim", "Vickers", role = "ctb"))
-Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
+             person("Tim", "Vickers", role = "ctb"),
+             person("Azif", "Zubair", role = "ctb"))
+Maintainer: Tim Triche <tim.triche@gmail.com>
 Description: Variant analysis tools for mitochondrial genetics. 
 biocViews: Genetics, Metabolomics, VariantAnnotation
 Depends:
-    viridis 
+    viridis,
+    S4Vectors,
+    GenomeInfoDb,
+    GenomicAlignments,
+    VariantAnnotation
 Imports:
     xml2,
     utils,
@@ -25,26 +29,23 @@ Imports:
     jsonlite,
     graphics,
     Rsamtools,
-    S4Vectors,
     grDevices,
     Biostrings,
     rtracklayer,
     VariantTools,
-    GenomeInfoDb,
     Homo.sapiens,
     BiocGenerics,
     GenomicRanges,
     GenomicFeatures,
-    VariantAnnotation,
-    GenomicAlignments,
     SummarizedExperiment
 Suggests:
     MTseekerData,
     BiocStyle,
     rmarkdown,
+    ggthemes,
+    ggplot2,
     pkgdown,
     knitr,
-    radix, 
     rsvg
 License: GPL-3
 Encoding: UTF-8 

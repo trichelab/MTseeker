@@ -4,6 +4,7 @@
 #'
 #' @examples
 #' data(chrominfo.rCRS)
+#' library(GenomeInfoDb) # wat
 #' seqlengths(chrominfo.rCRS) 
 #' 
 "chrominfo.rCRS"

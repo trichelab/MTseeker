@@ -5,7 +5,7 @@
 #' 
 #' @param mvr       An MVRanges, usually from callMT, often subsetted
 #' @param gr        A GRanges, usually of protein-coding regions (the default)
-#' @param xlate     Attempt to translate codon(s) affected by variant(s)? (TRUE)
+#' @param aa        Attempt to translate codon(s) affected by variant(s)? (TRUE)
 #' @param canon     Minimum VAF to treat variants as canonical by subject (0.99)
 #' @param refX      Reference depth below which variant is deemed canonical (1)
 #' @param altX      Alternative depth above which variants deemed canonical (1)
@@ -17,12 +17,11 @@
 #'
 #' @examples
 #' library(MTseekerData)
-#' data(RONKSvariants)
-#' injectMtVariants(RONKSvariants$RO_2)
+#' RO_2 <- RONKSvariants[["RO_2"]]
+#' injectMtVariants(RO_2)
 #'
 #' @export
-injectMtVariants <- function(mvr, gr=NULL, xlate=TRUE, 
-                             canon=.99, refX=1, altX=1) {
+injectMtVariants <- function(mvr, gr=NULL, aa=TRUE, canon=.99, refX=1, altX=1) {
 
   # rCRS only, for the time being 
   stopifnot(unique(genome(mvr)) == "rCRS")
@@ -44,7 +43,7 @@ injectMtVariants <- function(mvr, gr=NULL, xlate=TRUE,
   names(altSeq) <- names(rCRSeq)
   gr$varDNA <- getSeq(altSeq, gr)
 
-  if (xlate) {
+  if (aa) {
 
     # use MT_CODE to translate results
     MT_CODE <- getGeneticCode("SGC1")
@@ -83,9 +82,9 @@ injectMtVariants <- function(mvr, gr=NULL, xlate=TRUE,
 # helper function
 .flattenConsequences <- function(orig, altd, startCodons) {
 
-  .flat <- function(x) sapply(x[[1]], as.character)
+  .flat <- function(x) vapply(x[[1]], as.character, "N") 
   .prettify <- function(x) paste0(gsub(" ", "", x), collapse="")
-  asdf <- data.frame(refAA=.flat(orig), pos=startCodons, varAA=.flat(altd))
+  asdf <- DataFrame(refAA=.flat(orig), pos=startCodons, varAA=.flat(altd))
   csqs <- apply(subset(asdf, asdf$refAA != asdf$varAA), 1, .prettify)
   paste(csqs, collapse=",")
 

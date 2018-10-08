@@ -13,6 +13,7 @@ Sequence information (seqinfo) for the rCRS mitogenome
 }
 \examples{
 data(chrominfo.rCRS)
+library(GenomeInfoDb) # wat
 seqlengths(chrominfo.rCRS) 
 
 }

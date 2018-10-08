@@ -4,15 +4,15 @@
 \alias{injectMtVariants}
 \title{Inject (one or more) variants against rCRS.}
 \usage{
-injectMtVariants(mvr, gr = NULL, xlate = TRUE, canon = 0.99,
-  refX = 1, altX = 1)
+injectMtVariants(mvr, gr = NULL, aa = TRUE, canon = 0.99, refX = 1,
+  altX = 1)
 }
 \arguments{
 \item{mvr}{An MVRanges, usually from callMT, often subsetted}
 
 \item{gr}{A GRanges, usually of protein-coding regions (the default)}
 
-\item{xlate}{Attempt to translate codon(s) affected by variant(s)? (TRUE)}
+\item{aa}{Attempt to translate codon(s) affected by variant(s)? (TRUE)}
 
 \item{canon}{Minimum VAF to treat variants as canonical by subject (0.99)}
 
@@ -29,7 +29,7 @@ FIXME: this ONLY considers variants injected against rCRS, not RSRS or hg19.
 }
 \examples{
 library(MTseekerData)
-data(RONKSvariants)
-injectMtVariants(RONKSvariants$RO_2)
+RO_2 <- RONKSvariants[["RO_2"]]
+injectMtVariants(RO_2)
 
 }
