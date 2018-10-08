@@ -1,5 +1,3 @@
-VERSION = $(shell grep ^Version DESCRIPTION | sed s/Version:\ //)
-
 doc:
 	R --slave -e 'library(roxygen2); roxygenise()'
 	-git add --all man/*.Rd
@@ -15,7 +13,7 @@ build: doc
 	R CMD build .
 
 check: build
-	-R CMD check --as-cran MTseeker_$(VERSION).tar.gz
+	-R CMD check --as-cran MTseeker_check.tar.gz
 	rm -rf MTseeker.Rcheck/
 
 man: doc
