@@ -9,9 +9,9 @@ filterMTvars(vars, fp = TRUE, NuMT = 0.03, covg = 20)
 \arguments{
 \item{vars}{an MVRanges or MVRangesList (will be unlisted and relisted)}
 
-\item{fp}{standard issue false positive filters? (TRUE: use Triska & RSRS)}
+\item{fp}{use false positive filter[s]? (TRUE: use Triska fpFilter)}
 
-\item{NuMT}{variants with VAF < this number will be presumed NuMTs (0.03)}
+\item{NuMT}{variants with VAF < [this number] will be presumed NuMTs (0.03)}
 
 \item{covg}{minimum median read coverage across chrM to be considered (20)}
 }

@@ -20,6 +20,8 @@
 #' the user is expected to determine what additional filters to apply. We
 #' could envision changing these defaults down the road as standards congeal.
 #'
+#' If DFSE is an MVRanges[List], the function will call filterMTvars instead.
+#'
 #' @param DFSE        a DataFrame/SummarizedExperiment with colData()$`mtCovg`
 #' @param minCovg     minimum covg (20, cf. Griffin, Genetics in Medicine 2014)
 #' @param fpFilter    apply Triska's homopolymer false positive filter? (FALSE)
@@ -39,7 +41,11 @@ filterMT <- function(DFSE, minCovg=20, fpFilter=FALSE, NuMT=FALSE) {
   if (!class(DFSE) %in% 
       c("data.frame","DataFrame",
         "SummarizedExperiment","RangedSummarizedExperiment")) {
-    stop("filterMT operates on a [Ranged]SummarizedExperiment or DataFrame.")
+    if (is(DFSE, "VRanges") | is(DFSE, "VRangesList")) {
+      return(filterMTvars(DFSE))
+    } else { 
+      stop("filterMT operates on a [Ranged]SummarizedExperiment or DataFrame.")
+    }
   } else {
     if (is(DFSE, "DataFrame") | is(DFSE, "data.frame")) {
       stopifnot("mtCovg" %in% names(DFSE))

@@ -1,8 +1,8 @@
 #' sanitize PASSing mitochondrial variant calls to a moderate degree
 #'
 #' @param vars 	an MVRanges or MVRangesList (will be unlisted and relisted)
-#' @param fp 	standard issue false positive filters? (TRUE: use Triska & RSRS)
-#' @param NuMT	variants with VAF < this number will be presumed NuMTs (0.03)
+#' @param fp 	  use false positive filter[s]? (TRUE: use Triska fpFilter)
+#' @param NuMT	variants with VAF < [this number] will be presumed NuMTs (0.03)
 #' @param covg	minimum median read coverage across chrM to be considered (20) 
 #'
 #' @return	a filtered set of variants 
@@ -17,11 +17,14 @@
 filterMTvars <- function(vars, fp=TRUE, NuMT=0.03, covg=20) {
 
   if (fp) { 
-    data(fpFilter_RSRS, package="MTseeker")  
+    # deprecate for now
+    # data(fpFilter_RSRS, package="MTseeker")  
     data(fpFilter_Triska, package="MTseeker")
-    fpRegions <- reduce(c(fpFilter_RSRS, fpFilter_Triska))
+    # fpRegions <- reduce(c(fpFilter_RSRS, fpFilter_Triska))
+    fpRegions <- reduce(fpFilter_Triska)
     fpFilter <- subset(gaps(fpRegions), strand == "*")
   } else { 
+    # a nonfilter -- keep anything and everything on chrM
     fpFilter <- GRanges("chrM", IRanges(start=1, end=16569), strand="*")
   } 
 

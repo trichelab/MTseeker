@@ -44,6 +44,7 @@ MVRangesList <- function(...) {
 #' `tallyVariants`        return a matrix of variant types by annotated region
 #' `locateVariants`       locates variants within genes, tRNA, rRNA, or D-loop
 #' `summarizeVariants`    attempts mass functional annotation of variant sites
+#' `consensusString`      creates consensus genotypes from rCRS for eg Haplogrep
 #' 
 #' @section Visualization methods:
 #'
@@ -252,3 +253,16 @@ setMethod("tallyVariants", signature(x="MVRangesList"),
 #' @export
 setMethod("plot", signature(x="MVRangesList"),
           function(x, ...) mtCircos(x, ...))
+
+
+#' @rdname    MVRangesList-methods
+#' @export
+setMethod("consensusString", signature(x="MVRangesList"), 
+          function(x, ...) {
+            actual <- unique(genome(x))
+            res <- DNAStringSet(lapply(lapply(x, consensusString), `[[`, 1))
+            names(res) <- paste(sapply(x, function(y) 
+                                as.character(unique(sampleNames(y)))), 
+                                actual, sep=".")
+            return(res)
+          })

@@ -49,6 +49,7 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #' `predictCoding` returns variants consequence predictions as one might expect
 #' `tallyVariants` returns a named vector of variant types by annotated region.
 #' `summarizeVariants` uses MitImpact to attempt annotation of coding variants.
+#' `consensusString` edits rCRS to create a consensus genotype for eg Haplogrep
 #'
 #' @section Visualization methods:
 #'
@@ -80,7 +81,7 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #'
 #' @importMethodsFrom   VariantAnnotation filt 
 #' @importMethodsFrom   GenomicFeatures   genes
-#' @importMethodsFrom   Biostrings        type 
+#' @importMethodsFrom   Biostrings        consensusString type 
 #' @importMethodsFrom   IRanges           coverage
 #' 
 #' @examples
@@ -311,3 +312,18 @@ setMethod("summarizeVariants", signature(query="MVRanges","missing","missing"),
 #' @export
 setMethod("plot", signature(x="MVRanges"), 
           function(x, ...) mtCircos(x, ...))
+
+
+#' @rdname    MVRanges-methods
+#' @export
+setMethod("consensusString", signature(x="MVRanges"), 
+          function(x, ...) {
+            supported <- c("rCRS")
+            actual <- unique(genome(x))
+            stopifnot(unique(genome(x)) %in% supported)
+            data(rCRSeq, package="MTseeker")
+            mvr <- snpCall(filt(x)) # gross
+            alts <- DNAStringSet(replaceAt(rCRSeq[[1]], ranges(mvr), alt(mvr)))
+            names(alts) <- actual # genome 
+            return(alts)
+          })

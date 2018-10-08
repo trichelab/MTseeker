@@ -23,6 +23,7 @@
 \alias{predictCoding,MVRanges,missing,missing,missing-method}
 \alias{summarizeVariants,MVRanges,missing,missing-method}
 \alias{plot,MVRanges,ANY-method}
+\alias{consensusString,MVRanges-method}
 \title{MVRanges methods (centralized).}
 \usage{
 \S4method{coverage}{MVRanges}(x)
@@ -59,6 +60,8 @@
   mode, ...)
 
 \S4method{plot}{MVRanges,ANY}(x, y, ...)
+
+\S4method{consensusString}{MVRanges}(x, ...)
 }
 \arguments{
 \item{x}{an MVRanges}
@@ -111,6 +114,7 @@ In such cases, the method will usually, but not always, be apply()ed.
 `predictCoding` returns variants consequence predictions as one might expect
 `tallyVariants` returns a named vector of variant types by annotated region.
 `summarizeVariants` uses MitImpact to attempt annotation of coding variants.
+`consensusString` edits rCRS to create a consensus genotype for eg Haplogrep
 }
 
 \section{Visualization methods}{
