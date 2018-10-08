@@ -70,9 +70,21 @@
 \item{query}{an MVRanges}
 
 \item{filterLowQual}{boolean; drop non-PASSing variants from locateVariants?}
+
+\item{...}{miscellaneous args, passed through}
+
+\item{subject}{a GRanges, usually}
+
+\item{seqSource}{a BSgenome, usually}
+
+\item{varAllele}{variant alleles}
+
+\item{mode}{miscellaneous arguments}
+
+\item{y}{another MVRanges}
 }
 \value{
-the return value depends on the method invoked.
+depends on the method invoked.
 }
 \description{
 Many of these methods can be dispatched from an MVRangesList OR an MVRanges.

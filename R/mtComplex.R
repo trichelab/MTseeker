@@ -11,7 +11,8 @@
 #' 
 #' @return          invisibly, the temporary file to which the SVG was written
 #'
-#' @import xml2
+#' @import     xml2
+#' @importFrom utils browseURL
 #'
 #' @examples
 #' library(MTseekerData)

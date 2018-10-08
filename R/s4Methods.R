@@ -8,7 +8,10 @@
 #' 
 #' @return        methods for the class[es], union'ed into a character vector
 #' 
+#' @import        methods
+#' 
 #' @examples
+#' library(MTseeker) 
 #' s4methods("MVRangesList")
 #' s4methods("MAlignmentsList")
 #'

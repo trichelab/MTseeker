@@ -58,17 +58,31 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #' @param object        an MVRanges
 #' @param annotations   an MVRanges
 #' @param query         an MVRanges
+#' @param mode          miscellaneous arguments
+#' @param y             another MVRanges
+#' @param varAllele     variant alleles
+#' @param subject       a GRanges, usually 
+#' @param seqSource     a BSgenome, usually 
+#' @param ...           miscellaneous args, passed through
+#' 
 #' @param filterLowQual boolean; drop non-PASSing variants from locateVariants?
 #'
-#' @return              the return value depends on the method invoked.
+#' @return              depends on the method invoked.
 #' 
 #' @aliases locateVariants getAnnotations predictCoding genes
 #' @aliases snpCall annotation tallyVariants summarizeVariants
-#' 
-#' @importFrom          GenomicFeatures genes
-#' @importFrom          Biobase snpCall
-#' @importFrom          graphics plot 
 #'
+#' @import              Homo.sapiens
+#' 
+#' @importFrom          GenomicFeatures   genes
+#' @importFrom          Biobase           snpCall
+#' @importFrom          graphics          plot 
+#'
+#' @importMethodsFrom   VariantAnnotation filt 
+#' @importMethodsFrom   GenomicFeatures   genes
+#' @importMethodsFrom   Biostrings        type 
+#' @importMethodsFrom   IRanges           coverage
+#' 
 #' @examples
 #' library(MTseekerData)
 #' data(RONKSvariants)
@@ -178,6 +192,7 @@ setMethod("encoding", signature(x="MVRanges"),
 
 
 #' @rdname    MVRanges-methods
+#' @importFrom VariantAnnotation filt
 #' @export
 setMethod("filt", signature(x="MVRanges"), function(x) subset(x, x$PASS==TRUE))
 
@@ -256,6 +271,7 @@ setMethod("predictCoding", # mitochondrial annotations kept internally
 
 
 #' @rdname    MVRanges-methods
+#' @import    jsonlite
 #' @export
 setMethod("summarizeVariants", signature(query="MVRanges","missing","missing"),
           function(query, ...) {

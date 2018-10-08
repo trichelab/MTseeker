@@ -30,8 +30,6 @@ MVRangesList <- function(...) {
 #'
 #' @section Utility methods:
 #' 
-#' `counts`               returns fragment counts, if any
-#' `counts<-`             adds or updates fragment counts
 #' `coverage`             returns estimated mitochondrial read coverage depth
 #' `filt`                 removes variants where PASS != TRUE for each element 
 #'
@@ -52,13 +50,17 @@ MVRangesList <- function(...) {
 #' `plot`                 creates circular plot of mitochondrial variant calls
 #'
 #' @param x             an MVRangesList (for some methods)
-#' @param value         a RangedSummarizedExperiment with matching colnames
 #' @param query         an MVRangesList (for predictCoding)
 #' @param object        an MVRangesList (for other methods)
 #' @param annotations   an MVRangesList (for getAnnotations)
 #' @param filterLowQual opt. for `granges`/`summarizeVariants`/`tallyVariants`
+#' @param y             another MVRangesList
+#' @param varAllele     variant alleles
+#' @param subject       a GRanges, usually 
+#' @param seqSource     a BSgenome, usually 
+#' @param ...           miscellaneous args, passed through
 #'
-#' @return              the return value depends on the method invoked.
+#' @return              depends on the method invoked.
 #' 
 #' @name  MVRangesList-methods
 NULL
@@ -68,31 +70,6 @@ NULL
 #' @export
 setMethod("coverage", signature(x="MVRangesList"), 
           function(x) sapply(x, coverage))
-
-
-#' @rdname    MVRangesList-methods
-#' @export
-setReplaceMethod("counts", 
-                 signature(object="MVRangesList", 
-                           value="RangedSummarizedExperiment"),
-                 function(object, value) {
-                   if (!identical(names(object), colnames(value))) {
-                     stop("Error: colnames(value) doesn't match names(object)!")
-                   } else if (!"counts" %in% names(assays(value))) {
-                     stop("Error: value must have an assay named `counts`!")
-                   } else {
-                     columns <- names(object)
-                     metadata(object)$counts <- filterPeaks(value[, columns])
-                     return(object)
-                   }
-                 })
-
-
-#' @rdname    MVRangesList-methods
-#' @export
-setMethod("counts", signature(object="MVRangesList"), 
-          # it turns out that filtering may be needed on egress:
-          function(object) filterPeaks(metadata(object)$counts))
 
 
 #' @rdname    MVRangesList-methods
@@ -234,7 +211,7 @@ setMethod("summarizeVariants",
             names(rsv) <- sub("Start", "start", names(rsv)) # grrr
             rsv$chrom <- "chrM"
             rsv$end <- rsv$start # FIXME
-            res <- makeGRangesFromDataFrame(rsv, keep=TRUE)
+            res <- makeGRangesFromDataFrame(rsv, keep.extra.columns=TRUE)
             seqinfo(res) <- seqinfo(gr)
             return(res)
 

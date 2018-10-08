@@ -4,8 +4,6 @@
 \name{MVRangesList-methods}
 \alias{MVRangesList-methods}
 \alias{coverage,MVRangesList-method}
-\alias{counts<-,MVRangesList,RangedSummarizedExperiment-method}
-\alias{counts,MVRangesList-method}
 \alias{genes,MVRangesList-method}
 \alias{snpCall,MVRangesList-method}
 \alias{getAnnotations,MVRangesList-method}
@@ -22,11 +20,6 @@
 \title{MVRangesList methods (centralized).}
 \usage{
 \S4method{coverage}{MVRangesList}(x)
-
-
-  \S4method{counts}{MVRangesList,RangedSummarizedExperiment}(object) <- value
-
-\S4method{counts}{MVRangesList}(object)
 
 \S4method{genes}{MVRangesList}(x)
 
@@ -62,16 +55,24 @@
 
 \item{object}{an MVRangesList (for other methods)}
 
-\item{value}{a RangedSummarizedExperiment with matching colnames}
-
 \item{annotations}{an MVRangesList (for getAnnotations)}
 
 \item{query}{an MVRangesList (for predictCoding)}
 
+\item{subject}{a GRanges, usually}
+
+\item{seqSource}{a BSgenome, usually}
+
+\item{varAllele}{variant alleles}
+
+\item{...}{miscellaneous args, passed through}
+
 \item{filterLowQual}{opt. for `granges`/`summarizeVariants`/`tallyVariants`}
+
+\item{y}{another MVRangesList}
 }
 \value{
-the return value depends on the method invoked.
+depends on the method invoked.
 }
 \description{
 MVRangesList methods (centralized).
@@ -79,8 +80,6 @@ MVRangesList methods (centralized).
 \section{Utility methods}{
 
 
-`counts`               returns fragment counts, if any
-`counts<-`             adds or updates fragment counts
 `coverage`             returns estimated mitochondrial read coverage depth
 `filt`                 removes variants where PASS != TRUE for each element
 }

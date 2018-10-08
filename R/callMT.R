@@ -85,7 +85,6 @@ callMT <- function(mal, ..., parallel=FALSE, verbose=FALSE) {
 #' @param GENOME    the reference genome (for callMtVars; default is rCRS)
 #' @param CHR       the mt contig name (for callMtVars; default is chrM)
 #' @param COV       average read coverage (so we don't have to countBam)
-#' @param verbose   be chatty? (FALSE) 
 #' 
 #' @export
 callMtVars <- function(BAM, SIZE=75, GENOME="rCRS", CHR="chrM", COV=NULL,

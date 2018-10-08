@@ -1,6 +1,7 @@
 #' wraps a GAlignments with information about coverage and its target BAM file
 #' 
 #' @import GenomicAlignments
+#' @import Rsamtools
 #' 
 #' @exportClass MAlignments
 setClass("MAlignments",
@@ -33,16 +34,22 @@ MAlignments <- function(gal, bam) {
 
 #' MAlignments methods (centralized).
 #'
-#' @name      MAlignments-methods
+#' Depending on how a generic was originally designated, the arguments to 
+#' these methods can have various argument names, but all of them tend to 
+#' take an MAlignments as their argument.
+#'
+#' @param x         an MAlignments
+#' @param files     an MAlignments
+#' @param object    an MAlignments
+#' 
+#' @return          various things, as appropriate to the methods
+#'
+#' @name            MAlignments-methods
 NULL
 
 
 #' @rdname    MAlignments-methods
 #' 
-#' @param x   an MAlignments
-#' 
-#' @return    estimated coverage (numeric)
-#'
 #' @export
 setMethod("coverage", signature(x="MAlignments"),
           function(x) {
@@ -52,10 +59,6 @@ setMethod("coverage", signature(x="MAlignments"),
 
 #' @rdname    MAlignments-methods
 #' 
-#' @param x   an MAlignments
-#' 
-#' @return    read length
-#'
 #' @export
 setMethod("runLength", signature(x="MAlignments"),
           function(x) {
@@ -65,10 +68,6 @@ setMethod("runLength", signature(x="MAlignments"),
 
 #' @rdname    MAlignments-methods
 #' 
-#' @param x   an MAlignments
-#' 
-#' @return    genome size 
-#'
 #' @export
 setMethod("runValue", signature(x="MAlignments"),
           function(x) {
@@ -78,10 +77,6 @@ setMethod("runValue", signature(x="MAlignments"),
 
 #' @rdname    MAlignments-methods
 #' 
-#' @param x   an MAlignments
-#' 
-#' @return    summary of x
-#'
 #' @export
 setMethod("Summary", signature(x="MAlignments"),
           function(x) {
@@ -94,8 +89,6 @@ setMethod("Summary", signature(x="MAlignments"),
 
 #' @rdname    MAlignments-methods
 #'
-#' @param x   an MAlignments
-#' 
 #' @export
 setMethod("show", signature(object="MAlignments"),
           function(object) {
@@ -108,24 +101,12 @@ setMethod("show", signature(object="MAlignments"),
 
 #' @rdname    MAlignments-methods
 #'
-#' @param file      an MAlignments
-#' 
-#' @return          a BAM filename (string)
-#'
-#' @import          Rsamtools
-#'
 #' @export
 setMethod("fileName", signature(object="MAlignments"),
           function(object) return(object@bam))
 
 
 #' @rdname    MAlignments-methods
-#'
-#' @param bamRanges an MAlignments
-#' 
-#' @return          a BAM header
-#'
-#' @import          Rsamtools
 #'
 #' @export
 setMethod("scanBamHeader", signature(files="MAlignments"),
