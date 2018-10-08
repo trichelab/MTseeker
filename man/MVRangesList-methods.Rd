@@ -17,6 +17,7 @@
 \alias{locateVariants,MVRangesList,missing,missing-method}
 \alias{tallyVariants,MVRangesList-method}
 \alias{plot,MVRangesList,ANY-method}
+\alias{consensusString,MVRangesList-method}
 \title{MVRangesList methods (centralized).}
 \usage{
 \S4method{coverage}{MVRangesList}(x)
@@ -49,6 +50,8 @@
 \S4method{tallyVariants}{MVRangesList}(x, filterLowQual = TRUE, ...)
 
 \S4method{plot}{MVRangesList,ANY}(x, y, ...)
+
+\S4method{consensusString}{MVRangesList}(x, ...)
 }
 \arguments{
 \item{x}{an MVRangesList (for some methods)}
@@ -96,6 +99,7 @@ MVRangesList methods (centralized).
 `tallyVariants`        return a matrix of variant types by annotated region
 `locateVariants`       locates variants within genes, tRNA, rRNA, or D-loop
 `summarizeVariants`    attempts mass functional annotation of variant sites
+`consensusString`      creates consensus genotypes from rCRS for eg Haplogrep
 }
 
 \section{Visualization methods}{
