@@ -39,6 +39,8 @@ throughput mitochondrial sequence variant analysis at the time of writing
 (2018), the default for this function is to filter on coverage only, as 
 the user is expected to determine what additional filters to apply. We
 could envision changing these defaults down the road as standards congeal.
+
+If DFSE is an MVRanges[List], the function will call filterMTvars instead.
 }
 \examples{
 filterMT(data.frame(sample="foo", mtCovg=1000))
