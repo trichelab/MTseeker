@@ -19,7 +19,6 @@ Mostly for debugging and making architectural choices, e.g. about coverage()
 Note: this is borrowed from Hadley, who borrowed it from a BioC workshop!
 }
 \examples{
-library(MTseeker) 
 s4Methods("MVRangesList")
 s4Methods("MAlignmentsList")
 

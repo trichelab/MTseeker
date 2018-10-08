@@ -1,4 +1,4 @@
-VERSION = $(shell grep ^Version DESCRIPTION | sed s/Version:\ //)
+VERSION = 0.99
 
 doc:
 	R --slave -e 'library(roxygen2); roxygenise()'
