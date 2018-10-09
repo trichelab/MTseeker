@@ -1,6 +1,7 @@
 #' like a VRanges, but for mitochondria
 #' 
 #' @import VariantAnnotation
+#' @importFrom S4Vectors endoapply
 #' @importFrom VariantAnnotation filt 
 #' 
 #' @exportClass MVRanges
