@@ -117,8 +117,7 @@ data(RONKSvariants, package="MTseekerData")
 Show off the results:
 
 ```{r plotVariants}
-filteredRONKSvariants <- endoapply(RONKSvariants, subset, PASS == TRUE)
-plot(filteredRONKSvariants)
+plot(filt(RONKSvariants))
 ```
 
 The mitochondrial variant plots are structured like tree rings, in that each 
@@ -140,7 +139,7 @@ Now let's plot a cartoon of the putative functional impact in one patient (RO1):
 
 ```{r makeSVG}
 data(RONKSvariants, package="MTseekerData")
-SVG <- mtComplex(RONKSvariants[[2]]) 
+SVG <- MTseeker::mtComplex(RONKSvariants[[2]]) 
 ```
 
 The above will bring up an image in a browser window like the one in the README.
