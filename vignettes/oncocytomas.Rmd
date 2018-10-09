@@ -116,17 +116,21 @@ data(RONKSvariants, package="MTseekerData")
 
 Show off the results:
 
-```{r plotVariants} 
-plot(filt(subset(RONKSvariants)))
+```{r plotVariants}
+plot(filt(RONKSvariants))
 ```
 
-The mitochondrial variant plots are structured sort of like tree rings, in that
-each sample is a "ring" and each point along the circle is annotated against
-a region of the mitochondrial genome. The filt() method drops variants that do
+The mitochondrial variant plots are structured like tree rings, in that each 
+sample is a "ring" and each point along the circle is annotated against a 
+region of the mitochondrial genome. Filtering on PASS drops variants that do
 not pass remedial quality filters, but it is advisable to also filter on VAF 
 (0.03, or 3%, is a recommended floor to keep out NuMT nuclear-mitochondrial 
 integrations; see Ju et al, eLife 2014, for more on this subject) and mask off
-regions of frequent homopolymer miscalls, and also haplogroup-related variants.
+regions of frequent homopolymer miscalls, and also haplogroup-related variants
+when analyzing variants from subjects who come from different mitochondrial 
+haplogroups. (We are planning to add haplogroup inference and masking in an 
+upcoming release of MTseeker, and the PhyloTree XML data prepared by the fine
+HaploGrep folks is part of MTseekerData for exactly this purpose.)
 
 
 # Plotting functional impacts
@@ -135,7 +139,7 @@ Now let's plot a cartoon of the putative functional impact in one patient (RO1):
 
 ```{r makeSVG}
 data(RONKSvariants, package="MTseekerData")
-SVG <- mtComplex(RONKSvariants[[2]]) 
+SVG <- MTseeker::mtComplex(RONKSvariants[[2]]) 
 ```
 
 The above will bring up an image in a browser window like the one in the README.
@@ -147,9 +151,9 @@ tmppdf <- paste(tempdir(), "RO_1.functionalAnnot.pdf", sep="/")
 rsvg_pdf(tmppdf)
 ```
 
-We would like to add a biohazard/mutagen symbol to complexes within the electron
+We might like to add a biohazard/mutagen symbol to complexes within the electron
 transport chain (ETC) that are impacted by nonsynonymous variants, and this is 
-in progress; the output is Scalable Vector Graphics (SVG) based on an image 
+in progress. The output is Scalable Vector Graphics (SVG) based on an image 
 created and shared by Tim Vickers at Washington University in St. Louis. Any
 suggestions regarding how to scale this visual up to populations of cells, 
 people, or organisms are welcome; some components (such as in Complex II) have 
@@ -158,4 +162,5 @@ humans but lost to nuclear genomes in other eukaryotes. Moreover, tendencies
 for particular diseases or conditions to hit particular complexes are of both
 biological and medical interest, which is why we added this in the first place.
 
-We hope you enjoy working with mitochondrial genomes as much as we have. 
+We hope you enjoy working with mitochondrial genomes as much as we have. Please
+send an email to trichelab@gmail.com if you have comments or suggestions. 
