@@ -1,6 +1,7 @@
 #' like a VRanges, but for mitochondria
 #' 
 #' @import VariantAnnotation
+#' @importFrom VariantAnnotation filt 
 #' 
 #' @exportClass MVRanges
 setClass("MVRanges", 
