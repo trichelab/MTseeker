@@ -1,7 +1,7 @@
-#' grab the mitochondrial reads from a BAM and estimate their fraction
+#' grab the mitochondrial reads from a BAM & estimate their fraction (of total)
 #'
 #' nb. this could probably be done faster for a list of BAMs but it's not
-#' nb. nb. this returns NuMt-depleted mitochondrial GenomicAlignments
+#' nb. nb. this returns NuMT-depleted mitochondrial GenomicAlignments
 #' nb. nb. nb. for the time being, this function ONLY supports rCRS/GRCh/hg38!
 #' nb. nb. nb. nb. both chrM and mtGenome are now autodetected from BAM headers
 #' nb. nb. nb. nb. nb. in the process of converting to rCRS, chrM becomes "chrM"
@@ -102,7 +102,9 @@ getMT <- function(bam, filter=FALSE, parallel=FALSE, plotMAPQ=FALSE, ...) {
                        isNotPassingQualityControls=FALSE, 
                        isDuplicate=FALSE) 
   mtParam <- ScanBamParam(flag=flags, what=c("seq","mapq"), ...) 
-  mtReads <- suppressWarnings(readGAlignments(mtView, param=mtParam)[[1]])
+  mtReads <- suppressWarnings(readGAlignments(mtView, 
+                                              use.names=TRUE, # for revmapping
+                                              param=mtParam)[[1]])
   attr(mtReads, "mtFrac") <- mtFrac
   mtReads <- keepSeqlevels(mtReads, chrM)
   isCircular(seqinfo(mtReads))[chrM] <- TRUE 

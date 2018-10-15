@@ -3,11 +3,14 @@
 \name{mtCoverage}
 \alias{mtCoverage}
 \alias{plotMtCoverage}
-\title{mitochondrial genome coverage for an MAlignments or MVRanges object}
+\alias{plotStrandedMtCoverage}
+\title{Mitochondrial genome coverage and plots for MAlignments or MVRanges objects}
 \usage{
 mtCoverage(x, ...)
 
 plotMtCoverage(x, ...)
+
+plotStrandedMtCoverage(x, ...)
 }
 \arguments{
 \item{x}{an MAlignments or MVRanges}
@@ -15,7 +18,7 @@ plotMtCoverage(x, ...)
 \item{...}{other arguments to pass to GenomicAlignments::coverage()}
 }
 \value{
-an RleList
+an RleList (or, invisibly for plot functions, a result list)
 }
 \description{
 We co-opted the `coverage` method to retrieve approximate coverage depth
@@ -25,7 +28,11 @@ and can allow for some subsetting (e.g. variant-supporting-read coverage)
 that may be of interest when interpreting results.
 }
 \details{
-plotMtCoverage does what one might expect, and plots read coverage.
+The plotting functions can handle MAlignments or MVRanges objects directly.
+
+plotMtCoverage does what one might expect, and plots (read or call) coverage.
+
+plotStrandedMtCoverage does the same thing, but keeps track of which strand.
 }
 \examples{
 library(MTseekerData)
@@ -44,4 +51,9 @@ title("Read coverage for normal kidney sample 1")
 plotMtCoverage(RONKSreads$RO_1)
 title("Read coverage for renal oncocytoma sample 1") 
 
+par(mfrow=c(1,2))
+plotStrandedMtCoverage(RONKSreads$NKS_1)
+title("Stranded read coverage for normal kidney sample 1") 
+plotStrandedMtCoverage(RONKSreads$RO_1)
+title("Stranded read coverage for renal oncocytoma sample 1") 
 }
