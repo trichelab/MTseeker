@@ -13,7 +13,7 @@ callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM",
 \arguments{
 \item{mal}{an MAlignments (or, potentially, an MAlignmentsList)}
 
-\item{...}{other optional arguments to pass to callVariants}
+\item{...}{other arguments to pass to VariantTools::callVariants}
 
 \item{parallel}{try to run in parallel? (FALSE; this is super unstable)}
 
@@ -36,6 +36,12 @@ an MVRanges (or, potentially, an MVRangesList)
 `callMtVars` is a helper function for callMT
 }
 \details{
+FIXME: transition gmapR from import to suggestion; use tallyVariants alone?
+
+FIXME: use Rsamtools::pileup by default and only use gmapR if requested
+
+FIXME: figure out how to directly call variants off [GM]Alignments[List]s
+
 FIXME: figure out a way to reprocess extracted chrM/MT reads against rCRS,
        regardless of what reference they were originally aligned against.
 }
@@ -44,6 +50,7 @@ library(MTseekerData)
 data(RONKSreads)
 \donttest{
   # requires the BAMs
+  # also currently requires gmapR 
   RONKSvariants <- callMT(RONKSreads) 
 }
 head(RONKSvariants$RO_1) 

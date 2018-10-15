@@ -2,13 +2,19 @@
 #'
 #' `callMtVars` is a helper function for callMT 
 #'
+#' FIXME: transition gmapR from import to suggestion; use tallyVariants alone?
+#' 
+#' FIXME: use Rsamtools::pileup by default and only use gmapR if requested 
+#' 
+#' FIXME: figure out how to directly call variants off [GM]Alignments[List]s
+#'
 #' FIXME: figure out a way to reprocess extracted chrM/MT reads against rCRS,
 #'        regardless of what reference they were originally aligned against.
 #' 
 #' @name  callMT
 #'
 #' @param mal         an MAlignments (or, potentially, an MAlignmentsList) 
-#' @param ...         other optional arguments to pass to callVariants
+#' @param ...         other arguments to pass to VariantTools::callVariants
 #' @param parallel    try to run in parallel? (FALSE; this is super unstable)
 #' @param verbose     be verbose? (FALSE; turn on for debugging purposes)
 #'
@@ -23,6 +29,7 @@
 #' data(RONKSreads)
 #' \donttest{
 #'   # requires the BAMs
+#'   # also currently requires gmapR 
 #'   RONKSvariants <- callMT(RONKSreads) 
 #' }
 #' head(RONKSvariants$RO_1) 
