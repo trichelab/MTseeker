@@ -12,6 +12,10 @@ setClass("MVRanges",
 
 #' wrap a VRanges for mitochondrial use
 #'
+#' Usually the MVRanges constructur will be called by callMT(). 
+#' 
+#' @rdname    MVRanges-methods
+#'
 #' @param   vr        the VRanges
 #' @param   coverage  estimated coverage
 #'
@@ -20,9 +24,16 @@ setClass("MVRanges",
 #' @import BiocGenerics
 #'
 #' @examples
+#' 
 #' library(MTseekerData)
-#' data(RONKSvariants)
-#' show(RONKSvariants$RO_1)
+#' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
+#' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
+#' (mal <- getMT(BAMs[1]))
+#' (mvr <- callMT(mal))
+#' locateVariants(mvr)
+#' predictCoding(mvr) 
+#' 
+#' # summarizeVariants can take too long to run, and requires internet access 
 #'
 #' @export
 MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
@@ -37,7 +48,7 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #' 
 #' `pos` returns a character vector describing variant positions. 
 #' `filt` returns a subset of variant calls where PASS == TRUE (i.e. filtered)
-#' `coverage` returns the estimated average mitochondrial read coverage depth
+#' `genomeCoverage` returns the estimated mitochondrial read coverage depth
 #'
 #' @section Annotation methods:
 #' 
@@ -86,19 +97,13 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #' @importMethodsFrom   Biostrings        consensusString type 
 #' @importMethodsFrom   IRanges           coverage
 #' 
-#' @examples
-#' library(MTseekerData)
-#' data(RONKSvariants)
-#' annotation(RONKSvariants$RO_1)
-#' plot(snpCall(RONKSvariants$RO_1))
-#' 
 #' @name                MVRanges-methods
 NULL
 
 
 #' @rdname    MVRanges-methods
 #' @export
-setMethod("coverage", signature(x="MVRanges"), function(x) x@coverage)
+setMethod("genomeCoverage", signature(x="MVRanges"), function(x) x@coverage)
 
 
 #' @rdname    MVRanges-methods
@@ -138,7 +143,7 @@ setMethod("show", signature(object="MVRanges"),
             if ("annotation" %in% names(metadata(object))) {
               cat(" (try getAnnotations(object))")
             }
-            cat(paste0(", ~", round(coverage(object)), "x read coverage")) 
+            cat(paste0(", ~",round(genomeCoverage(object)),"x read coverage")) 
             cat("\n")
           })
 
@@ -270,7 +275,7 @@ setMethod("tallyVariants", signature(x="MVRanges"),
 #' @export
 setMethod("predictCoding", # mitochondrial annotations kept internally
           signature(query="MVRanges", "missing", "missing", "missing"), 
-          function(query, ...) injectMtVariants(filt(query)))
+          function(query, ...) injectMTVariants(filt(query)))
 
 
 #' @rdname    MVRanges-methods
@@ -289,7 +294,7 @@ setMethod("summarizeVariants", signature(query="MVRanges","missing","missing"),
                 res$protein <- with(res, paste0("p.",AA_ref,AA_position,AA_alt))
                 res$change <- with(res, paste(Gene_symbol, protein))
                 res[, c("genomic","protein","change","APOGEE_boost_consensus",
-                        "MtoolBox","Mitomap_Phenotype","Mitomap_Status",
+                        "MToolBox","Mitomap_Phenotype","Mitomap_Status",
                         "OXPHOS_complex","dbSNP_150_id","Codon_substitution")]
               } else {
                 return(NULL)
@@ -313,7 +318,7 @@ setMethod("summarizeVariants", signature(query="MVRanges","missing","missing"),
 #' @rdname    MVRanges-methods
 #' @export
 setMethod("plot", signature(x="MVRanges"), 
-          function(x, ...) mtCircos(x, ...))
+          function(x, ...) MTcircos(x, ...))
 
 
 #' @rdname    MVRanges-methods

@@ -35,11 +35,15 @@ been aligned with BWA against the canonical rCRS mitogenome by splicing it
 into hg19. (As opposed to GRCh37, which is what we should have done... but
 the point is that any modern GRCh assembly *or* a spliced rCRS contig works.)
 
-```{r loadBams, eval=FALSE} 
+```{r loadLibrary}
 library(MTseeker)
+```
 
+```{r loadBams, eval=FALSE} 
 if (FALSE) { 
   # we use SamBlaster... a lot... in my lab.
+  # however, this example takes a while even with SamBlaster. 
+  # it is recorded here for posterity and also "how did you get that result". 
   BAMfiles <- grep("(split|disc)", value=T, invert=T, list.files(patt=".bam$"))
   names(BAMfiles) <- sapply(strsplit(BAMfiles, "\\."), `[`, 1)
   BAMs <- data.frame(BAM=BAMfiles, 
@@ -66,13 +70,15 @@ The _RONKSreads_ and _RONKSvariants_ data objects hold what you might expect
 them to hold, at least once you find out that RONKS stands for _R_enal 
 _O_ncocytoma and _N_ormal _K_idney _S_amples from the same patients. 
 
+```{r loadDataLibrary}
+library(MTseekerData)
+```
 
 # Relative mitochondrial copy number changes
 
 We'd like to compute the relative mitochondrial copy number for each:
 
 ```{r computeCN}
-library(MTseekerData)
 data(RONKSreads, package="MTseekerData")
 mVn <- Summary(RONKSreads)$mitoVsNuclear
 names(mVn) <- names(RONKSreads) 
@@ -96,12 +102,15 @@ and soft-backfiltering of haplogroup-determining variants are works in progress,
 so we do not currently demonstrate them here, although the fpFilter datasets 
 are useful for these purposes)
 
-gmapR can be a bit fiesty, so we simply document the process below: 
+gmapR can be a bit feisty, so we simply document the process below: 
 
 ```{r callVariants, eval=FALSE} 
 if (FALSE) { 
+  # doing this requires the BAM files
   RONKSvariants <- callMT(RONKSreads)
+  # which is why we skip it in the vignette 
   save(RONKSvariants, file="RONKSvariants.rda")
+  # see ?callMT for a much simpler runnable example
 }
 ```
 
@@ -139,7 +148,7 @@ Now let's plot a cartoon of the putative functional impact in one patient (RO1):
 
 ```{r makeSVG}
 data(RONKSvariants, package="MTseekerData")
-SVG <- MTseeker::mtComplex(RONKSvariants[[2]]) 
+SVG <- MTseeker::MTcomplex(RONKSvariants[[2]]) 
 ```
 
 The above will bring up an image in a browser window like the one in the README.

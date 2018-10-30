@@ -9,16 +9,26 @@
 setClass("MVRangesList", contains="SimpleVRangesList")
 
 
-#' wrap a VRangesList for mitochondrial use
+#' Wrap a VRangesList for mitochondrial use.
 #'
+#' Usually an MVRangesList will be created by callMT.
+#'
+#' @rdname        MVRangesList-methods
+#' 
 #' @param ...     the MVRanges elements forming the MVRangesList
 #'
 #' @return        the MVRangesList
 #' 
 #' @examples
+#'
 #' library(MTseekerData)
-#' data(RONKSvariants)
-#' show(RONKSvariants)
+#' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
+#' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
+#' targets <- data.frame(BAM=BAMs) 
+#' rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
+#' (mall <- getMT(targets))
+#' (mvrl <- callMT(mall))
+#' filt(mvrl$pt1_cell1)
 #'
 #' @export
 MVRangesList <- function(...) {
@@ -30,7 +40,7 @@ MVRangesList <- function(...) {
 #'
 #' @section Utility methods:
 #' 
-#' `coverage`             returns estimated mitochondrial read coverage depth
+#' `genomeCoverage`       returns estimated mitochondrial read coverage depth
 #' `filt`                 removes variants where PASS != TRUE for each element 
 #'
 #' @section Annotation methods:
@@ -41,7 +51,6 @@ MVRangesList <- function(...) {
 #' `encoding`             returns mutations in coding regions for each element
 #' `granges`              returns mildly annotated aggregates of variant sites
 #' `snpCall`              retrieves single nucleotide variant polymorphisms 
-#' `tallyVariants`        return a matrix of variant types by annotated region
 #' `locateVariants`       locates variants within genes, tRNA, rRNA, or D-loop
 #' `summarizeVariants`    attempts mass functional annotation of variant sites
 #' `consensusString`      creates consensus genotypes from rCRS for eg Haplogrep
@@ -54,7 +63,7 @@ MVRangesList <- function(...) {
 #' @param query         an MVRangesList (for predictCoding)
 #' @param object        an MVRangesList (for other methods)
 #' @param annotations   an MVRangesList (for getAnnotations)
-#' @param filterLowQual opt. for `granges`/`summarizeVariants`/`tallyVariants`
+#' @param filterLowQual opt. for `granges`/`summarizeVariants`
 #' @param y             another MVRangesList
 #' @param varAllele     variant alleles
 #' @param subject       a GRanges, usually 
@@ -69,8 +78,8 @@ NULL
 
 #' @rdname    MVRangesList-methods
 #' @export
-setMethod("coverage", signature(x="MVRangesList"), 
-          function(x) sapply(x, coverage))
+setMethod("genomeCoverage", signature(x="MVRangesList"), 
+          function(x) sapply(x, genomeCoverage))
 
 
 #' @rdname    MVRangesList-methods
@@ -109,8 +118,8 @@ setMethod("predictCoding", # mitochondrial annotations kept internally
 setMethod("show", signature(object="MVRangesList"),
           function(object) {
             callNextMethod()
-            coverages <- paste0(round(unname(sapply(object, coverage))), "x")
-            cat(S4Vectors:::labeledLine("coverage", coverages))
+            covgs <- paste0(round(unname(sapply(object, genomeCoverage))), "x")
+            cat(S4Vectors:::labeledLine("genomeCoverage", covgs))
             if ("counts" %in% names(metadata(object))) {
               peaks <- nrow(metadata(object)$counts)
               cat(ifelse("bias" %in% names(rowData(counts(object))),
@@ -198,7 +207,7 @@ setMethod("summarizeVariants",
                         "Ref","Alt","Codon_substitution","dbSNP_150_id",
                         "Mitomap_Phenotype","Mitomap_Status",
                         "Gene_symbol","OXPHOS_complex",
-                        "Consequence","APOGEE_boost_consensus","MtoolBox")]
+                        "Consequence","APOGEE_boost_consensus","MToolBox")]
               } else {
                 return(NULL)
               }
@@ -240,19 +249,8 @@ setMethod("locateVariants",
 
 #' @rdname    MVRangesList-methods
 #' @export
-setMethod("tallyVariants", signature(x="MVRangesList"),
-          function(x, filterLowQual=TRUE, ...) {
-            
-            stop("Don't use this method for now. It has bugs!")
-            t(sapply(x, tallyVariants))
-
-          })
-
-
-#' @rdname    MVRangesList-methods
-#' @export
 setMethod("plot", signature(x="MVRangesList"),
-          function(x, ...) mtCircos(x, ...))
+          function(x, ...) MTcircos(x, ...))
 
 
 #' @rdname    MVRangesList-methods

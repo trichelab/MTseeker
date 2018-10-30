@@ -17,10 +17,10 @@
 #' @examples
 #' library(MTseekerData)
 #' data(RONKSvariants) 
-#' mtComplex(RONKSvariants$RO_1)
+#' MTcomplex(RONKSvariants$RO_1)
 #'
 #' @export 
-mtComplex <- function(variants, defColor="#c9eded", verbose=FALSE){
+MTcomplex <- function(variants, defColor="#c9eded", verbose=FALSE){
 
   data(mtAnno.rCRS)
   SVGfile <- system.file("extdata", "mtComplexes.svg", package="MTseeker")

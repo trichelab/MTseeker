@@ -18,10 +18,10 @@
 #' @examples
 #' library(MTseekerData)
 #' RO_2 <- RONKSvariants[["RO_2"]]
-#' injectMtVariants(RO_2)
+#' injectMTVariants(RO_2)
 #'
 #' @export
-injectMtVariants <- function(mvr, gr=NULL, aa=TRUE, canon=.99, refX=1, altX=1) {
+injectMTVariants <- function(mvr, gr=NULL, aa=TRUE, canon=.99, refX=1, altX=1) {
 
   # rCRS only, for the time being 
   stopifnot(unique(genome(mvr)) == "rCRS")

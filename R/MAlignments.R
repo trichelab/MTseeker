@@ -1,5 +1,7 @@
 #' wraps a GAlignments with information about coverage and its target BAM file
 #' 
+#' The runLength slot stores readLength and named for historic reasons.
+#' 
 #' @import GenomicAlignments
 #' @import Rsamtools
 #' 
@@ -12,6 +14,10 @@ setClass("MAlignments",
 
 #' wrap a GAlignments for easier stats
 #'
+#' Normally the MAlignments constructor will be called by getMT(bam).
+#' 
+#' @rdname            MAlignments-methods
+#' 
 #' @param gal         a GAlignments
 #' @param bam         a bam filename
 #'
@@ -20,10 +26,14 @@ setClass("MAlignments",
 #' @import            GenomicAlignments
 #'
 #' @examples
+#' 
 #' library(MTseekerData)
-#' data(RONKSreads)
-#' show(RONKSreads$RO_1)
-#'
+#' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
+#' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
+#' mal <- getMT(BAMs[1])
+#' class(mal) 
+#' show(mal) 
+#' 
 #' @export
 MAlignments <- function(gal, bam) { 
   if (!is(gal, "GAlignments")) stop("gal must be a GAlignments. Exiting.")
@@ -48,31 +58,11 @@ MAlignments <- function(gal, bam) {
 NULL
 
 
-#' @rdname    MAlignments-methods
-#' 
+#' @rdname          MAlignments-methods
+#'
 #' @export
-setMethod("coverage", signature(x="MAlignments"),
-          function(x) {
-            unname( (length(x) * runLength(x)) / runValue(x) )
-          })
-
-
-#' @rdname    MAlignments-methods
-#' 
-#' @export
-setMethod("runLength", signature(x="MAlignments"),
-          function(x) {
-            return(x@runLength)
-          })
-
-
-#' @rdname    MAlignments-methods
-#' 
-#' @export
-setMethod("runValue", signature(x="MAlignments"),
-          function(x) {
-            unname(seqlengths(x)[seqlevelsInUse(x)])
-          })
+setGeneric("genomeCoverage", 
+           function(x) unname((length(x)*readLength(x))/genomeLength(x)))
 
 
 #' @rdname    MAlignments-methods
@@ -81,9 +71,9 @@ setMethod("runValue", signature(x="MAlignments"),
 setMethod("Summary", signature(x="MAlignments"),
           function(x) {
             c(reads=length(x),
-              readLength=runLength(x),
-              genomeSize=runValue(x),
-              coverage=coverage(x))
+              readLength=readLength(x),
+              genomeSize=genomeLength(x),
+              genomeCoverage=genomeCoverage(x))
           })
 
 
@@ -94,7 +84,7 @@ setMethod("show", signature(object="MAlignments"),
           function(object) {
             callNextMethod()
             cat("  -------\n")
-            cat(paste0("  ", round(coverage(object)), 
+            cat(paste0("  ", round(genomeCoverage(object)), 
                        "x approximate read coverage."), "\n")
           })
 
@@ -113,3 +103,38 @@ setMethod("scanBamHeader", signature(files="MAlignments"),
           function(files) {
             return(scanBamHeader(fileName(files)))
           })
+
+
+#' @rdname    MAlignments-methods
+#' 
+#' @export 
+setGeneric("readLength", 
+           function(x) {
+             if ("readLength" %in% slotNames(x)) {
+               return(x@readLength)
+             } else if ("runLength" %in% slotNames(x)) { 
+               return(x@runLength)
+             } else { 
+               stop("Don't know how to get readLength for x.")
+             }
+           })
+
+
+#' @rdname    MAlignments-methods 
+#' 
+#' @export
+setMethod("readLength", "MAlignments", function(x) x@runLength)
+
+
+#' @rdname    MAlignments-methods
+#'
+#' @export 
+setGeneric("genomeLength", 
+           function(x) sum(unname(seqlengths(x)[seqlevelsInUse(x)])))
+
+
+#' @rdname    MAlignments-methods 
+#' 
+#' @export
+setMethod("genomeLength", "MAlignments", 
+           function(x) unname(seqlengths(x)[seqlevelsInUse(x)]))

@@ -9,10 +9,10 @@
 #' @examples
 #' library(MTseekerData) 
 #' data(RONKSvariants) 
-#' mtHGVS(RONKSvariants$RO_1)
+#' MTHGVS(RONKSvariants$RO_1)
 #' 
 #' @export
-mtHGVS <- function(x, asMVR=FALSE, verbose=FALSE) { 
+MTHGVS <- function(x, asMVR=FALSE, verbose=FALSE) { 
 
   # NCBI recommendation is ASSEMBLY:m.HGVS
   pre <- paste(unique(genome(x)), "m.", sep=":") 
