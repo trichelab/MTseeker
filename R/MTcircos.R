@@ -27,12 +27,12 @@
 #' @examples 
 #' library(MTseekerData)
 #' data(RONKSvariants) 
-#' mtCircos(RONKSvariants)
+#' MTcircos(RONKSvariants)
 #' # same as plot(RONKSvariants)
 #' title("Renal oncocytomas and normal kidney samples")
 #' 
 #' @export 
-mtCircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL, 
+MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL, 
                      incol=NULL, anno=NULL, how=c("matrix","VAF"), ...) {
 
   circos.clear() 

@@ -8,15 +8,15 @@
 #'
 #' The plotting functions can handle MAlignments or MVRanges objects directly.
 #' 
-#' plotMtCoverage does what one might expect, and plots (read or call) coverage.
+#' plotMTCoverage does what one might expect, and plots (read or call) coverage.
 #'
-#' plotStrandedMtCoverage does the same thing, but keeps track of which strand. 
+#' plotStrandedMTCoverage does the same thing, but keeps track of which strand. 
 #' 
 #' @param x         an MAlignments or MVRanges
 #' @param ...       other arguments to pass to GenomicAlignments::coverage()
 #'
-#' @aliases         plotMtCoverage
-#' @aliases         plotStrandedMtCoverage
+#' @aliases         plotMTCoverage
+#' @aliases         plotStrandedMTCoverage
 #'
 #' @return          an RleList (or, invisibly for plot functions, a result list)
 #' 
@@ -26,26 +26,26 @@
 #' library(MTseekerData)
 #'
 #' data(RONKSreads)
-#' mtCoverage(RONKSreads$RO_1)
-#' plotMtCoverage(RONKSreads$RO_1)
+#' MTcoverage(RONKSreads$RO_1)
+#' plotMTCoverage(RONKSreads$RO_1)
 #'
 #' data(RONKSvariants)
-#' mtCoverage(RONKSvariants$RO_1)
-#' plotMtCoverage(RONKSvariants$RO_1)
+#' MTcoverage(RONKSvariants$RO_1)
+#' plotMTCoverage(RONKSvariants$RO_1)
 #'
 #' par(mfrow=c(1,2))
-#' plotMtCoverage(RONKSreads$NKS_1)
+#' plotMTCoverage(RONKSreads$NKS_1)
 #' title("Read coverage for normal kidney sample 1") 
-#' plotMtCoverage(RONKSreads$RO_1)
+#' plotMTCoverage(RONKSreads$RO_1)
 #' title("Read coverage for renal oncocytoma sample 1") 
 #' 
 #' par(mfrow=c(1,2))
-#' plotStrandedMtCoverage(RONKSreads$NKS_1)
+#' plotStrandedMTCoverage(RONKSreads$NKS_1)
 #' title("Stranded read coverage for normal kidney sample 1") 
-#' plotStrandedMtCoverage(RONKSreads$RO_1)
+#' plotStrandedMTCoverage(RONKSreads$RO_1)
 #' title("Stranded read coverage for renal oncocytoma sample 1") 
 #' @export
-mtCoverage <- function(x, ...) { 
+MTcoverage <- function(x, ...) { 
   if (is(x, "VRanges")) {
     res <- coverage(as(x, "VRanges"))
   } else if (is(x, "GAlignments")) {
@@ -57,15 +57,15 @@ mtCoverage <- function(x, ...) {
 } 
 
 
-#' @rdname    mtCoverage
+#' @rdname    MTcoverage
 #' 
 #' @import    circlize
 #' 
 #' @export
-plotMtCoverage <- function(x, ...) { 
+plotMTCoverage <- function(x, ...) { 
 
   CHR <- unique(seqnames(x)) 
-  if (is(x, "MAlignments") | is(x, "MVRanges")) x <- mtCoverage(x)[[CHR]]
+  if (is(x, "MAlignments") | is(x, "MVRanges")) x <- MTcoverage(x)[[CHR]]
   message("Plotting mitochondrial coverage...")
   data(mtAnno.rCRS)
   anno <- mtAnno #.rCRS
@@ -110,16 +110,16 @@ plotMtCoverage <- function(x, ...) {
 }
 
 
-#' @rdname    mtCoverage
+#' @rdname    MTcoverage
 #' 
 #' @import    circlize
 #' 
 #' @export
-plotStrandedMtCoverage <- function(x, ...) { 
+plotStrandedMTCoverage <- function(x, ...) { 
 
   CHR <- unique(seqnames(x)) 
   if (is(x, "MAlignments") | is(x, "MVRanges")) {
-    x <- lapply(lapply(byStrand(x), mtCoverage), `[[`, CHR)
+    x <- lapply(lapply(byStrand(x), MTcoverage), `[[`, CHR)
   }
   message("Plotting stranded mitochondrial coverage...")
   data(mtAnno.rCRS)

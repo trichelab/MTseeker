@@ -2,12 +2,12 @@
 % Please edit documentation in R/callMT.R
 \name{callMT}
 \alias{callMT}
-\alias{callMtVars}
+\alias{callMTVars}
 \title{call mitochondrial variants against rCRS from an MAlignments[List] object}
 \usage{
 callMT(mal, ..., parallel = FALSE, verbose = FALSE)
 
-callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM",
+callMTVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM",
   COV = NULL, verbose = FALSE)
 }
 \arguments{
@@ -19,13 +19,13 @@ callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM",
 
 \item{verbose}{be verbose? (FALSE; turn on for debugging purposes)}
 
-\item{BAM}{the BAM filename (for callMtVars)}
+\item{BAM}{the BAM filename (for callMTVars)}
 
-\item{SIZE}{the read length (for callMtVars; default is 75)}
+\item{SIZE}{the read length (for callMTVars; default is 75)}
 
-\item{GENOME}{the reference genome (for callMtVars; default is rCRS)}
+\item{GENOME}{the reference genome (for callMTVars; default is rCRS)}
 
-\item{CHR}{the mt contig name (for callMtVars; default is chrM)}
+\item{CHR}{the mt contig name (for callMTVars; default is chrM)}
 
 \item{COV}{average read coverage (so we don't have to countBam)}
 }
@@ -33,7 +33,7 @@ callMtVars(BAM, SIZE = 75, GENOME = "rCRS", CHR = "chrM",
 an MVRanges (or, potentially, an MVRangesList)
 }
 \description{
-`callMtVars` is a helper function for callMT
+`callMTVars` is a helper function for callMT
 }
 \details{
 FIXME: transition gmapR from import to suggestion; use tallyVariants alone?

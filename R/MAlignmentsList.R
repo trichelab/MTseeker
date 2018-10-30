@@ -10,6 +10,10 @@ setClass("MAlignmentsList", contains="GAlignmentsList")
 
 #' wrap a GAlignmentsList for viewing
 #'
+#' Normally the MAlignmentsList constructor will be called by getMT. 
+#' 
+#' @rdname          MAlignmentsList-methods
+#' 
 #' @param ...         MAlignments
 #'
 #' @return            an MAlignments 
@@ -18,8 +22,13 @@ setClass("MAlignmentsList", contains="GAlignmentsList")
 #' 
 #' @examples
 #' library(MTseekerData)
-#' data(RONKSreads)
-#' show(RONKSreads)
+#' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
+#' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
+#' targets <- data.frame(BAM=BAMs) 
+#' rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
+#' mall <- getMT(targets)
+#' class(mall) 
+#' show(mall) 
 #'
 #' @export
 MAlignmentsList <- function(...) {
@@ -28,8 +37,8 @@ MAlignmentsList <- function(...) {
   mdat <- list()
   mdat$cache <- data.frame(BAM=sapply(..., fileName),
                            reads=sapply(..., length),
-                           readLength=sapply(..., runLength), 
-                           genomeSize=sapply(..., runValue), 
+                           readLength=sapply(..., readLength), 
+                           genomeSize=sapply(..., genomeLength), 
                            genome=unname(sapply(..., genome)),
                            nuclearReads=unname(sapply(..., attr, "nucReads")),
                            mitoVsNuclear=unname(sapply(..., attr, "mtVsNuc")))
@@ -83,10 +92,11 @@ MAlignmentsList <- function(...) {
 NULL
 
 
+
 #' @rdname          MAlignmentsList-methods
 #'
 #' @export
-setMethod("coverage", signature(x="MAlignmentsList"),
+setMethod("genomeCoverage", signature(x="MAlignmentsList"),
           function(x) {
             covg <- metadata(x)$cache$genomeCoverage
             names(covg) <- names(x)
@@ -94,10 +104,8 @@ setMethod("coverage", signature(x="MAlignmentsList"),
           })
 
 
-#' @rdname          MAlignmentsList-methods
-#'
 #' @export
-setMethod("runLength", signature(x="MAlignmentsList"),
+setMethod("readLength", signature(x="MAlignmentsList"),
           function(x) {
             rl <- metadata(x)$cache$readLength
             names(rl) <- names(x)
@@ -137,3 +145,5 @@ setMethod("show", signature(object="MAlignmentsList"),
             cat("-------\n", sep = "")
             cat("seqinfo: ", summary(seqinfo(object)), "\n", sep = "")
           })
+
+

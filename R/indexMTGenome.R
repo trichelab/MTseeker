@@ -21,12 +21,19 @@
 #' @param  unlink     if an index package already exists, remove it? (FALSE)
 #'
 #' @return            the path to the created package as a character string
+#'
+#' @examples 
 #' 
+#' if (.Platform$OS.type != "windows") {
+#'   fa <- system.file(paste0("extdata/", mtGenome, ".fa"), package="MTseeker")
+#'   indexMTGenome(mtGenome="rCRS", fa=fa, destDir=tempdir())
+#' }
+#'
 #' @import gmapR
 #' @importFrom utils install.packages installed.packages remove.packages
 #'
 #' @export
-indexMtGenome <- function(mtGenome="rCRS", fa=NULL, organism="Hsapiens", 
+indexMTGenome <- function(mtGenome="rCRS", fa=NULL, organism="Hsapiens", 
                           destDir=NULL, install=TRUE, unlink=FALSE) {
 
   # default to rCRS

@@ -5,5 +5,5 @@
 \alias{MAlignments-class}
 \title{wraps a GAlignments with information about coverage and its target BAM file}
 \description{
-wraps a GAlignments with information about coverage and its target BAM file
+The runLength slot stores readLength and named for historic reasons.
 }
