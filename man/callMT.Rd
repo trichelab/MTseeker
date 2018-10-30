@@ -46,13 +46,12 @@ FIXME: figure out a way to reprocess extracted chrM/MT reads against rCRS,
        regardless of what reference they were originally aligned against.
 }
 \examples{
+
 library(MTseekerData)
-data(RONKSreads)
-\donttest{
-  # requires the BAMs
-  # also currently requires gmapR 
-  RONKSvariants <- callMT(RONKSreads) 
-}
-head(RONKSvariants$RO_1) 
+BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
+BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
+(mal <- getMT(BAMs[1]))
+(mvr <- callMT(mal))
+filt(snpCall(mvr))
 
 }
