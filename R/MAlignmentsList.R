@@ -23,8 +23,10 @@ setClass("MAlignmentsList", contains="GAlignmentsList")
 #' @examples
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
+#' print(BAMdir)
 #' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
-#' targets <- data.frame(BAM=BAMs) 
+#' print(BAMs)
+#' targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
 #' rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
 #' mall <- getMT(targets)
 #' class(mall) 
@@ -104,6 +106,8 @@ setMethod("genomeCoverage", signature(x="MAlignmentsList"),
           })
 
 
+#' @rdname          MAlignmentsList-methods
+#'
 #' @export
 setMethod("readLength", signature(x="MAlignmentsList"),
           function(x) {

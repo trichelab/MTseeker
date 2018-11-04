@@ -15,8 +15,6 @@ setClass("MVRangesList", contains="SimpleVRangesList")
 #'
 #' @rdname        MVRangesList-methods
 #' 
-#' @param ...     the MVRanges elements forming the MVRangesList
-#'
 #' @return        the MVRangesList
 #' 
 #' @examples
@@ -24,7 +22,7 @@ setClass("MVRangesList", contains="SimpleVRangesList")
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 #' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
-#' targets <- data.frame(BAM=BAMs) 
+#' targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
 #' rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
 #' (mall <- getMT(targets))
 #' (mvrl <- callMT(mall))
@@ -41,6 +39,7 @@ MVRangesList <- function(...) {
 #' @section Utility methods:
 #' 
 #' `genomeCoverage`       returns estimated mitochondrial read coverage depth
+#' `coverage`             returns an RleList of coverage for each sample's chrM
 #' `filt`                 removes variants where PASS != TRUE for each element 
 #'
 #' @section Annotation methods:
@@ -104,6 +103,12 @@ setMethod("getAnnotations", signature(annotations="MVRangesList"),
 #' @export
 setMethod("encoding", signature(x="MVRangesList"), 
           function(x) MVRangesList(lapply(x, encoding)))
+
+
+#' @rdname    MVRangesList-methods
+#' @export
+setMethod("coverage", signature(x="MVRangesList"), 
+          function(x) RleList(lapply(x, coverage)))
 
 
 #' @rdname    MVRangesList-methods

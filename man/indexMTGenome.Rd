@@ -41,8 +41,9 @@ styles of contig names, whether NCBI, UCSC, Genbank, or colloquial rCRS.
 \examples{
 
 if (.Platform$OS.type != "windows") {
+  mtGenome <- "rCRS"
   fa <- system.file(paste0("extdata/", mtGenome, ".fa"), package="MTseeker")
-  indexMTGenome(mtGenome="rCRS", fa=fa, destDir=tempdir())
+  indexMTGenome(mtGenome=mtGenome, fa=fa, destDir=tempdir())
 }
 
 }

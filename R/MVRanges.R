@@ -48,6 +48,7 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #' 
 #' `pos` returns a character vector describing variant positions. 
 #' `filt` returns a subset of variant calls where PASS == TRUE (i.e. filtered)
+#' `coverage` returns an Rle of coverage across the mitochondrial genome
 #' `genomeCoverage` returns the estimated mitochondrial read coverage depth
 #'
 #' @section Annotation methods:
@@ -104,6 +105,12 @@ NULL
 #' @rdname    MVRanges-methods
 #' @export
 setMethod("genomeCoverage", signature(x="MVRanges"), function(x) x@coverage)
+
+
+#' @rdname    MVRanges-methods
+#' @export
+setMethod("coverage", signature(x="MVRanges"), 
+          function(x) callNextMethod()[[1]]) 
 
 
 #' @rdname    MVRanges-methods

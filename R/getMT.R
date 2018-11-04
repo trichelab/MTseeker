@@ -22,7 +22,7 @@
 #' (mal <- getMT(BAMs[1]))
 #' class(mal) 
 #'
-#' targets <- data.frame(BAM=BAMs) 
+#' targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
 #' rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
 #' (mall <- getMT(targets))
 #' class(mall) 
@@ -70,7 +70,9 @@ getMT <- function(bam, filter=FALSE, parallel=FALSE, plotMAPQ=FALSE, ...) {
   }
 
   # for individual BAM files:
+  bam <- as.character(bam) 
   bai <- paste0(bam, ".bai")
+  if (!file.exists(bam)) stop(paste("Cannot find file", bam))
   if (!file.exists(bai)) indexBam(bam)
   bamfile <- BamFile(bam, index=bai, asMates=TRUE)
   chrM <- ifelse("chrM" %in% seqlevels(bamfile), "chrM", "MT")
