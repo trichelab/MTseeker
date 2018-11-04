@@ -31,7 +31,7 @@ filterMTvars <- function(vars, fp=TRUE, NuMT=0.03, covg=20) {
   if (is(vars, "MVRanges")) {
     subset(subsetByOverlaps(vars, fpFilter), VAF >= NuMT & PASS)
   } else if (is(vars, "MVRangesList")) {
-    MVRangesList(lapply(vars[coverage(vars)>=covg], 
+    MVRangesList(lapply(vars[genomeCoverage(vars)>=covg], 
                         filterMTvars, fp=fp, NuMT=NuMT))
   } else { 
     stop("This function is only meant for MVRanges and MVRangesList objects.")

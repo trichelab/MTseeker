@@ -9,6 +9,7 @@
 \alias{snpCall,MVRangesList-method}
 \alias{getAnnotations,MVRangesList-method}
 \alias{encoding,MVRangesList-method}
+\alias{coverage,MVRangesList-method}
 \alias{predictCoding,MVRangesList,missing,missing,missing-method}
 \alias{show,MVRangesList-method}
 \alias{filt,MVRangesList-method}
@@ -32,6 +33,8 @@ MVRangesList(...)
 
 \S4method{encoding}{MVRangesList}(x)
 
+\S4method{coverage}{MVRangesList}(x)
+
 \S4method{predictCoding}{MVRangesList,missing,missing,missing}(query,
   subject, seqSource, varAllele, ...)
 
@@ -54,7 +57,7 @@ MVRangesList(...)
 \S4method{consensusString}{MVRangesList}(x, ...)
 }
 \arguments{
-\item{...}{the MVRanges elements forming the MVRangesList}
+\item{...}{miscellaneous args, passed through}
 
 \item{x}{an MVRangesList (for some methods)}
 
@@ -73,8 +76,6 @@ MVRangesList(...)
 \item{filterLowQual}{opt. for `granges`/`summarizeVariants`}
 
 \item{y}{another MVRangesList}
-
-\item{...}{miscellaneous args, passed through}
 }
 \value{
 the MVRangesList
@@ -88,6 +89,7 @@ Usually an MVRangesList will be created by callMT.
 
 
 `genomeCoverage`       returns estimated mitochondrial read coverage depth
+`coverage`             returns an RleList of coverage for each sample's chrM
 `filt`                 removes variants where PASS != TRUE for each element
 }
 
@@ -116,7 +118,7 @@ Usually an MVRangesList will be created by callMT.
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
-targets <- data.frame(BAM=BAMs) 
+targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
 rownames(targets) <- sapply(strsplit(basename(BAMs), "\\\\."), `[`, 1)
 (mall <- getMT(targets))
 (mvrl <- callMT(mall))

@@ -76,7 +76,9 @@ library(MTseekerData)
 
 # Relative mitochondrial copy number changes
 
-We'd like to compute the relative mitochondrial copy number for each:
+We'd like to compute the relative mitochondrial copy number for each.
+For whatever reason, this seems to throw an error in the vignette build 
+if we plot all of them, so we will just plot a subset in this vignette. 
 
 ```{r computeCN}
 data(RONKSreads, package="MTseekerData")
@@ -87,12 +89,16 @@ mtCN <- data.frame(subject=names(CN), CN=CN)
 
 library(ggplot2) 
 library(ggthemes)
-p <- ggplot(mtCN, aes(x=subject, y=CN, fill=subject)) + 
-       geom_col() + theme_tufte() + ylim(0,5) + 
+p <- ggplot(head(mtCN), aes(x=subject, y=CN, fill=subject)) + 
+       geom_col() + theme_tufte(base_size=24) + ylim(0,4) + 
        ylab("Tumor/normal mitochondrial ratio") + 
        ggtitle("Mitochondrial retention in oncocytomas")
 print(p)
 ```
+
+Note that some of the oncocytomas appear to have fewer mitochondrial genome
+copies than their normal kidney sample counterparts, contrary to intuition.
+
 
 # Calling variants
 
@@ -123,23 +129,66 @@ data(RONKSvariants, package="MTseekerData")
 
 # Plotting variants
 
-Show off the results:
+Let's filter out some of the common variants, to focus on those only seen in
+the renal oncocytoma samples. The `filterMT` function drops samples with median
+read depth less than 20x, and if requested, also drops variants that fall into 
+known homopolymeric regions (fpFilter=TRUE) or have variant allele frequencies 
+(VAFs) of less than 0.03, many or most of which are likely to be NuMT (nu-mite)
+sequences that map equally well between nuclear and mitochondrial assemblies.
 
-```{r plotVariants}
-plot(filt(RONKSvariants))
+The coverage filter is somewhat gratuitous, since the shallowest mitochondrial
+coverage in this study is 333x, but the false-positive filter and the NuMT 
+filter are both a good idea in most studies. Additionally, variant calls that
+are not marked as PASSing quality control are all dropped at this stage. The 
+`granges` method for MVRanges and MVRangesList objects turns a set of variant
+calls into a GenomicRanges object with the aggregated affected regions.
+
+```{r filterRoVariants}
+RO <- grep("RO_", names(RONKSvariants))
+filtered_RO <- filterMT(RONKSvariants[RO], fpFilter=TRUE, NuMT=TRUE)
+RO_recurrent <- subset(granges(filtered_RO), 
+                       region == "coding" & rowSums(overlaps) > 1)
 ```
 
-The mitochondrial variant plots are structured like tree rings, in that each 
-sample is a "ring" and each point along the circle is annotated against a 
-region of the mitochondrial genome. Filtering on PASS drops variants that do
-not pass remedial quality filters, but it is advisable to also filter on VAF 
-(0.03, or 3%, is a recommended floor to keep out NuMT nuclear-mitochondrial 
-integrations; see Ju et al, eLife 2014, for more on this subject) and mask off
-regions of frequent homopolymer miscalls, and also haplogroup-related variants
-when analyzing variants from subjects who come from different mitochondrial 
-haplogroups. (We are planning to add haplogroup inference and masking in an 
-upcoming release of MTseeker, and the PhyloTree XML data prepared by the fine
-HaploGrep folks is part of MTseekerData for exactly this purpose.)
+Same thing for the normal kidney samples, so that we can weed out a bit more. 
+Again, we'll use the `granges` method to aggregate affected regions of chrM. 
+
+
+```{r filterNksVariants}
+NKS <- grep("NKS_", names(RONKSvariants))
+filtered_NKS <- filterMT(RONKSvariants[NKS], fpFilter=TRUE, NuMT=TRUE)
+NKS_recurrent <- subset(granges(filtered_NKS), 
+                        region == "coding" & rowSums(overlaps) > 1)
+NKS_gaps <- subset(gaps(NKS_recurrent), strand == "*")
+```
+
+Lastly, let's take only the variants in the oncocytomas that do not overlap
+recurrent variants in the normal kidney samples, to simplify our plotting.
+
+```{r pruneVariants}
+RONKSfiltered <- endoapply(filterMT(RONKSvariants), subsetByOverlaps, NKS_gaps)
+RONKScoding <- encoding(RONKSfiltered)
+```
+
+OK, now we have whittled away some of the more common variants to focus
+on those that seem to be specific and recurrent in the oncocytomas. Let's
+plot the resulting variants in the first few samples. The plot looks a bit 
+like tree rings; each tree ring is one sample, and each black mark is a 
+variant (of whatever minimum variant allele frequency, or VAF, enforced)
+in a particular sample. The color-coded lines point to where on chrM the 
+variant maps back to, since there are sparse and dense regions of variation.
+
+
+```{r plotVariants}
+plot(RONKScoding)
+```
+
+We are planning to add haplogroup inference and masking in an upcoming release
+and the PhyloTree XML data prepared by the fine HaploGrep folks is part of 
+MTseekerData for exactly this purpose. The interaction between haplogroups 
+(inherited and ancestry-informative mitochondrial variant haplotypes) and 
+germline or somatic variants, in both mitochondrial and nuclear genomes, is a 
+topic of substantial research interest due to its clear metabolic implications.
 
 
 # Plotting functional impacts

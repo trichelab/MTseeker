@@ -5,6 +5,7 @@
 \alias{MAlignmentsList}
 \alias{MAlignmentsList-methods}
 \alias{genomeCoverage,MAlignmentsList-method}
+\alias{readLength,MAlignmentsList-method}
 \alias{fileName,MAlignmentsList-method}
 \alias{Summary,MAlignmentsList-method}
 \alias{show,MAlignmentsList-method}
@@ -13,6 +14,8 @@
 MAlignmentsList(...)
 
 \S4method{genomeCoverage}{MAlignmentsList}(x)
+
+\S4method{readLength}{MAlignmentsList}(x)
 
 \S4method{fileName}{MAlignmentsList}(object)
 
@@ -42,8 +45,10 @@ take an MAlignmentsList as their argument.
 \examples{
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
+print(BAMdir)
 BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
-targets <- data.frame(BAM=BAMs) 
+print(BAMs)
+targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
 rownames(targets) <- sapply(strsplit(basename(BAMs), "\\\\."), `[`, 1)
 mall <- getMT(targets)
 class(mall) 

@@ -9,6 +9,7 @@
 \alias{predictCoding}
 \alias{genes}
 \alias{genomeCoverage,MVRanges-method}
+\alias{coverage,MVRanges-method}
 \alias{type,MVRanges-method}
 \alias{genes,MVRanges-method}
 \alias{snpCall,MVRanges-method}
@@ -30,6 +31,8 @@
 MVRanges(vr, coverage = NA_real_)
 
 \S4method{genomeCoverage}{MVRanges}(x)
+
+\S4method{coverage}{MVRanges}(x)
 
 \S4method{type}{MVRanges}(x)
 
@@ -109,6 +112,7 @@ In such cases, the method will usually, but not always, be apply()ed.
 
 `pos` returns a character vector describing variant positions. 
 `filt` returns a subset of variant calls where PASS == TRUE (i.e. filtered)
+`coverage` returns an Rle of coverage across the mitochondrial genome
 `genomeCoverage` returns the estimated mitochondrial read coverage depth
 }
 
