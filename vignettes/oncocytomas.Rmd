@@ -177,10 +177,12 @@ like tree rings; each tree ring is one sample, and each black mark is a
 variant (of whatever minimum variant allele frequency, or VAF, enforced)
 in a particular sample. The color-coded lines point to where on chrM the 
 variant maps back to, since there are sparse and dense regions of variation.
+For whatever reason, vignette builds can fail if we plot all of the variants,
+so we just plot the first two matched tumor-normal pairs here. 
 
 
 ```{r plotVariants}
-plot(RONKScoding)
+plot(RONKScoding[1:4])
 ```
 
 We are planning to add haplogroup inference and masking in an upcoming release
