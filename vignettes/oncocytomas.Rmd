@@ -66,9 +66,19 @@ if (FALSE) {
 
 Since realigning 22 whole exomes and extracting/counting reads takes a while,
 we created the MTseekerData package to hold the output from doing the above. 
-The _RONKSreads_ and _RONKSvariants_ data objects hold what you might expect 
-them to hold, at least once you find out that RONKS stands for _R_enal 
-_O_ncocytoma and _N_ormal _K_idney _S_amples from the same patients. 
+The _RONKSreads_ and _RONKSvariants_ data objects hold aligned reads (as 
+an MAlignments object) and called variants (as an MVRangesList object)
+comparing _R_enal _O_ncocytomas and _N_ormal _K_idney _S_amples from 11 
+subjects who developed this premalignant neoplasia of the kidney. Most such 
+cases seem to be self-limiting, perhaps due to their defective mitophagy, and
+they accumulate thousands of excess mitochondria with Complex I defects. If
+these tumors do become malignant, they tend to turn into chromophobe renal
+cell carcinomas, a type of kidney cancer that is characterized by aneuploidy 
+of all or nearly all chromosomes. So the relationship between a self-limiting
+oncocytoma and a genomically unstable carcinoma is thought to hinge at least 
+in part on how the affected cell deals with metabolic derangement, and whether
+that results in the accumulation of additional mutations (like _TP53_ in CRCCs).
+
 
 ```{r loadDataLibrary}
 library(MTseekerData)
@@ -97,8 +107,12 @@ print(p)
 ```
 
 Note that some of the oncocytomas appear to have fewer mitochondrial genome
-copies than their normal kidney sample counterparts, contrary to intuition.
-
+copies than their normal kidney sample counterparts, contrary to intuition. 
+These tumors usually stain as great big pink eosinophil-like cells on slides,
+supposedly due to their massive cytoplasmic load of mitochongdria. For whatever
+reason, though, the amount of (non-duplicated) mtDNA recovered in some of the 
+oncocytomas relative to nearby normal kidney cells isn't always much greater. 
+(It is also possible that some neighboring cells might also be premalignant.)
 
 # Calling variants
 
@@ -106,7 +120,9 @@ Obviously it's not much good to have a variant caller that can't call variants,
 so we demonstrate that here. (Note: tumor/normal calls, haplogroup inference,
 and soft-backfiltering of haplogroup-determining variants are works in progress,
 so we do not currently demonstrate them here, although the fpFilter datasets 
-are useful for these purposes)
+are useful for these purposes) At present, MTseeker supports the _gmapR_ package
+for mitochondrial variant calling, though we plan to provide cross-platform 
+support via Rsamtools::pileup in the near future.     
 
 gmapR can be a bit feisty, so we simply document the process below: 
 
@@ -177,13 +193,17 @@ like tree rings; each tree ring is one sample, and each black mark is a
 variant (of whatever minimum variant allele frequency, or VAF, enforced)
 in a particular sample. The color-coded lines point to where on chrM the 
 variant maps back to, since there are sparse and dense regions of variation.
-For whatever reason, vignette builds can fail if we plot all of the variants,
-so we just plot the first two matched tumor-normal pairs here. 
+For whatever reason, vignette builds fail if we plot all of the variants,
+so we skip this step in the production vignette. (It _is_ done in the build!) 
 
 
-```{r plotVariants}
-plot(RONKScoding[1:4])
+```{r plotVariants, eval=FALSE}
+plot(RONKScoding)
 ```
+
+The resulting plot looks like so:
+
+![mtDNA variants in oncocytomas and normal kidney samples](RO_NKS_filtered.png)
 
 We are planning to add haplogroup inference and masking in an upcoming release
 and the PhyloTree XML data prepared by the fine HaploGrep folks is part of 
