@@ -102,7 +102,7 @@ an MVRanges
 depends on the method invoked.
 }
 \description{
-Usually the MVRanges constructur will be called by callMT().
+Usually the MVRanges constructor will be called by callMT().
 
 Many of these methods can be dispatched from an MVRangesList OR an MVRanges.
 In such cases, the method will usually, but not always, be apply()ed.
@@ -144,9 +144,14 @@ library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
 (mal <- getMT(BAMs[1]))
-(mvr <- callMT(mal))
-locateVariants(mvr)
-predictCoding(mvr) 
+if (require(GmapGenome.Hsapiens.rCRS)) {
+  (mvr <- callMT(mal))
+  locateVariants(mvr)
+  predictCoding(mvr) 
+} else { 
+  message("You have not yet installed an rCRS reference genome.")
+  message("Consider running the indexMTgenome() function to do so.")
+}
 
 # summarizeVariants can take too long to run, and requires internet access 
 
