@@ -36,14 +36,9 @@ an MVRanges (or, potentially, an MVRangesList)
 `callMTVars` is a helper function for callMT
 }
 \details{
-FIXME: transition gmapR from import to suggestion; use tallyVariants alone?
-
-FIXME: use Rsamtools::pileup by default and only use gmapR if requested
-
-FIXME: figure out how to directly call variants off [GM]Alignments[List]s
-
-FIXME: figure out a way to reprocess extracted chrM/MT reads against rCRS,
-       regardless of what reference they were originally aligned against.
+FIXME: transition gmapR from import to suggestion
+FIXME: use Rsamtools::pileup by default
+FIXME: optional haplogroup masking?
 }
 \examples{
 
@@ -51,7 +46,12 @@ library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
 (mal <- getMT(BAMs[1]))
-(mvr <- callMT(mal))
-filt(snpCall(mvr))
+if (require(GmapGenome.Hsapiens.rCRS)) {
+  (mvr <- callMT(mal))
+  filt(snpCall(mvr))
+} else { 
+  message("You have not yet installed an rCRS reference genome.")
+  message("Consider running the indexMTgenome() function to do so.")
+}
 
 }

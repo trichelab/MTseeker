@@ -12,7 +12,7 @@ setClass("MVRanges",
 
 #' wrap a VRanges for mitochondrial use
 #'
-#' Usually the MVRanges constructur will be called by callMT(). 
+#' Usually the MVRanges constructor will be called by callMT(). 
 #' 
 #' @rdname    MVRanges-methods
 #'
@@ -29,9 +29,14 @@ setClass("MVRanges",
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 #' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
 #' (mal <- getMT(BAMs[1]))
-#' (mvr <- callMT(mal))
-#' locateVariants(mvr)
-#' predictCoding(mvr) 
+#' if (require(GmapGenome.Hsapiens.rCRS)) {
+#'   (mvr <- callMT(mal))
+#'   locateVariants(mvr)
+#'   predictCoding(mvr) 
+#' } else { 
+#'   message("You have not yet installed an rCRS reference genome.")
+#'   message("Consider running the indexMTgenome() function to do so.")
+#' }
 #' 
 #' # summarizeVariants can take too long to run, and requires internet access 
 #'

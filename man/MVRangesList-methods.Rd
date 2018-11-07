@@ -121,7 +121,12 @@ BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
 targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
 rownames(targets) <- sapply(strsplit(basename(BAMs), "\\\\."), `[`, 1)
 (mall <- getMT(targets))
-(mvrl <- callMT(mall))
-filt(mvrl$pt1_cell1)
+if (require(GmapGenome.Hsapiens.rCRS)) {
+  (mvrl <- callMT(mall))
+  filt(mvrl$pt1_cell1)
+} else { 
+  message("You have not yet installed an rCRS reference genome.")
+  message("Consider running the indexMTgenome() function to do so.")
+}
 
 }
