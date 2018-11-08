@@ -46,12 +46,13 @@ library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
 (mal <- getMT(BAMs[1]))
-if (require(GmapGenome.Hsapiens.rCRS)) {
+if (requireNamespace("GmapGenome.Hsapiens.rCRS", quietly=TRUE)) {
   (mvr <- callMT(mal))
   filt(snpCall(mvr))
 } else { 
   message("You have not yet installed an rCRS reference genome.")
   message("Consider running the indexMTgenome() function to do so.")
+  message("The RONKSvariants object in MTseekerData is a result of callMT.")
 }
 
 }

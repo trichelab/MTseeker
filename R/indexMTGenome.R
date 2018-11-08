@@ -77,7 +77,7 @@ indexMTGenome <- function(mtGenome="rCRS", fa=NULL, organism="Hsapiens",
                         license="Artistic-2.0")
 
   # this raises a NOTE: in BiocCheck; I think it's worth it. 
-  if (install == TRUE) install.packages(pkgPath, repos=NULL)
+  if (install == TRUE) install.packages(pkgPath, repos=NULL, type="source")
   return(pkgPath)
 
 }

@@ -25,12 +25,14 @@ setClass("MVRangesList", contains="SimpleVRangesList")
 #' targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
 #' rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
 #' (mall <- getMT(targets))
-#' if (require(GmapGenome.Hsapiens.rCRS)) {
+#'
+#' if (requireNamespace("GmapGenome.Hsapiens.rCRS", quietly=TRUE)) {
 #'   (mvrl <- callMT(mall))
 #'   filt(mvrl$pt1_cell1)
 #' } else { 
 #'   message("You have not yet installed an rCRS reference genome.")
 #'   message("Consider running the indexMTgenome() function to do so.")
+#'   message("An example MVRangesList is RONKSvariants from MTseekerData.")
 #' }
 #'
 #' @export
