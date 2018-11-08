@@ -144,13 +144,14 @@ library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
 (mal <- getMT(BAMs[1]))
-if (require(GmapGenome.Hsapiens.rCRS)) {
+if (requireNamespace("GmapGenome.Hsapiens.rCRS", quietly=TRUE)) {
   (mvr <- callMT(mal))
   locateVariants(mvr)
   predictCoding(mvr) 
 } else { 
   message("You have not yet installed an rCRS reference genome.")
   message("Consider running the indexMTgenome() function to do so.")
+  message("An example MVRanges is RONKSvariants$RO_1 from MTseekerData.")
 }
 
 # summarizeVariants can take too long to run, and requires internet access 
