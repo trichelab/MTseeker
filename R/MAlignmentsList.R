@@ -82,7 +82,18 @@ MAlignmentsList <- function(...) {
   } else {
     rownames(mdat$cache) <- names(gal) 
   }
-
+  
+  #filter out samples that have 0 reads
+  if (any(mdat$cache$reads == 0)) {
+    message("Filtering out samples with 0 reads after pre-processing...")
+    lcfilt <- mdat$cache[which(mdat$cache$reads > 0),]
+    mdat$cache <- mdat$cache[rownames(lcfilt),]
+    gal <- gal[rownames(lcfilt),]
+  }
+  
+  #check if there is anything left!
+  if (length(gal) == 0) stop("After filtering samples with 0 reads, there aren't any samples left. Exiting.")
+  
   # construct the object + its cache
   mal <- new("MAlignmentsList", gal)
   metadata(mal) <- mdat
