@@ -53,7 +53,7 @@ combineMAlignments <- function(mall, malToCombine=NULL, replace=FALSE) {
   # replace the combined MAlignments object in place
   if (replace) {
     reducedMAlignments <- mall[malToCombine]
-    reducedMAlignments <- validMetadata(reducedMAlignments)
+    reducedMAlignments <- .cleanMAlignmentsListCache(reducedMAlignments)
     mall <- .replaceMAlignments(mall, malToCombine, combinedMA, reducedMAlignments)
   }
   
@@ -77,7 +77,7 @@ combineMAlignments <- function(mall, malToCombine=NULL, replace=FALSE) {
   message("Cleaning and recomputing the metadata...")
   combinedMdat <- .recomputeMAlignmentsMetadata(reducedMAlignments)
   rownames(combinedMdat$cache) <- paste0("combined_", MAnames[1])
-  oldMdat <- metadata(validMetadata(MAlist))
+  oldMdat <- metadata(.cleanMAlignmentsListCache(MAlist))
   combinedMdat$cache <- rbind(oldMdat$cache,
                               combinedMdat$cache)
   #combine with old data
@@ -112,10 +112,10 @@ combineMAlignments <- function(mall, malToCombine=NULL, replace=FALSE) {
 }
 
 # helper function to clean the cache/metadata
-# .cleanMAlignmentsListCache <- function(MAlist) {
-#   if (length(names(MAlist)) != nrow(metadata(MAlist)$cache)) {
-#     # this is largely to prevent an error with names not existing
-#     metadata(MAlist)$cache <- metadata(MAlist)$cache[rownames(metadata(MAlist)$cache) %in% names(MAlist),]
-#   }
-#   return(MAlist)
-# }
+.cleanMAlignmentsListCache <- function(MAlist) {
+  if (length(names(MAlist)) != nrow(metadata(MAlist)$cache)) {
+    # this is largely to prevent an error with names not existing
+    metadata(MAlist)$cache <- metadata(MAlist)$cache[rownames(metadata(MAlist)$cache) %in% names(MAlist),]
+  }
+  return(MAlist)
+}
