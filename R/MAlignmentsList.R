@@ -37,13 +37,25 @@ MAlignmentsList <- function(...) {
 
   # this must be done first: 
   mdat <- list()
-  mdat$cache <- data.frame(BAM=sapply(..., fileName),
-                           reads=sapply(..., length),
-                           readLength=sapply(..., readLength), 
-                           genomeSize=sapply(..., genomeLength), 
-                           genome=unname(sapply(..., genome)),
-                           nuclearReads=unname(sapply(..., attr, "nucReads")),
-                           mitoVsNuclear=unname(sapply(..., attr, "mtVsNuc")))
+  #check for genomeSize to be 0 in a list
+  #this is a really odd bug... but this will currently patch it
+  if (is(sapply(..., genomeLength), "list")) {
+    mdat$cache <- data.frame(BAM = sapply(..., fileName),
+                             reads = sapply(..., length),
+                             readLength = sapply(..., readLength),
+                             genomeSize = unlist(as.numeric(sapply(..., genomeLength))),
+                             genome = unname(sapply(..., genome)),
+                             nuclearReads = unname(sapply(..., attr, "nucReads")),
+                             mitoVsNuclear = unname(sapply(..., attr, "mtVsNuc")))
+  } else {
+    mdat$cache <- data.frame(BAM = sapply(..., fileName),
+                             reads = sapply(..., length),
+                             readLength = sapply(..., readLength),
+                             genomeSize = sapply(..., genomeLength),
+                             genome = unname(sapply(..., genome)),
+                             nuclearReads = unname(sapply(..., attr, "nucReads")),
+                             mitoVsNuclear = unname(sapply(..., attr, "mtVsNuc")))
+  }
 
   # options(stringsAsFactors) fix
   if (is.factor(mdat$cache$BAM)) {
