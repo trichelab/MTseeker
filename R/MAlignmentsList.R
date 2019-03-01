@@ -37,13 +37,25 @@ MAlignmentsList <- function(...) {
 
   # this must be done first: 
   mdat <- list()
-  mdat$cache <- data.frame(BAM=sapply(..., fileName),
-                           reads=sapply(..., length),
-                           readLength=sapply(..., readLength), 
-                           genomeSize=sapply(..., genomeLength), 
-                           genome=unname(sapply(..., genome)),
-                           nuclearReads=unname(sapply(..., attr, "nucReads")),
-                           mitoVsNuclear=unname(sapply(..., attr, "mtVsNuc")))
+  #check for genomeSize to be 0 in a list
+  #this is a really odd bug... but this will currently patch it
+  if (is(sapply(..., genomeLength), "list")) {
+    mdat$cache <- data.frame(BAM = sapply(..., fileName),
+                             reads = sapply(..., length),
+                             readLength = sapply(..., readLength),
+                             genomeSize = unlist(as.numeric(sapply(..., genomeLength))),
+                             genome = unname(sapply(..., genome)),
+                             nuclearReads = unname(sapply(..., attr, "nucReads")),
+                             mitoVsNuclear = unname(sapply(..., attr, "mtVsNuc")))
+  } else {
+    mdat$cache <- data.frame(BAM = sapply(..., fileName),
+                             reads = sapply(..., length),
+                             readLength = sapply(..., readLength),
+                             genomeSize = sapply(..., genomeLength),
+                             genome = unname(sapply(..., genome)),
+                             nuclearReads = unname(sapply(..., attr, "nucReads")),
+                             mitoVsNuclear = unname(sapply(..., attr, "mtVsNuc")))
+  }
 
   # options(stringsAsFactors) fix
   if (is.factor(mdat$cache$BAM)) {
@@ -70,7 +82,18 @@ MAlignmentsList <- function(...) {
   } else {
     rownames(mdat$cache) <- names(gal) 
   }
-
+  
+  #filter out samples that have 0 reads
+  if (any(mdat$cache$reads == 0)) {
+    message("Filtering out samples with 0 reads after pre-processing...")
+    lcfilt <- mdat$cache[which(mdat$cache$reads > 0),]
+    mdat$cache <- mdat$cache[rownames(lcfilt),]
+    gal <- gal[rownames(lcfilt),]
+  }
+  
+  #check if there is anything left!
+  if (length(gal) == 0) stop("After filtering samples with 0 reads, there aren't any samples left. Exiting.")
+  
   # construct the object + its cache
   mal <- new("MAlignmentsList", gal)
   metadata(mal) <- mdat
