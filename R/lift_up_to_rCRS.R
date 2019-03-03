@@ -1,11 +1,11 @@
 #' @import GenomicRanges
 #' 
-#' @param ranges_obj GRanges or MVRanges list or dataframe for file name of VCF(and BAM)
+#' @param ranges_obj Either GRanges or MVRanges
 #' @param verbose    logical, if set to TRUE, print all messages during progressing.
-#' @return           object as same as origina input
+#' @return           Either Granges or MVRanges object
 #'
 #'
-#' refered to http://haplogrep.uibk.ac.at/blog/rcrs-vs-rsrs-vs-hg19/
+#' referred to http://haplogrep.uibk.ac.at/blog/rcrs-vs-rsrs-vs-hg19/
 #' 
 #' @export
 lift_up_to_rCRS <- function(ranges_obj, verbose = T) {
@@ -14,10 +14,10 @@ lift_up_to_rCRS <- function(ranges_obj, verbose = T) {
   } 
   
   if(seqlengths(ranges_obj) == 16569) {
-    stop("Input data already has 16569 length as same as chromosome M in version of rCRS")
+    return(ranges_obj)
   }
   
-  if(verbose) message('Lifting up coordinates from HG19 base to rCRS base ... ')
+  if(verbose) message('Lifting up coordinates to rCRS base ... ')
   ir <- ranges(ranges_obj)
   
   ir1 <- ir[ir@start < 315]
