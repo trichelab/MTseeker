@@ -11,6 +11,7 @@
 #' @param mal         an MAlignments (or, potentially, an MAlignmentsList) 
 #' @param ...         other arguments to pass to VariantTools::callVariants
 #' @param parallel    try to run in parallel? (FALSE; this is super unstable)
+#' @param cores       the number of cores to use for parallel processing
 #' @param verbose     be verbose? (FALSE; turn on for debugging purposes)
 #'
 #' @return            an MVRanges (or, potentially, an MVRangesList) 
@@ -35,53 +36,50 @@
 #' }
 #' 
 #' @export
-callMT <- function(mal, ..., parallel=FALSE, verbose=FALSE) {
-
+callMT <- function (mal, ..., parallel = FALSE, cores = 1, verbose = FALSE) 
+{
   if (!is(mal, "MAlignments") & !is(mal, "MAlignmentsList")) {
-
     stop("callMT needs an MAlignments or MAlignmentsList to call variants.")
-
-  } else if (is(mal, "MAlignmentsList")) { 
-   
+  }
+  else if (is(mal, "MAlignmentsList")) {
     if (unique(genome(mal)) != "rCRS") {
       stop("Genomes besides rCRS (aka GRCh37/GRCh38/hg38) are not supported.")
-    } else { 
-      message("Variant-calling an MAlignmentsList (may melt your machine)...")
-    } 
-
-    mtChr <- grep("(MT|chrM|NC_012920.1|rCRS)", seqlevelsInUse(mal), value=TRUE)
-
-    if (parallel == TRUE) { 
-      warning("Parallel mtDNA variant calling is REALLY flaky at the moment.") 
-      mvrl <- MVRangesList(mcmapply(callMTVars,
-                                    BAM=metadata(mal)$cache$BAM,
-                                    SIZE=metadata(mal)$cache$readLength,
-                                    GENOME=unique(genome(mal)),
-                                    CHR=rep(mtChr, length(mal))))
-    } else { 
-      mvrl <- MVRangesList(mapply(callMTVars,
-                                  BAM=metadata(mal)$cache$BAM,
-                                  SIZE=metadata(mal)$cache$readLength,
-                                  GENOME=unique(genome(mal)),
-                                  CHR=rep(mtChr, length(mal))))
     }
-    seqinfo(mvrl) <- seqinfo(mal) 
+    else {
+      message("Variant-calling an MAlignmentsList (may melt your machine)...")
+    }
+    mtChr <- grep("(MT|chrM|NC_012920.1|rCRS)", seqlevelsInUse(mal), 
+                  value = TRUE)
+    
+    #set the BPPARAM number of cores to 1 so parallel won't blow up
+    #also has the side effect of making sure low depth samples also run
+    BiocParallel::register(MulticoreParam(workers=1))
+    
+    if (parallel == TRUE) {
+      warning("Parallel mtDNA variant calling is REALLY flaky at the moment.")
+      options(mc.cores = cores)
+      mvrl <- MVRangesList(mcmapply(callMTVars, BAM = metadata(mal)$cache$BAM, 
+                                    SIZE = metadata(mal)$cache$readLength, GENOME = unique(genome(mal)), 
+                                    CHR = rep(mtChr, length(mal))))
+    }
+    else {
+      mvrl <- MVRangesList(mapply(callMTVars, BAM = metadata(mal)$cache$BAM, 
+                                  SIZE = metadata(mal)$cache$readLength, GENOME = unique(genome(mal)), 
+                                  CHR = rep(mtChr, length(mal))))
+    }
+    seqinfo(mvrl) <- seqinfo(mal)
     names(mvrl) <- names(mal)
-    return(mvrl) 
-
-  } else if (is(mal, "MAlignments")) { 
-
-    mtChr <- grep("(MT|chrM|NC_012920.1|rCRS)", seqlevelsInUse(mal), value=TRUE)
-    mvr <- callMTVars(BAM=fileName(mal),
-                      COV=genomeCoverage(mal),
-                      SIZE=readLength(mal),
-                      GENOME=unique(genome(mal)),
-                      CHR=mtChr)
+    return(mvrl)
+  }
+  else if (is(mal, "MAlignments")) {
+    mtChr <- grep("(MT|chrM|NC_012920.1|rCRS)", seqlevelsInUse(mal), 
+                  value = TRUE)
+    mvr <- callMTVars(BAM = fileName(mal), COV = genomeCoverage(mal), 
+                      SIZE = readLength(mal), GENOME = unique(genome(mal)), 
+                      CHR = mtChr)
     seqinfo(mvr) <- seqinfo(mal)
     return(mvr)
-
   }
-
 }
 
 
