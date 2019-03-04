@@ -94,7 +94,7 @@ MAlignmentsList <- function(...) {
   #add a filter step for personal use
   if (any(mdat$cache$genomeCoverage < 20)) {
     message("Filtering out samples with < 20x coverage after pre-processing...")
-    lcfilt <- mdat$cache[which(mdat$cache$genomeCoverage < 20),]
+    lcfilt <- mdat$cache[which(mdat$cache$genomeCoverage > 20),]
     mdat$cache <- mdat$cache[rownames(lcfilt),]
     gal <- gal[rownames(lcfilt),]
   }
