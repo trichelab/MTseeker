@@ -61,8 +61,8 @@ injectMTVariants <- function(mvr, gr=NULL, aa=TRUE, canon=.99, refX=1, altX=1) {
       gr[g]$varAA <- suppressWarnings(translate(gr[g]$varSeq, MT_CODE))
       # FIXME: probably different in terms of end codon from orig (esp for AAfs)
       #bizarre checks for if a bp change occurs in the first codon at bp 1
-      if (submvr$startCodon == 0) submvr$startCodon <- 1
-      if (submvr$endCodon == 0) submvr$endCodon <- 1
+      if (length(mvr) & submvr$startCodon == 0) submvr$startCodon <- 1
+      if (length(mvr) & submvr$endCodon == 0) submvr$endCodon <- 1
       orig <- extractAt(gr[g]$refAA, IRanges(submvr$startCodon,submvr$endCodon))
       altd <- extractAt(gr[g]$varAA, IRanges(submvr$startCodon,submvr$endCodon))
       gr[g]$consequences <- .flattenConsequences(orig, altd, submvr$startCodon)
