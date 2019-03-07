@@ -53,6 +53,11 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
   #preprocess the variants
   mvr <- .getCoding(mvr, ...)
   
+  if (length(mvr) == 0) {
+    message("No variants overlapping coding space")
+    return(mvr)
+  }
+  
   #add empty column for consequences
   mcols(mvr)$AAchange <- NA
   mcols(mvr)$impacted.gene <- NA
@@ -99,10 +104,13 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
   # get mtGenes if needed 
   if (is.null(gr)) gr <- genes(mvr)
   stopifnot(unique(genome(gr)) == "rCRS")
-  
+
   # subset the variants to those that overlap the target GRanges and are canon
-  mvr <- subset(locateVariants(subsetByOverlaps(mvr, gr, type="within")),
-                VAF >= canon & refDepth < refX & altDepth > altX )
+  
+  if (length(subsetByOverlaps(mvr, gr, type="within"))) {
+    mvr <- subset(locateVariants(subsetByOverlaps(mvr, gr, type="within")),
+                  VAF >= canon & refDepth < refX & altDepth > altX )
+  } else { mvr <- MVRanges(subsetByOverlaps(mvr, gr, type="within")) }
   return(mvr)
 }
 
