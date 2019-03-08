@@ -58,6 +58,7 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
     return(mvr)
   }
   
+  
   #add empty column for consequences
   mcols(mvr)$AAchange <- NA
   mcols(mvr)$impacted.gene <- NA
@@ -106,10 +107,19 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
   stopifnot(unique(genome(gr)) == "rCRS")
 
   # subset the variants to those that overlap the target GRanges and are canon
-  
   if (length(subsetByOverlaps(mvr, gr, type="within"))) {
     mvr <- subset(locateVariants(subsetByOverlaps(mvr, gr, type="within")),
                   VAF >= canon & refDepth < refX & altDepth > altX )
+    #check and clean anything that might cause injectMTVariants to blow up
+    mvr <-mvr[which(mvr$localStart > 0 & 
+                      mvr$localEnd > 0 & 
+                      mvr$startCodon > 0 & 
+                      mvr$endCodon > 0),]
+    #check again whether we've now cleared out all the variants
+    #return an empty ranges if we have
+    if (length(mvr) == 0) {
+      mvr <- MVRanges(subsetByOverlaps(mvr, gr, type="within"))
+    }
   } else { mvr <- MVRanges(subsetByOverlaps(mvr, gr, type="within")) }
   return(mvr)
 }
