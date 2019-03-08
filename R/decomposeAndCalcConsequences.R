@@ -64,15 +64,23 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
   mcols(mvr)$impacted.gene <- NA
   
   if (isDisjoint(mvr)) {
-    message("Found disjoint ranges in ", sampleNames(mvr)@values)
+    message("Found non-disjoint ranges in ", sampleNames(mvr)@values)
     message("Processing consequences...")
     if (AAchanges) {
       for (r in 1:length(mvr)) {
         con <- injectMTVariants(mvr[r])
         con.sub <- subset(con, mcols(con)$consequences != "")
         if (length(con.sub)) {
-          mcols(mvr)$AAchange[r] <- mcols(con.sub)$consequences
-          mcols(mvr)$impacted.gene[r] <- mcols(con.sub)$synonym
+          if (length(mcols(con.sub)$consequences) > 1) {
+            cols(mvr)$AAchange[r] <- paste(mcols(con.sub)$consequences, collapse = ",")
+          }
+          if (length(mcols(con.sub)$synonym) > 1) {
+            mcols(mvr)$impacted.gene[r] <- paste(mcols(con.sub)$synonym, collapse = ",")
+          }
+          else {
+            mcols(mvr)$AAchange[r] <- mcols(con.sub)$consequences
+            mcols(mvr)$impacted.gene[r] <- mcols(con.sub)$synonym 
+          }
         } else {
           mcols(mvr)$impacted.gene[r] <- .getGeneImpacted(mvr[r])
           }
@@ -85,8 +93,16 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
         con <- injectMTVariants(mvr[r])
         con.sub <- subset(con, mcols(con)$consequences != "")
         if (length(con.sub)) {
-          mcols(mvr)$AAchange[r] <- mcols(con.sub)$consequences
-          mcols(mvr)$impacted.gene[r] <- mcols(con.sub)$synonym
+          if (length(mcols(con.sub)$consequences) > 1) {
+            cols(mvr)$AAchange[r] <- paste(mcols(con.sub)$consequences, collapse = ",")
+          }
+          if (length(mcols(con.sub)$synonym) > 1) {
+            mcols(mvr)$impacted.gene[r] <- paste(mcols(con.sub)$synonym, collapse = ",")
+          }
+          else {
+            mcols(mvr)$AAchange[r] <- mcols(con.sub)$consequences
+            mcols(mvr)$impacted.gene[r] <- mcols(con.sub)$synonym 
+          }
         } else {
           mcols(mvr)$impacted.gene[r] <- .getGeneImpacted(mvr[r])
         }
@@ -137,6 +153,9 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
   stopifnot(unique(genome(gr)) == "rCRS")
   
   gene.name <- mcols(subsetByOverlaps(gr, mvr))$synonym
+  if (length(gene.name) > 1) {
+    gene.name <- paste(gene.name, collapse = ",")
+  }
   
   return(gene.name)
 }
