@@ -110,11 +110,14 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
   if (length(subsetByOverlaps(mvr, gr, type="within"))) {
     mvr <- subset(locateVariants(subsetByOverlaps(mvr, gr, type="within")),
                   VAF >= canon & refDepth < refX & altDepth > altX )
+    #drop anything that has an N base.. this also looks like a weird bug?
+    mvr <- mvr[!grepl("N", mvr@alt),]
     #check and clean anything that might cause injectMTVariants to blow up
-    mvr <-mvr[which(mvr$localStart > 0 & 
-                      mvr$localEnd > 0 & 
-                      mvr$startCodon > 0 & 
-                      mvr$endCodon > 0),]
+    #this isn't really desired behavior... especially if codon 1 has an AA change
+    # mvr <-mvr[which(mvr$localStart > 0 & 
+    #                   mvr$localEnd > 0 & 
+    #                   mvr$startCodon > 0 & 
+    #                   mvr$endCodon > 0),]
     #check again whether we've now cleared out all the variants
     #return an empty ranges if we have
     if (length(mvr) == 0) {
