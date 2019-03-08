@@ -72,7 +72,7 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
         con.sub <- subset(con, mcols(con)$consequences != "")
         if (length(con.sub)) {
           if (length(mcols(con.sub)$consequences) > 1) {
-            cols(mvr)$AAchange[r] <- paste(mcols(con.sub)$consequences, collapse = ",")
+            mcols(mvr)$AAchange[r] <- paste(mcols(con.sub)$consequences, collapse = ",")
           }
           if (length(mcols(con.sub)$synonym) > 1) {
             mcols(mvr)$impacted.gene[r] <- paste(mcols(con.sub)$synonym, collapse = ",")
@@ -94,7 +94,7 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
         con.sub <- subset(con, mcols(con)$consequences != "")
         if (length(con.sub)) {
           if (length(mcols(con.sub)$consequences) > 1) {
-            cols(mvr)$AAchange[r] <- paste(mcols(con.sub)$consequences, collapse = ",")
+            mcols(mvr)$AAchange[r] <- paste(mcols(con.sub)$consequences, collapse = ",")
           }
           if (length(mcols(con.sub)$synonym) > 1) {
             mcols(mvr)$impacted.gene[r] <- paste(mcols(con.sub)$synonym, collapse = ",")
