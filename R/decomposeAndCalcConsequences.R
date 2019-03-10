@@ -49,7 +49,7 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
     mvrl <- MVRangesList(lapply(mvr, decomposeAndCalcConsequences))
     return(mvrl)
     }
-  
+
   #preprocess the variants
   mvr <- .getCoding(mvr, ...)
   
@@ -57,7 +57,6 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
     message("No variants overlapping coding space")
     return(mvr)
   }
-  
   
   #add empty column for consequences
   mcols(mvr)$AAchange <- NA
@@ -128,12 +127,6 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
                   VAF >= canon & refDepth < refX & altDepth > altX )
     #drop anything that has an N base.. this also looks like a weird bug?
     mvr <- mvr[!grepl("N", mvr@alt),]
-    #check and clean anything that might cause injectMTVariants to blow up
-    #this isn't really desired behavior... especially if codon 1 has an AA change
-    # mvr <-mvr[which(mvr$localStart > 0 & 
-    #                   mvr$localEnd > 0 & 
-    #                   mvr$startCodon > 0 & 
-    #                   mvr$endCodon > 0),]
     #check again whether we've now cleared out all the variants
     #return an empty ranges if we have
     if (length(mvr) == 0) {

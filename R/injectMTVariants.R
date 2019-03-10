@@ -65,7 +65,6 @@ injectMTVariants <- function(mvr, gr=NULL, aa=TRUE, canon=.99, refX=1, altX=1) {
           submvr$localEnd <- submvr$localEnd + 1
         }
       }
-      
       subir <- IRanges(submvr$localStart, submvr$localEnd)
       gr[g]$varSeq <- replaceAt(gr[g]$refSeq, subir, alt(submvr))
       gr[g]$varAA <- suppressWarnings(translate(gr[g]$varSeq, MT_CODE))
