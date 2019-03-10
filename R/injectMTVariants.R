@@ -58,11 +58,14 @@ injectMTVariants <- function(mvr, gr=NULL, aa=TRUE, canon=.99, refX=1, altX=1) {
       submvr <- subsetByOverlaps(mvr, gr[g])
       #related to the off by 1 error below
       #this should catch indels in codon 1
-      #haven't yet encountered where both start and end are 0
       if (length(submvr)) {
         if (submvr$localStart == 0 & submvr$localEnd > 0) {
           submvr$localStart <- 1
           submvr$localEnd <- submvr$localEnd + 1
+        }
+        if (submvr$localStart == 0 & submvr$localEnd == 0) {
+          submvr$localStart <- 1
+          submvr$localEnd <- 1
         }
       }
       subir <- IRanges(submvr$localStart, submvr$localEnd)
