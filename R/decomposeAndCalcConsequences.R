@@ -123,8 +123,7 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
 
   # subset the variants to those that overlap the target GRanges and are canon
   if (length(subsetByOverlaps(mvr, gr, type="within"))) {
-    mvr <- subset(locateVariants(subsetByOverlaps(mvr, gr, type="within")),
-                  VAF >= canon & refDepth < refX & altDepth > altX )
+    mvr <- subsetByOverlaps(mvr, gr, type="within")
     #drop anything that has an N base.. this also looks like a weird bug?
     mvr <- mvr[!grepl("N", mvr@alt),]
     #check again whether we've now cleared out all the variants
