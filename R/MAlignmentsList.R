@@ -91,8 +91,16 @@ MAlignmentsList <- function(...) {
     gal <- gal[rownames(lcfilt),]
   }
   
+  #add a filter step for personal use
+  if (any(mdat$cache$genomeCoverage < 10)) {
+    message("Filtering out samples with < 10x coverage after pre-processing...")
+    lcfilt <- mdat$cache[which(mdat$cache$genomeCoverage >= 10),]
+    mdat$cache <- mdat$cache[rownames(lcfilt),]
+    gal <- gal[rownames(lcfilt),]
+  }
+  
   #check if there is anything left!
-  if (length(gal) == 0) stop("After filtering samples with 0 reads, there aren't any samples left. Exiting.")
+  if (length(gal) == 0) stop("After filtering samples, there aren't any samples left. Exiting.")
   
   # construct the object + its cache
   mal <- new("MAlignmentsList", gal)

@@ -229,7 +229,6 @@ setMethod("genome", signature(x="MVRanges"),
 setMethod("locateVariants", 
           signature(query="MVRanges","missing","missing"),
           function(query, filterLowQual=FALSE, ...) {
-
             if (filterLowQual == TRUE) query <- filt(query)
             if ("gene" %in% names(mcols(query)) &
                 "region" %in% names(mcols(query)) &
@@ -240,36 +239,75 @@ setMethod("locateVariants",
               return(query) # done 
             }
             if (length(query) == 0) return(NULL)
-
+            
             data("mtAnno.rCRS", package="MTseeker")
             metadata(query)$annotation <- mtAnno
-
+            
             ol <- findOverlaps(query, mtAnno, ignore.strand=TRUE)
             query$gene <- NA_character_
-            query[queryHits(ol)]$gene <- names(mtAnno)[subjectHits(ol)] 
+            query$overlapGene <- NA_character_
+            #check if we picked up a hit in overlapping genes
+            #NOTE: this ignores strand if overlapping hits based on above
+            if (length(names(mtAnno)[subjectHits(ol)]) > 1) {
+              #pick off the first gene name
+              query[queryHits(ol)]$gene <- names(mtAnno)[subjectHits(ol)][1]
+              query[queryHits(ol)]$overlapGene <- paste(names(mtAnno)[subjectHits(ol)],
+                                                        collapse = ",")
+            } else {
+              query[queryHits(ol)]$gene <- names(mtAnno)[subjectHits(ol)]
+            }
+            #query[queryHits(ol)]$gene <- names(mtAnno)[subjectHits(ol)] 
             query$region <- NA_character_
             query[queryHits(ol)]$region <- mtAnno[subjectHits(ol)]$region
-
+            
             ## Localized genic coordinates
             anno <- subset(mtAnno, region == "coding") 
             ol2 <- findOverlaps(query, anno, ignore.strand=TRUE)
             query$localStart <- NA_integer_
-            query[queryHits(ol2)]$localStart <- 
-              start(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])
+            #check if we picked up a hit in overlapping genes
+            if (length(start(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])) > 1) {
+              dnaStart <- 
+                start(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])
+              #be consistent with first start
+              #could add a check here to make sure we have the same gene
+              query[queryHits(ol2)]$localStart <- dnaStart[1]
+            } else {
+              query[queryHits(ol2)]$localStart <- 
+                start(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])
+            }
             query$localEnd <- NA_integer_
-            query[queryHits(ol2)]$localEnd <- 
-              end(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])
+            if (length(end(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])) > 1) {
+              dnaEnd <- 
+                end(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])
+              #be consistent with first end
+              #could add a check here to make sure we have the same gene
+              query[queryHits(ol2)]$localEnd <- dnaEnd[1]
+            } else {
+              query[queryHits(ol2)]$localEnd <- 
+                end(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])
+            }
             
             ## Affected reference codon(s)
             query$startCodon <- NA_integer_
-            query[queryHits(ol2)]$startCodon <- 
-              query[queryHits(ol2)]$localStart %/% 3
+            #check if we picked up overlapping genes
+            if (length(query[queryHits(ol2)]$localStart %/% 3) > 1) {
+              aaStart <- query[queryHits(ol2)]$localStart %/% 3
+              query[queryHits(ol2)]$startCodon <- aaStart[1]
+            } else {
+              query[queryHits(ol2)]$startCodon <- 
+                query[queryHits(ol2)]$localStart %/% 3
+            }
             query$endCodon <- NA_integer_
-            query[queryHits(ol2)]$endCodon <- 
-              query[queryHits(ol2)]$localEnd %/% 3
-
+            if (length(query[queryHits(ol2)]$localEnd %/% 3) > 1) {
+              aaEnd <- query[queryHits(ol2)]$localEnd %/% 3
+              query[queryHits(ol2)]$endCodon <- aaEnd[1]
+            } else {
+              query[queryHits(ol2)]$endCodon <- 
+                query[queryHits(ol2)]$localEnd %/% 3
+            }
+            
             return(query)
-
+            
           })
 
 
