@@ -81,7 +81,7 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup =
   #subset the existing mvr to get the ref seqs
   haplogroup_polys_to_mask.gr <- GRanges(seqnames = "chrM", ranges = haplogroup_polys_to_mask)
   haplogroup_polys_to_mask_ref <- subsetByOverlaps(mvr, haplogroup_polys_to_mask.gr)
-  haplogroup_polys_to_mask_ref <- ref(haplogroup_polys_to_mask_ref[match(alt(haplogroup_polys_to_mask_ref), haplogroup_polys_to_mask_alt),])
+  haplogroup_polys_to_mask_ref <- ref(haplogroup_polys_to_mask_ref[complete.cases(match(alt(haplogroup_polys_to_mask_ref), haplogroup_polys_to_mask_alt)),])
   snps_to_mask <- MVRanges(VRanges(seqnames = "chrM",
                                    ranges = haplogroup_polys_to_mask,
                                    ref = haplogroup_polys_to_mask_ref,
