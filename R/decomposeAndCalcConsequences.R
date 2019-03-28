@@ -41,12 +41,12 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
   
   #run in parallel
   if (is(mvr, "MVRangesList") & parallel) {
-    mvrl <- MVRangesList(mclapply(mvr, decomposeAndCalcConsequences))
+    mvrl <- MVRangesList(mclapply(mvr, decomposeAndCalcConsequences, ...))
     return(mvrl)
     }
   #run serially
   if (is(mvr, "MVRangesList")) {
-    mvrl <- MVRangesList(lapply(mvr, decomposeAndCalcConsequences))
+    mvrl <- MVRangesList(lapply(mvr, decomposeAndCalcConsequences, ...))
     return(mvrl)
     }
 
@@ -67,7 +67,7 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
     message("Processing consequences...")
     if (AAchanges) {
       for (r in 1:length(mvr)) {
-        con <- injectMTVariants(mvr[r])
+        con <- injectMTVariants(mvr[r], ...)
         con.sub <- subset(con, mcols(con)$consequences != "")
         if (length(con.sub)) {
           if (length(mcols(con.sub)$consequences) > 1) {
@@ -89,7 +89,7 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
     message("Processing consequences for ", sampleNames(mvr)@values)
     if (AAchanges) {
       for (r in 1:length(mvr)) {
-        con <- injectMTVariants(mvr[r])
+        con <- injectMTVariants(mvr[r], ...)
         con.sub <- subset(con, mcols(con)$consequences != "")
         if (length(con.sub)) {
           if (length(mcols(con.sub)$consequences) > 1) {
