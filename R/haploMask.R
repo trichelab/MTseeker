@@ -6,6 +6,7 @@
 #' @param fasta.output Path to a location to output the per-sample consensus variant fasta files
 #' @param mask Whether to mask out the haplogroup specific SNPs
 #' @param return.haplogroup Return the inferred haplogroup
+#' @param ties Whether to use depth or weight to resolve variants to pass for haplogroup inference
 #' @param override This will override the java check and proceed even if a java install isn't detected
 #'
 #' @return An MVRanges or MVRangesList of masked haplogroup-specific variants
@@ -18,7 +19,7 @@
 #' @examples
 #' 
 
-haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup = TRUE, override = FALSE) {
+haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup = TRUE, ties = c("depth", "weight"), override = FALSE) {
 
   #check if java is installed and stop if not
   java_install <- ifelse(length(system("java -version 2>&1", intern = TRUE)) == 3,
@@ -33,7 +34,65 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup =
     return(suppressWarnings(MVRangesList(mvrl)))
     }
   
+  #filter out non-PASSing variants
+  #this should be done by default and not up to the user...
+  mvr <- filterMTvars(mvr)
+  
   #collect variants for haplogroup inference with haplogrep
+  #this will fail with disjoint ranges
+  #to deal intelligently, we need a whitelist of ranges/variants to pick from
+  #otherwise we can just drop the range for haplogrep
+  if (!isDisjoint(mvr)) {
+    message("Found non-disjoint ranges...")
+    #pull in whitelist
+    data(haplomask_whitelist, package = "MTseeker")
+    #find and check the non-disjoint ranges against the whitelist
+    non_disjoint_ranges <- disjoin(mvr, with.revmap = TRUE)
+    #subset the ranges to only keep the overlapping ranges
+    disjoin_idxs <- lapply(mcols(non_disjoint_ranges)$revmap, function(x) {
+      if (length(x) > 1) return(x)
+      else {return(NA)}
+    })
+    disjoin_idxs <- unlist(disjoin_idxs[!is.na(disjoin_idxs)])
+    #gather the disjoint ranges to query against whitelist
+    disjoint_ranges <- mvr[disjoin_idxs,]
+    
+    message("Resolving variants for haplogroup inference...")
+    #remove non-disjoint ranges from original object
+    mvr <- mvr[-c(disjoin_idxs),]
+    nd_snvs <- disjoint_ranges[isSNV(disjoint_ranges),]
+    nd_ins <- disjoint_ranges[isInsertion(disjoint_ranges),]
+    nd_del <- disjoint_ranges[isDeletion(disjoint_ranges),]
+    #standard SNPs
+    if (length(nd_snvs)) {
+      ssnps <- subsetByOverlaps(nd_snvs, haplomask_whitelist$Standard_SNPs)
+      #check for duplicate ranges
+      if (length(ssnps)) {
+        browser()
+        ssnps <- .resolveTies(ssnps, ties = ties)
+        mvr <- sort(c(mvr, ssnps))
+      }
+    }
+    #insertions
+    #TODO: deal with .XC expansions to handle variable length insertions
+    if (length(nd_ins)) {
+      ins <- subsetByOverlaps(nd_ins, haplomask_whitelist$Insertions)
+      #check for duplicate ranges
+      if (length(ins)) {
+        ins <- .resolveTies(ins, ties = ties)
+        mvr <- sort(c(mvr, ins))
+      }
+    }
+    #deletions
+    if (length(nd_del)) {
+      del <- subsetByOverlaps(nd_del, haplomask_whitelist$Deletions)
+      #check for duplicate ranges
+      if (length(del)) {
+        del <- .resolveTies(del, ties = ties)
+        mvr <- sort(c(mvr, ins))
+      }
+    }
+  }
   consensus_fasta <- consensusString(mvr)
   
   #export the fasta files
@@ -96,4 +155,37 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup =
     }
   masked <- snps_to_mask
   return(masked)
+}
+
+#helper function to resolve ties
+.resolveTies <- function(mvr, ties = c("depth", "weight")) {
+  #resolve each tie
+  #currently depth is only supported
+  #set up a way to filter
+  metadata(mvr)$keep.filt <- rep(NA, length(mvr))
+  names(metadata(mvr)$keep) <- names(mvr)
+  for (var in 1:length(mvr)) {
+    if (ties == "depth") {
+      #get equal ranges
+      dup_ranges <- subsetByOverlaps(mvr,
+                                     mvr[var,],
+                                     type = "equal")
+      #sort by the higher depth ranges
+      if (length(unique(altDepth(dup_ranges))) > 1 & all(is.na(metadata(dup_ranges)$keep))) {
+        higher_depth_var <- sort(altDepth(dup_ranges), decreasing = TRUE)
+        metadata(mvr)$keep[dup_ranges@altDepth == higher_depth_var[1]] <- "keep"
+      }
+      
+      if (length(unique(altDepth(dup_ranges))) == 1) {
+        message("Couldn't resolve the tie based on depth.")
+        message("Returning the first variant in the tie.")
+        if (all(is.na(metadata(dup_ranges)$keep))) {
+          metadata(mvr)$keep[names(dup_ranges)[1]] <- "keep"
+        }
+      }
+    }
+  }
+  resolved <- mvr[!is.na(metadata(mvr)$keep),]
+  metadata(resolved) <- list()
+  return(resolved)
 }

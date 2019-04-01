@@ -5,7 +5,8 @@
 \title{Mask haplogroup specific variants using haplogrep}
 \usage{
 haploMask(mvr, fasta.output = NULL, mask = TRUE,
-  return.haplogroup = TRUE, override = FALSE)
+  return.haplogroup = TRUE, ties = c("depth", "weight"),
+  override = FALSE)
 }
 \arguments{
 \item{mvr}{Input should be either an MVRanges or MVRangesList}
@@ -15,6 +16,8 @@ haploMask(mvr, fasta.output = NULL, mask = TRUE,
 \item{mask}{Whether to mask out the haplogroup specific SNPs}
 
 \item{return.haplogroup}{Return the inferred haplogroup}
+
+\item{ties}{Whether to use depth or weight to resolve variants to pass for haplogroup inference}
 
 \item{override}{This will override the java check and proceed even if a java install isn't detected}
 }
