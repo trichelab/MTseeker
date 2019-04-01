@@ -37,7 +37,7 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup =
   #filter out non-PASSing variants
   #this should be done by default and not up to the user...
   mvr <- filterMTvars(mvr)
-  
+
   #collect variants for haplogroup inference with haplogrep
   #this will fail with disjoint ranges
   #to deal intelligently, we need a whitelist of ranges/variants to pick from
@@ -88,11 +88,11 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup =
       #check for duplicate ranges
       if (length(del)) {
         del <- .resolveTies(del, ties = ties)
-        mvr <- sort(c(mvr, ins))
+        mvr <- sort(c(mvr, del))
       }
     }
   }
-  consensus_fasta <- consensusString(mvr)
+  consensus_fasta <- .injectVariantsIntoReference(mvr)
   
   #export the fasta files
   if (is.null(fasta.output)) fasta.output <- getwd()
@@ -124,16 +124,24 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup =
     metadata(mvr)$haplogroup.quality <- haplogrep_input$Quality
     #return the found polymorphisms
     metadata(mvr)$haplogroup.found.SNPs <- haplogrep_input$Found_Polys
+    #return the input polymorphisms
+    metadata(mvr)$haplogroup.input.SNPs <- haplogrep_input$Input_Sample
   }
   
   #check if no variants were found to mask from haplogroups
   if (is.na(haplogrep_input$Found_Polys)) return(mvr)
   
   #mask off the haplogroup-specific polymorphisms
+  #match up input polymorphisms to found polymorphisms
   haplogroup_polys_to_mask <- strsplit(haplogrep_input$Found_Polys, split = " ")
+  haplogroup_input_polys <- strsplit(haplogrep_input$Input_Sample, split = " ")
+  #yuck... not sure why haplogrep does this... but this is critical
+  haplogroup_polys_to_mask <- list(haplogroup_polys_to_mask[[1]][haplogroup_polys_to_mask[[1]] %in% haplogroup_input_polys[[1]]])
   haplogroup_polys_to_mask <- IRanges(start = as.numeric(sapply(haplogroup_polys_to_mask, function(x) gsub("([0-9]+).*$", "\\1", x))),
                                       end = as.numeric(sapply(haplogroup_polys_to_mask, function(x) gsub("([0-9]+).*$", "\\1", x))))
   haplogroup_polys_to_mask_alt <- strsplit(haplogrep_input$Found_Polys, split = " ")
+  #yuck... not sure why haplogrep does this... but this is critical
+  haplogroup_polys_to_mask_alt <- list(haplogroup_polys_to_mask_alt[[1]][haplogroup_polys_to_mask_alt[[1]] %in% haplogroup_input_polys[[1]]])
   haplogroup_polys_to_mask_alt <- sapply(haplogroup_polys_to_mask_alt, function(x) gsub("^([0-9]+)", "", x))
   
   #subset the existing mvr to get the ref seqs
@@ -189,4 +197,16 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup =
   resolved <- mvr[!is.na(metadata(mvr)$keep),]
   metadata(resolved) <- list()
   return(resolved)
+}
+
+#bug in snpCall work around
+.injectVariantsIntoReference <- function(x, ...) {
+  supported <- c("rCRS")
+  actual <- unique(genome(x))
+  stopifnot(unique(genome(x)) %in% supported)
+  data(rCRSeq, package="MTseeker")
+  mvr <- x
+  alts <- DNAStringSet(replaceAt(rCRSeq[[1]], ranges(mvr), alt(mvr)))
+  names(alts) <- actual # genome 
+  return(alts)
 }
