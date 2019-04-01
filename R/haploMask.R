@@ -68,7 +68,6 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup =
       ssnps <- subsetByOverlaps(nd_snvs, haplomask_whitelist$Standard_SNPs)
       #check for duplicate ranges
       if (length(ssnps)) {
-        browser()
         ssnps <- .resolveTies(ssnps, ties = ties)
         mvr <- sort(c(mvr, ssnps))
       }
@@ -162,7 +161,7 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup =
   #resolve each tie
   #currently depth is only supported
   #set up a way to filter
-  metadata(mvr)$keep.filt <- rep(NA, length(mvr))
+  metadata(mvr)$keep <- rep(NA, length(mvr))
   names(metadata(mvr)$keep) <- names(mvr)
   for (var in 1:length(mvr)) {
     if (ties == "depth") {
@@ -179,7 +178,9 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup =
       if (length(unique(altDepth(dup_ranges))) == 1) {
         message("Couldn't resolve the tie based on depth.")
         message("Returning the first variant in the tie.")
-        if (all(is.na(metadata(dup_ranges)$keep))) {
+        #this is a catch for iterating through the ranges to decompose them
+        #ensures we don't set "keep" to both duplicate ranges and end up with non-disjoint ranges again...
+        if (all(is.na(metadata(dup_ranges)$keep[names(dup_ranges)]))) {
           metadata(mvr)$keep[names(dup_ranges)[1]] <- "keep"
         }
       }
