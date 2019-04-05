@@ -5,7 +5,7 @@
 \title{Convert a VCF to an MVRangesList object}
 \usage{
 vcf2mvrl(vcf_filename, bam_filename = NULL, gzip = TRUE,
-  verbose = TRUE)
+  biscuit = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{vcf_filename}{A filename/path to the corresponding VCF}
@@ -13,6 +13,8 @@ vcf2mvrl(vcf_filename, bam_filename = NULL, gzip = TRUE,
 \item{bam_filename}{A filename/path to the corresponding BAM}
 
 \item{gzip}{Is the input gzipped?}
+
+\item{biscuit}{Is the input VCF from biscuit?}
 
 \item{verbose}{logical, if set to TRUE, print all messages during progressing.}
 }

@@ -4,12 +4,14 @@
 \alias{importVCF}
 \title{Import a VCF directly into MTseeker}
 \usage{
-importVCF(x, gzip = TRUE, verbose = TRUE)
+importVCF(x, gzip = TRUE, biscuit = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{x}{character, list or dataframe for file name of VCF(and BAM)}
 
 \item{gzip}{Is the input gzipped?}
+
+\item{biscuit}{Is the input VCF from biscuit?}
 
 \item{verbose}{logical, if set to TRUE, print all messages during progressing.}
 }
