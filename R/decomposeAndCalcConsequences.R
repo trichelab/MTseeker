@@ -62,7 +62,7 @@ decomposeAndCalcConsequences <- function(mvr, AAchanges=TRUE, parallel=FALSE, ..
   mcols(mvr)$AAchange <- NA
   mcols(mvr)$impacted.gene <- NA
   
-  if (isDisjoint(mvr)) {
+  if (!isDisjoint(mvr)) {
     message("Found non-disjoint ranges in ", sampleNames(mvr)@values)
     message("Processing consequences...")
     if (AAchanges) {

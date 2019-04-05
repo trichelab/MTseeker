@@ -91,6 +91,20 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup =
         mvr <- sort(c(mvr, del))
       }
     }
+    #one last check for disjoint ranges
+    #this can in fact arise if we have overlapping indels with high heteroplasmy
+    #specifically this shows up in bulk samples
+    #non-ideal way to deal is to just disjoin and warn the user
+    #that some haplogroup variants still exist in the sample
+    if (!isDisjoint(mvr)) {
+      message("WARNING! WARNING!")
+      message("Non-disjoint ranges still persist")
+      message("Some haplogroup variants will not be masked")
+      message("Likely due to high heteroplasmy in the sample")
+      message("Disjoining and proceeding with arbitrary, variants to ensure it is disjoint")
+      resolved.disjoin <- disjoin(mvr)
+      mvr <- subsetByOverlaps(mvr, resolved.disjoin, type = "equal")
+    }
   }
   consensus_fasta <- .injectVariantsIntoReference(mvr)
   
@@ -196,6 +210,20 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup =
   }
   resolved <- mvr[!is.na(metadata(mvr)$keep),]
   metadata(resolved) <- list()
+  #one last check for disjoint ranges
+  #this can in fact arise if we have overlapping indels with high heteroplasmy
+  #specifically this shows up in bulk samples
+  #non-ideal way to deal is to just disjoin and warn the user
+  #that some haplogroup variants still exist in the sample
+  if (!isDisjoint(resolved)) {
+    message("WARNING! WARNING!")
+    message("Non-disjoint ranges still persist")
+    message("Some haplogroup variants will not be masked")
+    message("Likely due to high heteroplasmy in the sample")
+    message("Disjoining and proceeding with arbitrary, variants to ensure it is disjoint")
+    resolved.disjoin <- disjoin(resolved)
+    resolved <- subsetByOverlaps(resolved, resolved.disjoin, type = "equal")
+  }
   return(resolved)
 }
 
