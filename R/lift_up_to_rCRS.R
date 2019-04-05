@@ -1,13 +1,20 @@
-#' @import GenomicRanges
+#' Lift hg19 chrM to rCRS
+#' 
+#' @name lift_up_to_rCRS
 #' 
 #' @param ranges_obj Either GRanges or MVRanges
 #' @param verbose    logical, if set to TRUE, print all messages during progressing.
 #' @return           Either Granges or MVRanges object
 #'
+#' @import GenomicRanges
 #'
 #' referred to http://haplogrep.uibk.ac.at/blog/rcrs-vs-rsrs-vs-hg19/
 #' 
 #' @export
+#' 
+#' @examples 
+#' 
+
 lift_up_to_rCRS <- function(ranges_obj, verbose = T) {
   if(!(class(ranges_obj) == "GRanges" || class(ranges_obj) == "MVRanges")) {
     stop("Either GRanges or MVRanges must be provided as input")
