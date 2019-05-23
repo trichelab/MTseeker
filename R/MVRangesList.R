@@ -305,7 +305,7 @@ setMethod("consensusString", signature(x="MVRangesList"),
 # helper fn
 .extractBamFiles <- function(...) { 
   if ("bam" %in% .extractCommonElts(...)) {
-    return(DataFrame(lapply(lapply(..., metadata), `[[`, "bam")))
+    return(sapply(lapply(..., metadata), `[[`, "bam"))
   } else { 
     return(NULL)
   }
