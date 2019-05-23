@@ -4,7 +4,7 @@
 \alias{filterMTvars}
 \title{sanitize PASSing mitochondrial variant calls to a moderate degree}
 \usage{
-filterMTvars(vars, fp = TRUE, NuMT = 0.03, covg = 20)
+filterMTvars(vars, fp = TRUE, NuMT = 0.03, covg = 20, depth = 2)
 }
 \arguments{
 \item{vars}{an MVRanges or MVRangesList (will be unlisted and relisted)}
@@ -14,6 +14,8 @@ filterMTvars(vars, fp = TRUE, NuMT = 0.03, covg = 20)
 \item{NuMT}{variants with VAF < [this number] will be presumed NuMTs (0.03)}
 
 \item{covg}{minimum median read coverage across chrM to be considered (20)}
+
+\item{depth}{minimum altDepth for a variant to be retained (2)}
 }
 \value{
 a filtered set of variants

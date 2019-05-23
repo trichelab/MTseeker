@@ -38,22 +38,9 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, ref=c("rCRS","GRCh37","GRCh38","hg
 
   if (is.null(sbp)) sbp <- scanMT(bam) 
   if (is.null(pup)) pup <- PileupParam(distinguish_strands=FALSE) 
+  refSeqLengths <- .refSeqLengths() # synonyms 
+  ref <- .getRefSyn(match.arg(ref)) # matching 
 
-  # turn this into a fn
-  refSeqLengths <- c() 
-  # data(mtRefs, package="MTseeker") # both
-  data(rCRSeq, package="MTseeker") # human
-  data(NC_005089seq, package="MTseeker") # mouse
-  refSeqLengths["rCRS"] <- width(rCRSeq)
-  refSeqLengths["GRCh38"] <- width(rCRSeq)
-  refSeqLengths["hg38"] <- width(rCRSeq)
-  refSeqLengths["GRCh37"] <- width(rCRSeq)
-  refSeqLengths["NC_005089"] <- width(NC_005089seq)
-  refSeqLengths["GRCm38"] <- width(NC_005089seq)
-  refSeqLengths["mm10"] <- width(NC_005089seq) 
-  refSeqLengths["C57BL/6J"] <- width(NC_005089seq)
-
-  ref <- match.arg(ref)
   # scant support for other mitogenomes
   if (!ref %in% names(refSeqLengths)) {
     stop("Only the ", paste(names(refSeqLengths), collapse=" and "),
@@ -64,12 +51,8 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, ref=c("rCRS","GRCh37","GRCh38","hg
     pu <- pileup(file=bam, scanBamParam=sbp, pileupParam=pup, ...)
   }
 
-  # simplify references down to the sane "mouse" or "human" mitogenomes 
-  if (ref %in% c("C57BL/6J", "NC_005089", "GRCm38","mm10")) ref <- "mmMT"
-  if (ref %in% c("hg38", "GRCh37", "GRCh38")) ref <- "rCRS" 
-
-  refs <- DNAStringSet(c(rCRS=rCRSeq[['chrM']], 
-                         NC_005089=NC_005089seq[['chrM']]))
+  # may be handy for editing 
+  refSeqDNA <- .getRefSeq(ref)
 
   # will need to handle '-' and '+' separately 
   indels <- subset(pu, nucleotide %in% c('-', '+'))
@@ -78,13 +61,12 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, ref=c("rCRS","GRCh37","GRCh38","hg
   }
   # data(fpFilter_Triska, package="MTseeker") # for when they are... 
  
-  # process results into VRanges fodder
-  # may belong in a separate function...
+  # this may belong in a separate helper function...
   pu <- subset(pu, nucleotide %in% c('A','C','G','T'))
   pu$which_label <- NULL # confusing here 
-  refseq <- factor(strsplit(as.character(rCRSeq[['chrM']]), '')[[1]],
-                   levels=levels(pu$nucleotide))
-  pu$ref <- refseq[pu$pos]
+  pu$ref <-  factor(strsplit(as.character(.getRefSeq(ref)), '')[[1]],
+                    levels=levels(pu$nucleotide))[pu$pos]
+
   pu$alt <- pu$nucleotide 
   pu$totalDepth <- .byPos(pu, "count")
   is.na(pu$alt) <- (pu$nucleotide == pu$ref)
@@ -95,14 +77,17 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, ref=c("rCRS","GRCh37","GRCh38","hg
   columns <- c("seqnames","pos","ref","alt","totalDepth","refDepth","altDepth")
   gr <- keepSeqlevels(.puToGR(subset(pu, isAlt|alleles==1)[,columns]),
                       unique(pu$seqnames))
-  seqinfo(gr) <- Seqinfo("chrM", length(refs[[ref]]), 
+  seqinfo(gr) <- Seqinfo("chrM", length(.getRefSeq(ref)), 
                          isCircular=TRUE, genome=ref)
   vr <- makeVRangesFromGRanges(.puToGR(subset(pu, isAlt|alleles==1)[,columns]))
   vr <- keepSeqlevels(vr, "chrM") 
   seqinfo(vr) <- seqinfo(gr)
   mvr <- MVRanges(vr, coverage=median(rowsum(pu$count, pu$pos)))
   sampleNames(mvr) <- base::sub(".bam", "", basename(bam))
-  covg <- rep(0, length(refs[[ref]]))
+  names(mvr) <- MTHGVS(mvr) # HGVS naming conventions
+  mvr$VAF <- altDepth(mvr)/totalDepth(mvr)
+  metadata(mvr)$refseq <- .getRefSeq(ref)
+  covg <- rep(0, length(metadata(mvr)$refseq))
   covered <- rowsum(pu$count, pu$pos)
   covg[as.numeric(rownames(covered))] <- covered 
   metadata(mvr)$coverageRle <- Rle(covg)
@@ -126,3 +111,43 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, ref=c("rCRS","GRCh37","GRCh38","hg
                            keep.extra.columns=TRUE)
 }
 
+
+# helper fn
+.refSeqLengths <- function() { 
+  
+  refSeqLengths <- c() 
+  # data(mtRefs, package="MTseeker") # both
+  refSeqLengths["rCRS"] <- width(rCRSeq)
+  refSeqLengths["GRCh38"] <- width(rCRSeq)
+  refSeqLengths["hg38"] <- width(rCRSeq)
+  refSeqLengths["GRCh37"] <- width(rCRSeq)
+  refSeqLengths["NC_005089"] <- width(NC_005089seq)
+  refSeqLengths["GRCm38"] <- width(NC_005089seq)
+  refSeqLengths["mm10"] <- width(NC_005089seq) 
+  refSeqLengths["C57BL/6J"] <- width(NC_005089seq)
+  return(refSeqLengths)
+
+}
+
+
+# helper fn
+.getRefSyn <- function(ref) {
+  
+  # simplify references down to the supported "mouse" or "human" mitogenomes 
+  if (ref %in% c("C57BL/6J", "NC_005089", "GRCm38","mm10")) ref <- "NC_005089"
+  if (ref %in% c("hg38", "GRCh37", "GRCh38")) ref <- "rCRS" 
+  return(ref)
+  
+}
+
+
+# helper fn
+.getRefSeq <- function(ref) { 
+
+  data(rCRSeq, package="MTseeker") # human
+  data(NC_005089seq, package="MTseeker") # mouse
+  refs <- DNAStringSet(c(rCRS=rCRSeq[['chrM']],
+                         NC_005089=NC_005089seq[['chrM']]))
+  return(refs[.getRefSyn(ref)])
+
+}
