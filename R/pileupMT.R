@@ -87,6 +87,7 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, ref=c("rCRS","GRCh37","GRCh38","hg
                                 base::sub(".bam", "", 
                                           basename(bam)))
   names(mvr)[which(mvr$ref != mvr$alt)] <- MTHGVS(subset(mvr, ref != alt)) 
+  altDepth(mvr)[is.na(altDepth(mvr))] <- 0
   mvr$VAF <- altDepth(mvr)/totalDepth(mvr)
   metadata(mvr)$refseq <- .getRefSeq(ref)
   covg <- rep(0, length(metadata(mvr)$refseq))

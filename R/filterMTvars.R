@@ -26,20 +26,14 @@ filterMTvars <- function(vars, fp=TRUE, NuMT=0.03, covg=20, depth=2) {
   } 
 
   if (is(vars, "MVRanges")) {
-    if (!"VAF" %in% names(mcols(vars))) {
-      # add VAF column for NuMT filtering
-      vars$VAF <- altDepth(vars) / totalDepth(vars)
-    }
-    if (!"PASS" %in% names(mcols(vars))) {
-      # mark all vars as PASS if unflagged (!)
-      # currently, this happens with pileupMT()
-      vars$PASS <- TRUE # this is sketchy AF
-    }
-    subset(subsetByOverlaps(vars, fpFilter), 
-           VAF >= NuMT & PASS & altDepth(vars) >= depth)
+    vars <- subset(vars, !is.na(altDepth(vars)) & altDepth(vars) >= depth)
+    vars$VAF <- altDepth(vars) / totalDepth(vars)
+    vars <- subset(subsetByOverlaps(vars, fpFilter), VAF >= NuMT)
+    if (!"PASS" %in% names(mcols(vars))) vars <- subset(vars, PASS)
+    return(vars)
   } else if (is(vars, "MVRangesList")) {
     MVRangesList(lapply(vars[genomeCoverage(vars)>=covg], 
-                        filterMTvars, fp=fp, NuMT=NuMT))
+                        filterMTvars, fp=fp, NuMT=NuMT, depth=depth))
   } else { 
     stop("This function is only meant for MVRanges and MVRangesList objects.")
   }
