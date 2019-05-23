@@ -77,13 +77,15 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, ref=c("rCRS","GRCh37","GRCh38","hg
   columns <- c("seqnames","pos","ref","alt","totalDepth","refDepth","altDepth")
   gr <- keepSeqlevels(.puToGR(subset(pu, isAlt|alleles==1)[,columns]),
                       unique(pu$seqnames))
-  seqinfo(gr) <- Seqinfo("chrM", length(.getRefSeq(ref)), 
+  seqinfo(gr) <- Seqinfo("chrM", width(.getRefSeq(ref)), 
                          isCircular=TRUE, genome=ref)
   vr <- makeVRangesFromGRanges(.puToGR(subset(pu, isAlt|alleles==1)[,columns]))
   vr <- keepSeqlevels(vr, "chrM") 
   seqinfo(vr) <- seqinfo(gr)
   mvr <- MVRanges(vr, coverage=median(rowsum(pu$count, pu$pos)))
-  sampleNames(mvr) <- base::sub(".bam", "", basename(bam))
+  sampleNames(mvr) <- base::sub(paste0(".", ref), "", 
+                                base::sub(".bam", "", 
+                                          basename(bam)))
   names(mvr) <- MTHGVS(mvr) # HGVS naming conventions
   mvr$VAF <- altDepth(mvr)/totalDepth(mvr)
   metadata(mvr)$refseq <- .getRefSeq(ref)
@@ -91,9 +93,10 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, ref=c("rCRS","GRCh37","GRCh38","hg
   covered <- rowsum(pu$count, pu$pos)
   covg[as.numeric(rownames(covered))] <- covered 
   metadata(mvr)$coverageRle <- Rle(covg)
-  metadata(mvr)$bam <- bam
+  metadata(mvr)$bam <- basename(bam)
   metadata(mvr)$sbp <- sbp
   metadata(mvr)$pup <- pup
+  mvr$bam <- basename(bam)
   genome(mvr) <- ref
   return(mvr)
 }
