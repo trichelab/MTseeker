@@ -29,7 +29,7 @@ filterMTvars <- function(vars, fp=TRUE, NuMT=0.03, covg=20, depth=2) {
     vars <- subset(vars, !is.na(altDepth(vars)) & altDepth(vars) >= depth)
     vars$VAF <- altDepth(vars) / totalDepth(vars)
     vars <- subset(subsetByOverlaps(vars, fpFilter), VAF >= NuMT)
-    if (!"PASS" %in% names(mcols(vars))) vars <- subset(vars, PASS)
+    if ("PASS" %in% names(mcols(vars))) vars <- subset(vars, PASS)
     return(vars)
   } else if (is(vars, "MVRangesList")) {
     MVRangesList(lapply(vars[genomeCoverage(vars)>=covg], 
