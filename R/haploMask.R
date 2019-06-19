@@ -8,6 +8,7 @@
 #' @param return.haplogroup Return the inferred haplogroup
 #' @param ties Whether to use depth or weight to resolve variants to pass for haplogroup inference
 #' @param override This will override the java check and proceed even if a java install isn't detected
+#' @param java.path This is an option to specify a path to a java install (e.g. /usr/bin/java)
 #'
 #' @return An MVRanges or MVRangesList of masked haplogroup-specific variants
 #' 
@@ -19,12 +20,19 @@
 #' @examples
 #' 
 
-haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup = TRUE, ties = c("depth", "weight"), override = FALSE) {
+haploMask <- function(mvr, fasta.output = NULL, mask = TRUE,
+                      return.haplogroup = TRUE, ties = c("depth", "weight"),
+                      override = FALSE, java.path = NULL) {
 
   #check if java is installed and stop if not
+  if (is.null(java.path)) {
   java_install <- ifelse(length(system("java -version 2>&1", intern = TRUE)) == 3,
                          TRUE,
                          FALSE)
+  } else {
+    #user has provided a path to java install
+    override <- TRUE
+  }
   if (isFALSE(java_install) & isFALSE(override)) {
     stop("Couldn't find java. Make sure running 'java -version' doesn't return an error. Stopping.")
   }
@@ -118,12 +126,21 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE, return.haplogroup =
   #run haplogrep with the extended report to return SNPs found to call haplogroup
   haplogrep_output_loc <- paste0(fasta.output, "/", unique(sampleNames(mvr)), ".consensus.haplogrep.txt")
   message("Running haplogrep on ", unique(sampleNames(mvr)))
-  haplogrep_output <- system(paste0("java -jar ",
+  if (is.null(java.path)) {
+    haplogrep_output <- system(paste0("java -jar ",
                                     system.file("extdata", "haplogrep-2.1.20.jar", package = "MTseeker"),
                                     " --in ", fasta_output_loc,
                                     " --format fasta",
                                     " --out ", haplogrep_output_loc,
                                     " --extend-report"))
+  } else {
+    haplogrep_output <- system(paste0(java.path, " -jar ",
+                                      system.file("extdata", "haplogrep-2.1.20.jar", package = "MTseeker"),
+                                      " --in ", fasta_output_loc,
+                                      " --format fasta",
+                                      " --out ", haplogrep_output_loc,
+                                      " --extend-report"))
+    }
   
   #read the output in and parse to mask
   message("Parsing haplogrep output for ", unique(sampleNames(mvr)))
