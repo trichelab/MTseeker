@@ -1,12 +1,24 @@
+#' Import a VCF directly into MTseeker
+#'
+#' @name importVCF
+#' 
+#' @param x   character, list or dataframe for file name of VCF(and BAM)
+#' @param gzip   Is the input gzipped?
+#' @param biscuit   Is the input VCF from biscuit?
+#' @param verbose   logical, if set to TRUE, print all messages during progressing.
+#' 
 #' @import VariantTools
 #' @import VariantAnnotation
 #' 
-#' @param x         character, list or dataframe for file name of VCF(and BAM)
-#' @param verbose   logical, if set to TRUE, print all messages during progressing.
-#' @return          an MVRangesList
+#' @return an MVRangesList
 #'
 #' @export
-importVCF <- function(x, verbose = T) {
+#' 
+#' @examples 
+#' 
+#' 
+
+importVCF <- function(x, gzip = TRUE, biscuit = FALSE, verbose = TRUE) {
   bam_files <- NULL
   if(is(x, 'character') || is(x, 'list')) {
     vcf_files <- x
@@ -36,6 +48,8 @@ importVCF <- function(x, verbose = T) {
     
     t_mvrl <- vcf2mvrl(vcf_filename = vcf_file,
                        bam_filename = bam_file,
+                       gzip = gzip,
+                       biscuit = biscuit,
                        verbose = verbose)
     
     if(is.null(mvrl)) { mvrl <- t_mvrl }
@@ -45,10 +59,38 @@ importVCF <- function(x, verbose = T) {
   return(mvrl)
 }
 
-vcf2mvrl <- function(vcf_filename, bam_filename = NULL, verbose = T) {
+#' Convert a VCF to an MVRangesList object
+#'
+#' @name vcf2mvrl
+#' 
+#' @param vcf_filename   A filename/path to the corresponding VCF
+#' @param bam_filename   A filename/path to the corresponding BAM
+#' @param gzip    Is the input gzipped?
+#' @param biscuit    Is the input VCF from biscuit?
+#' @param verbose   logical, if set to TRUE, print all messages during progressing.
+#' 
+#' @import VariantTools
+#' @import VariantAnnotation
+#' 
+#' @return an MVRangesList
+#'
+#' @export
+#' 
+#' @examples 
+#' 
+#' 
+
+vcf2mvrl <- function(vcf_filename, bam_filename = NULL, gzip = TRUE,
+                     biscuit = FALSE, verbose = TRUE) {
+  
   if(verbose) message("Loading data from ", vcf_filename)
   
-  chr <- as.character(read.table(vcf_filename, nrows = 1, sep=NULL, header = F)$V1)
+  #check if the file is gzip'd
+  if (gzip) {
+    chr <- as.character(read.table(gzfile(vcf_filename), nrows = 1, sep=NULL, header = FALSE)$V1)
+  } else {
+    chr <- as.character(read.table(vcf_filename, nrows = 1, sep=NULL, header = FALSE)$V1)
+    }
   
   if(startsWith(chr, 'chr')) {
     mt_chr <- 'chrM'
@@ -65,7 +107,11 @@ vcf2mvrl <- function(vcf_filename, bam_filename = NULL, verbose = T) {
   if(verbose) message("Found ", ncol(collVcfs), " sample(s)")
   for(i in 1:ncol(collVcfs)) {
     collVcf <- collVcfs[, i]
-      
+    if (biscuit) {
+      #filter out the CpG, CH, CHH, CHG methylation variant calls
+      if (!("CX" %in% colnames(info(collVcf)))) stop("This doesn't look like a VCF from biscuit. Stopping.")
+      collVcf <- collVcf[is.na(info(collVcf)$CX),]
+    }
     if(all(c("DP", "AC") %in% names(geno(collVcf)))){
       dp <- unname(geno(collVcf)$DP[, 1])
       alt_c <- geno(collVcf)$AC
@@ -97,7 +143,7 @@ vcf2mvrl <- function(vcf_filename, bam_filename = NULL, verbose = T) {
     vr$PASS <- vr$FILTER == "PASS"
       
     if(ncol(collVcfs) == 1 && !is.null(bam_filename)) {
-      cov <- calc_cov(ranges_obj = vr, bam_file = bam_filename, chr = mt_chr, verbose = verbose)
+      cov <- .calc_cov(ranges_obj = vr, bam_file = bam_filename, chr = mt_chr, verbose = verbose)
     } else {
       cov <- 1
     }
@@ -119,7 +165,8 @@ vcf2mvrl <- function(vcf_filename, bam_filename = NULL, verbose = T) {
   return(mvrl)
 }
 
-calc_cov <- function(ranges_obj, bam_file, chr, verbose=T) {
+#helper function to calculate coverage
+.calc_cov <- function(ranges_obj, bam_file, chr, verbose=TRUE) {
   if(verbose) message("Calculating coverage for region of chromosome M .. ")
   
   flags <- scanBamFlag(isPaired=TRUE, 
