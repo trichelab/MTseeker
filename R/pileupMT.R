@@ -120,6 +120,7 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, ref=c("rCRS","GRCh37","GRCh38","hg
 .refSeqLengths <- function() { 
   
   refSeqLengths <- c() 
+  data(rCRSeq, package="MTseeker") # human
   # data(mtRefs, package="MTseeker") # both
   refSeqLengths["rCRS"] <- width(rCRSeq)
   refSeqLengths["GRCh38"] <- width(rCRSeq)
