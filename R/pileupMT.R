@@ -57,7 +57,16 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, ref=c("rCRS","GRCh37","GRCh38","hg
   # will need to handle '-' and '+' separately 
   indels <- subset(pu, nucleotide %in% c('-', '+'))
   if (nrow(indels) > 0) {
+    # for obtaining the supporting reads and CIGARs from the BAM: 
+    indels$start <- indels$pos
+    indels$end <- indels$pos 
+    indelSBP <- sbp
+    bamWhich(indelSBP) <- as(indels, "GRanges")
+    indelReads <- readGAlignments(file=bam, param=indelSBP)
+    # cigar(indelReads)
+    # 
     message("Warning: indels are not currently supported in pileupMT()")
+    message("(However, if you debug() this function, indelReads will help.")
   }
   # data(fpFilter_Triska, package="MTseeker") # for when they are... 
  
