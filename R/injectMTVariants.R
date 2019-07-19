@@ -56,10 +56,34 @@ injectMTVariants <- function(mvr, gr=NULL, aa=TRUE, canon=.99, refX=1, altX=1) {
     # this is a bit tricky 
     for (g in names(gr)) {
       submvr <- subsetByOverlaps(mvr, gr[g])
+      #related to the off by 1 error below
+      #this should catch indels in codon 1
+      if (length(submvr)) {
+        if (submvr$localStart == 0 & submvr$localEnd > 0) {
+          submvr$localStart <- 1
+          submvr$localEnd <- submvr$localEnd + 1
+        }
+        if (submvr$localStart == 0 & submvr$localEnd == 0) {
+          submvr$localStart <- 1
+          submvr$localEnd <- 1
+        }
+      }
       subir <- IRanges(submvr$localStart, submvr$localEnd)
       gr[g]$varSeq <- replaceAt(gr[g]$refSeq, subir, alt(submvr))
       gr[g]$varAA <- suppressWarnings(translate(gr[g]$varSeq, MT_CODE))
       # FIXME: probably different in terms of end codon from orig (esp for AAfs)
+      #bizarre checks for if a bp change occurs in the first codon at bp 1
+      #this actually looks like an off by 1 error when the 1st codon is impacted
+      if (length(submvr)) {
+        if (submvr$startCodon == 0) {
+          submvr$startCodon <- 1
+        }
+      }
+      if (length(submvr)) {
+        if (submvr$endCodon == 0) {
+          submvr$endCodon <- 1
+        }
+      }
       orig <- extractAt(gr[g]$refAA, IRanges(submvr$startCodon,submvr$endCodon))
       altd <- extractAt(gr[g]$varAA, IRanges(submvr$startCodon,submvr$endCodon))
       gr[g]$consequences <- .flattenConsequences(orig, altd, submvr$startCodon)
