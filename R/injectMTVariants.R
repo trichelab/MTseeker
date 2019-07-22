@@ -131,14 +131,14 @@ injectMTVariants <- function(mvr, gr=NULL, aa=TRUE, canon=.99, refX=1, altX=1) {
             if ( (width(gr[g]$refSeq) %% 3 == 0) && (width(gr[g]$refSeq) / 3 == width(gr[g]$refAA)) ){
               
               submvr$startCodon <- floor(submvr$localStart / 3)
-              submvr$endCodon <- floor(submvr$localEnd / 3)
+              submvr$endCodon <- ceiling(submvr$localEnd / 3)
             }
             
             else {
               message("Need new method to determine start and end codons")
               warning("Setting codons potentially incorrectly for ", names(submvr))
               submvr$startCodon <- floor(submvr$localStart / 3)
-              submvr$endCodon <- floor(submvr$localEnd / 3)
+              submvr$endCodon <- ceiling(submvr$localEnd / 3)
             }
             
             
