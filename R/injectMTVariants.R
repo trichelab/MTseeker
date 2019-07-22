@@ -22,18 +22,18 @@
 #'
 #' @export
 injectMTVariants <- function(mvr, gr=NULL, aa=TRUE, canon=.99, refX=1, altX=1) {
-
+  
   # rCRS only, for the time being 
   stopifnot(unique(genome(mvr)) == "rCRS")
-
+  
   # get mtGenes if needed 
   if (is.null(gr)) gr <- genes(mvr)
   stopifnot(unique(genome(gr)) == "rCRS")
-
+  
   # subset the variants to those that overlap the target GRanges and are canon
   mvr <- subset(locateVariants(subsetByOverlaps(mvr, gr, type="within")),
                 VAF >= canon & refDepth < refX & altDepth > altX )
-
+  
   # mitochondrial genomic sequence
   # FIXME: may not want to do this
   # FIXME: else may want to filter
@@ -42,9 +42,9 @@ injectMTVariants <- function(mvr, gr=NULL, aa=TRUE, canon=.99, refX=1, altX=1) {
   altSeq <- DNAStringSet(replaceAt(rCRSeq[[1]], ranges(mvr), alt(mvr)))
   names(altSeq) <- names(rCRSeq)
   gr$varDNA <- getSeq(altSeq, gr)
-
+  
   if (aa) {
-
+    
     # use MT_CODE to translate results
     MT_CODE <- getGeneticCode("SGC1")
     gr$refSeq <- getSeq(rCRSeq, gr)
@@ -52,10 +52,101 @@ injectMTVariants <- function(mvr, gr=NULL, aa=TRUE, canon=.99, refX=1, altX=1) {
     gr$refAA <- suppressWarnings(translate(gr$refSeq, MT_CODE))
     gr$varAA <- gr$refAA
     gr$consequences <- NA_character_
-
+    
     # this is a bit tricky 
     for (g in names(gr)) {
+      
       submvr <- subsetByOverlaps(mvr, gr[g])
+      
+      if (length(submvr)) {
+        
+        ### FIX: Not sure what the actual codon end should be for the second gene
+        ### FIX: For now this only handles deletions
+        
+        # Check to see if the variant is in an overlapping gene
+        # Assumes the entire second gene will not be deleted
+        if (!is.na(submvr$overlapGene)) {
+          
+          # Workaround 
+          # Not fixed for insertions
+          if (grepl("ins", names(submvr))) {
+            
+            orig <- extractAt(gr[g]$refAA, IRanges(submvr$startCodon,submvr$startCodon))
+            altd <- extractAt(gr[g]$varAA, IRanges(submvr$startCodon,submvr$startCodon))
+            gr[g]$consequences <- "overlap"
+            warning("Overlapping genes with insertion in: ", print(names(submvr)))
+            next
+          }
+          
+          # Names of overlapping gene
+          affectedGenes <- unlist(strsplit(mcols(submvr)$overlapGene, split=","))
+          
+          # For the first gene
+          if (g == affectedGenes[1]) {
+
+            # If the variant is located within the range of start and end of the gene
+            # then it can continue as normal
+            if ( (start(submvr) >= start(gr[g])) && (end(submvr) <= end(gr[g])) ) {
+              # This is fine
+            }
+            
+            # If the variant starts in one gene, but then goes into the next
+            # then artificially makes a new ending for the variant within the first gene
+            if (end(submvr) > end(gr[g])) {
+              
+              # Create an artifical end for the variant
+              submvr$localEnd <- width(gr[g])
+              submvr$endCodon <- width(gr[g]$refAA)
+              
+            }
+          } # 1st gene
+          
+          # For the second gene
+          # In this next iteration, all information about the variant is reset
+          if (g == affectedGenes[2]) {
+            
+            # If the deletion is completely encompassed within this second gene
+            if ( (start(submvr) >= start(gr[g])) && (end(submvr) <= end(gr[g])) ) {
+              
+              # Have to change the start and end locations to reflect local values
+              submvr$localStart <- start(submvr) - start(gr[g])
+              submvr$localEnd <- submvr$localStart + (width(submvr) - 1)
+              
+            }
+            
+            # If part of the deletion takes place in the first gene
+            # then continues the deletion in the beginning of this second gene
+            # Must alter the sequence that is replaced
+            if (start(submvr) < start(gr[g])) {
+              
+              oldWidth <- width(submvr)
+              submvr$localStart <- 1
+              submvr$localEnd <- submvr$localStart + (oldWidth - 1) 
+              
+            }
+            
+            # Need to figure out the startCodon and endCodon
+            # For now, if the sequence is evenly divided into 3
+            # assume the first bp of the gene is the start bp
+            if ( (width(gr[g]$refSeq) %% 3 == 0) && (width(gr[g]$refSeq) / 3 == width(gr[g]$refAA)) ){
+              
+              submvr$startCodon <- floor(submvr$localStart / 3)
+              submvr$endCodon <- floor(submvr$localEnd / 3)
+            }
+            
+            else {
+              message("Need new method to determine start and end codons")
+              warning("Setting codons potentially incorrectly for ", names(submvr))
+              submvr$startCodon <- floor(submvr$localStart / 3)
+              submvr$endCodon <- floor(submvr$localEnd / 3)
+            }
+            
+            
+          } # 2nd gene
+          
+        } # !overlappingGene
+      }
+      
       #related to the off by 1 error below
       #this should catch indels in codon 1
       if (length(submvr)) {
@@ -84,24 +175,38 @@ injectMTVariants <- function(mvr, gr=NULL, aa=TRUE, canon=.99, refX=1, altX=1) {
           submvr$endCodon <- 1
         }
       }
+      
+      # AA sequence from the reference
       orig <- extractAt(gr[g]$refAA, IRanges(submvr$startCodon,submvr$endCodon))
+      
+      # If there is a deletion at the end of a gene
+      # Must go here otherwise the endCodon value changes and you get the incorrect reference AA
+      if (length(submvr)) {
+        if (submvr$endCodon > width(gr[g]$varAA)) {
+          
+          submvr$endCodon <- width(gr[g]$varAA)
+        }
+      }
+      
       altd <- extractAt(gr[g]$varAA, IRanges(submvr$startCodon,submvr$endCodon))
       gr[g]$consequences <- .flattenConsequences(orig, altd, submvr$startCodon)
-
+      
     } 
-
+    
     # for later
     if (FALSE) {
       alignments <- pairwiseAlignment(gr$refAA, gr$varAA,
                                       substitutionMatrix = "BLOSUM50",
                                       gapOpening = 0, gapExtension = 8)
     }
-      
+    
   }
-
+  
   # done
   return(gr)
 }
+
+
 
 # helper function
 .flattenConsequences <- function(orig, altd, startCodons) {
