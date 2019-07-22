@@ -131,7 +131,18 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
 
 # helper fn
 .mvrToBed <- function(mvr) { 
-  bed <- as.data.frame(locateVariants(mvr))[, c("gene", "start", "end")]
+
+  message("This will take a moment")
+  
+  # Iterate through each variant and call locateVariant
+  newMvr <- locateVariants(mvr[1])
+  for (i in 2:length(mvr)) {
+    newVar <- locateVariants(mvr[i])
+    newMvr <- append(newMvr, newVar)
+  }
+  
+  bed <- as.data.frame(newMvr)[, c("gene", "start", "end")]
+  
   bed$value <- mvr$VAF
   bed <- subset(bed, !is.na(bed[,1]))
   return(bed)

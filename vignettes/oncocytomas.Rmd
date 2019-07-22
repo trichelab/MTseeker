@@ -4,6 +4,7 @@ shorttitle: "MTseeker guide"
 author: 
   - Tim Triche, Jr. 
   - Noor Sohail 
+  - Benjamin K Johnson
 package: MTseeker
 abstract: >
   An example of processing renal oncocytomas and matched normal
@@ -29,11 +30,20 @@ have thousands of mitochondria stuffed into them. So that's what we'll study.
 
 # Loading data
 
-First we needed to load the oncocytoma BAMs. We don't actually do this here, 
-since they are several gigabytes apiece, but notice that all of them have 
-been aligned with BWA against the canonical rCRS mitogenome by splicing it 
+First we needed to load the oncocytoma BAMs. You can do this using the following code, but you can also skip it and use the MTseekerData package. Notice that all of them have been aligned with BWA against the canonical rCRS mitogenome by splicing it 
 into hg19. (As opposed to GRCh37, which is what we should have done... but
 the point is that any modern GRCh assembly *or* a spliced rCRS contig works.)
+
+## Download the oncocytoma bams from GitHub
+
+```{r engine='bash', eval=FALSE}
+
+# the repository can be downloaded and installed wherever you like
+# it is worth noting that the bams here *only* contain the chrM reads
+# the relative ratio of nuclear to mitochondria section of the tutorial will not work
+git clone https://github.com/trichelab/oncocytomaBams.git
+
+```
 
 ```{r loadLibrary}
 library(MTseeker)
@@ -44,24 +54,31 @@ if (FALSE) {
   # we use SamBlaster... a lot... in my lab.
   # however, this example takes a while even with SamBlaster. 
   # it is recorded here for posterity and also "how did you get that result". 
+  # if they were aligned using BWA and samblaster with split and discordant read output
   BAMfiles <- grep("(split|disc)", value=T, invert=T, list.files(patt=".bam$"))
+  #if you downloaded the git repo oncocytomaBams
+  BAMfiles <- list.files("/path/to/the/oncocytomaBams",
+                         pattern = ".bam$")
   names(BAMfiles) <- sapply(strsplit(BAMfiles, "\\."), `[`, 1)
   BAMs <- data.frame(BAM=BAMfiles, 
                      Sample_Group=ifelse(grepl("NKS", BAMfiles), 
                                          "normal","tumor"))
   rownames(BAMs) <- sub("NKS", "normal", sub("RO","oncocytoma", rownames(BAMs)))
-  BAMs$subject <- as.integer(sapply(strsplit(BAMs$BAM, "(_|\\.)"), `[`, 2))
+  BAMs$subject <- as.integer(sapply(strsplit(as.character(BAMs$BAM), "(_|\\.)"), `[`, 2))
 
-  # we merged all the BAMs after-the-fact, so...
-  BAMs <- subset(BAMs, grepl("merged", BAMs$BAM))
+  # order things by subject
   BAMs <- BAMs[order(BAMs$subject), ]
+  show(BAMs)
 
   library(parallel) 
-  options("mc.cores"=detectCores())
-  MTreads <- getMT(BAMs, filter=FALSE) 
+  options("mc.cores"=detectCores()/2)
+  MTreads <- getMT(BAMs)
   names(MTreads) <- sapply(strsplit(fileName(MTreads), "\\."), `[`, 1)
+  rownames(metadata(MTreads)$cache) <- names(MTreads)
   saveRDS(MTreads, file="oncocytoma_and_matched_normal_MTreads.rds")
 }
+
+# We can proceed to variant calling, haplomasking, etc. from here
 ```
 
 Since realigning 22 whole exomes and extracting/counting reads takes a while,
@@ -88,7 +105,9 @@ library(MTseekerData)
 
 We'd like to compute the relative mitochondrial copy number for each.
 For whatever reason, this seems to throw an error in the vignette build 
-if we plot all of them, so we will just plot a subset in this vignette. 
+if we plot all of them, so we will just plot a subset in this vignette.
+
+*NOTE* This will fail if you try using the bams from the oncocytomaBams git repository!
 
 ```{r computeCN}
 data(RONKSreads, package="MTseekerData")
@@ -129,7 +148,8 @@ gmapR can be a bit feisty, so we simply document the process below:
 ```{r callVariants, eval=FALSE} 
 if (FALSE) { 
   # doing this requires the BAM files
-  RONKSvariants <- callMT(RONKSreads)
+  RONKSvariants <- callMT(RONKSreads, parallel = TRUE,
+                          cores = 8, verbose = TRUE)
   # which is why we skip it in the vignette 
   save(RONKSvariants, file="RONKSvariants.rda")
   # see ?callMT for a much simpler runnable example
@@ -141,6 +161,22 @@ For this vignette, we have stored the results in the MTseekerData package:
 ```{r loadVariants}
 library(MTseekerData)
 data(RONKSvariants, package="MTseekerData")
+```
+
+# Haplomasking ancestry-related variants
+
+It's important to mask off ancestry-related variants for a variety of reasons, one of which being important to identify disease related variation as opposed to ancestry-related mitochondrial variation. To do this, we employ HaploGrep using the latest build of PhyloTree (e.g. 17). The process works by finding variants present that correspond to ancestry and building up a fasta representation of rCRS with the variants injected into it. If there exist overlapping ancestry-related variants, we pick the highest frequency mutation since we can only represent one in the fasta file. If both (or more) are equally frequent, we randomly pick one (for now). Finally, we call out to HaploGrep to infer the haplogroup and parse the returned variants corresponding to the inferred haplogroup.
+
+```{r haplomask}
+
+# this depends upon having java installed
+RONKSvariants <- haploMask(RONKSvariants)
+
+# if you are running this on a linux machine with openJDK installed as the default
+# it will fail
+# unfortunately, you need oracle java to have haplogrep run...
+# RONKSvariants <- haploMask(RONKSvariants, java.path = "/user/bin/java")
+
 ```
 
 # Plotting variants
