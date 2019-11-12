@@ -1,7 +1,7 @@
 Package: MTseeker
 Type: Package
 Title: Bioconductor Tools for Human Mitochondrial Variant Analysis
-Version: 1.3.8
+Version: 1.3.3
 Author: Tim Triche [cre, aut], Noor Sohail [aut], Ben Johnson [aut], Tim Vickers [ctb], Azif Zubair [ctb]
 Authors@R: c(person("Tim", "Triche", role = c("cre", "aut"),
                     email = "tim.triche@gmail.com"),
@@ -14,18 +14,18 @@ Description: Variant analysis tools for mitochondrial genetics.
 biocViews: Genetics, Metabolomics, VariantAnnotation
 Depends:
     viridis,
+    circlize,
     S4Vectors,
     GenomeInfoDb,
+    GenomicFeatures,
     GenomicAlignments,
     VariantAnnotation
 Imports:
     xml2,
     utils,
-    gmapR,
     methods,
     IRanges,
     Biobase,
-    circlize,
     jsonlite,
     graphics,
     Rsamtools,
@@ -36,7 +36,6 @@ Imports:
     Homo.sapiens,
     BiocGenerics,
     GenomicRanges,
-    GenomicFeatures,
     SummarizedExperiment
 Suggests:
     MTseekerData,
@@ -49,5 +48,6 @@ Suggests:
     rsvg
 License: GPL-3
 Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
