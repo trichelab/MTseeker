@@ -11,9 +11,10 @@
 #' @import 	GenomicRanges
 #'
 #' @examples
+#' \dontrun{
 #' library(MTseekerData) 
 #' filterMTvars(RONKSvariants$RO_1)
-#'
+#' }
 #' @export 
 filterMTvars <- function(vars, fp=TRUE, NuMT=0.03, covg=20, depth=2) {
 

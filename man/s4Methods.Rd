@@ -7,10 +7,11 @@
 s4Methods(...)
 }
 \arguments{
-\item{...}{name[s] of class[es] (please note, results will be union'ed)}
+\item{...}{name\link{s} of class\link{es} (please note, results will be union'ed)}
 }
 \value{
-methods for the class[es], union'ed into a character vector
+\preformatted{   methods for the class[es], union'ed into a character vector
+}
 }
 \description{
 Mostly for debugging and making architectural choices, e.g. about coverage()

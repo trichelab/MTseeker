@@ -47,24 +47,26 @@ genomeLength(x)
 \item{files}{an MAlignments}
 }
 \value{
-an MAlignments
+\preformatted{       an MAlignments 
+}
 
-various things, as appropriate to the methods
+\preformatted{     various things, as appropriate to the methods
+}
 }
 \description{
 Normally the MAlignments constructor will be called by getMT(bam).
 
-Depending on how a generic was originally designated, the arguments to 
-these methods can have various argument names, but all of them tend to 
+Depending on how a generic was originally designated, the arguments to
+these methods can have various argument names, but all of them tend to
 take an MAlignments as their argument.
 }
 \examples{
-
+\dontrun{
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
 mal <- getMT(BAMs[1])
 class(mal) 
 show(mal) 
-
+}
 }

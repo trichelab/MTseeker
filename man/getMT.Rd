@@ -4,27 +4,26 @@
 \alias{getMT}
 \title{grab the mitochondrial reads from a BAM & estimate their fraction (of total)}
 \usage{
-getMT(bam, filter = FALSE, parallel = FALSE, plotMAPQ = FALSE, ...)
+getMT(bam, filter = FALSE, plotMAPQ = FALSE, ...)
 }
 \arguments{
 \item{bam}{a BAM filename, or DataFrame/SummarizedExperiment with $BAM}
 
 \item{filter}{filter on bam$mtCovg? (default is FALSE, don't filter)}
 
-\item{parallel}{load multiple BAMs in parallel, if possible? (FALSE)}
-
 \item{plotMAPQ}{plot distribution of mitochondrial mapping quality? (FALSE)}
 
 \item{...}{additional args to pass scanBamParam(), such as mapqFilter}
 }
 \value{
-an MAlignments or MAlignmentsList object
+\preformatted{     an MAlignments or MAlignmentsList object
+}
 }
 \description{
 This purely a convenience function, and an incredibly convenient one at that.
 }
 \examples{
-
+\dontrun{
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
@@ -35,5 +34,5 @@ targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE)
 rownames(targets) <- sapply(strsplit(basename(BAMs), "\\\\."), `[`, 1)
 (mall <- getMT(targets))
 class(mall) 
-
+}
 }

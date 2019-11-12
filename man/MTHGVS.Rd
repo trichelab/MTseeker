@@ -14,14 +14,16 @@ MTHGVS(x, asMVR = FALSE, verbose = FALSE)
 \item{verbose}{be yappy? (default is FALSE)}
 }
 \value{
-proper HGVS names for the *Ranges (or a renamed *Ranges)
+\preformatted{     proper HGVS names for the *Ranges (or a renamed *Ranges)
+}
 }
 \description{
 convert mitochondrial variant calls to HGVS format for naming
 }
 \examples{
+\dontrun{
 library(MTseekerData) 
 data(RONKSvariants) 
 MTHGVS(RONKSvariants$RO_1)
-
+}
 }

@@ -10,10 +10,11 @@
 #' @return    the object, with fixed metadata (if needed and possible) 
 #' 
 #' @examples
+#' \dontrun{
 #' library(MTseekerData)
 #' data(RONKSreads)
 #' fixed <- fixMetadata(RONKSreads)
-#' 
+#' }
 #' @export
 fixMetadata <- function(x) {
   metadata(x) <- attr(validMetadata(x), "fixedMeta")

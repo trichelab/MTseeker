@@ -2,7 +2,7 @@
 % Please edit documentation in R/indexMTGenome.R
 \name{indexMTGenome}
 \alias{indexMTGenome}
-\title{build and install GmapGenome.[organism].[mtGenome], currently Hsapiens.rCRS}
+\title{build and install GmapGenome.\link{organism}.\link{mtGenome}, currently Hsapiens.rCRS}
 \usage{
 indexMTGenome(mtGenome = "rCRS", fa = NULL, organism = "Hsapiens",
   destDir = NULL, install = TRUE, unlink = FALSE)
@@ -10,7 +10,7 @@ indexMTGenome(mtGenome = "rCRS", fa = NULL, organism = "Hsapiens",
 \arguments{
 \item{mtGenome}{mitochondrial reference genome to index (default is rCRS)}
 
-\item{fa}{FASTA file (default is to find included `mtGenome`.fa)}
+\item{fa}{FASTA file (default is to find included \code{mtGenome}.fa)}
 
 \item{organism}{organism whose mitochondrial genome is indexed (Hsapiens)}
 
@@ -21,7 +21,8 @@ indexMTGenome(mtGenome = "rCRS", fa = NULL, organism = "Hsapiens",
 \item{unlink}{if an index package already exists, remove it? (FALSE)}
 }
 \value{
-the path to the created package as a character string
+\preformatted{       the path to the created package as a character string
+}
 }
 \description{
 gmapR needs a reference genome index in order for it to call any variants.
@@ -29,7 +30,7 @@ We support rCRS (and only rCRS) as that reference, at least for the moment.
 This function creates & installs a reference (rCRS, the default) Gmap index.
 In principle, hg19 and mm10 could be supported; in practice, support is poor.
 (Also, the Yoruban chrM in hg19 is a terrible reference for variant calling.)
-We would be grateful for a patch to add mm10/GRCm38 support; eventually, we 
+We would be grateful for a patch to add mm10/GRCm38 support; eventually, we
 plan to add it in ourselves (as one might have guessed from Mouse Mitocarta).
 }
 \details{

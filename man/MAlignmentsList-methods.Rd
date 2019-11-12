@@ -31,18 +31,21 @@ MAlignmentsList(...)
 \item{object}{an MAlignmentsList}
 }
 \value{
-an MAlignments
+\preformatted{       an MAlignments 
+}
 
-various objects, as appropriate to the method
+\preformatted{     various objects, as appropriate to the method 
+}
 }
 \description{
 Normally the MAlignmentsList constructor will be called by getMT.
 
-Depending on how a generic was originally designated, the arguments to 
-these methods can have various argument names, but all of them tend to 
+Depending on how a generic was originally designated, the arguments to
+these methods can have various argument names, but all of them tend to
 take an MAlignmentsList as their argument.
 }
 \examples{
+\dontrun{
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 print(BAMdir)
@@ -53,5 +56,5 @@ rownames(targets) <- sapply(strsplit(basename(BAMs), "\\\\."), `[`, 1)
 mall <- getMT(targets)
 class(mall) 
 show(mall) 
-
+}
 }

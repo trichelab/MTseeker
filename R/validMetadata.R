@@ -13,10 +13,11 @@
 #' @return            TRUE or FALSE (if FALSE, attr(res)$mismatches shows why)
 #'
 #' @examples
+#' \dontrun{
 #' library(MTseekerData)
 #' data(RONKSreads) 
 #' if(validMetadata(RONKSreads)) message("RONKSreads has valid metadata")
-#'
+#' }
 #' @export 
 validMetadata <- function(x) { 
   if (!class(x) %in% c("MAlignmentsList", "MVRangesList")) {

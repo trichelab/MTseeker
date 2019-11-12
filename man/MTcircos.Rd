@@ -6,7 +6,7 @@
 \usage{
 MTcircos(variants = NULL, outside = NULL, inside = NULL,
   outcol = NULL, incol = NULL, anno = NULL, how = c("matrix",
-  "VAF"), ...)
+  "AA"), ...)
 }
 \arguments{
 \item{variants}{optional MVRanges or MVRangesList to split by strand & plot}
@@ -26,21 +26,20 @@ MTcircos(variants = NULL, outside = NULL, inside = NULL,
 \item{...}{other arguments to pass on to called functions}
 }
 \value{
-invisibly, a list: `anno` (data.frame) + `pfun` (panel.fun)
+\preformatted{     invisibly, a list: `anno` (data.frame) + `pfun` (panel.fun)
+}
 }
 \description{
 The default font sizes, orientations, etc. are optimized for a "cold" start;
 if you want to fiddle with the details, crack open the code and modify it...
 or alternatively, add sectors/dendrograms inside of this "framed" version.
 }
-\details{
-FIXME: add variant type coloration (del=blue, SNV=black, ins=red)
-}
 \examples{
+\dontrun{
 library(MTseekerData)
 data(RONKSvariants) 
 MTcircos(RONKSvariants)
 # same as plot(RONKSvariants)
 title("Renal oncocytomas and normal kidney samples")
-
+}
 }

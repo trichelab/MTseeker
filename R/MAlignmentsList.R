@@ -21,6 +21,7 @@ setClass("MAlignmentsList", contains="GAlignmentsList")
 #' @import            GenomicAlignments
 #' 
 #' @examples
+#' \dontrun{
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 #' print(BAMdir)
@@ -31,10 +32,11 @@ setClass("MAlignmentsList", contains="GAlignmentsList")
 #' mall <- getMT(targets)
 #' class(mall) 
 #' show(mall) 
-#'
+#' }
 #' @export
 MAlignmentsList <- function(...) {
 
+  browser()
   # this must be done first: 
   mdat <- list()
   #check for genomeSize to be 0 in a list

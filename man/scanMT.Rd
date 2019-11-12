@@ -14,13 +14,14 @@ scanMT(bam, chrM = "(rCRS|chrM|MT)", ...)
 \item{...}{additional args to pass scanBamParam(), such as mapqFilter}
 }
 \value{
-a ScanBamParam object for the BAM(s) to use with pileup()
+\preformatted{     a ScanBamParam object for the BAM(s) to use with pileup() 
+}
 }
 \description{
 This purely a convenience function, and an incredibly convenient one at that.
 }
 \examples{
-
+\dontrun{
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
@@ -30,5 +31,5 @@ show(sbp)
 
 sbps <- scanMT(BAMs, mapqFilter=20)
 show(sbps) 
-
+}
 }

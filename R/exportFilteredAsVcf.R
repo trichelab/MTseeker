@@ -9,10 +9,11 @@
 #' @import 	VariantAnnotation
 #'
 #' @examples
+#' \dontrun{
 #' library(MTseekerData) 
 #' filterMTvars(RONKSvariants$RO_1)
 #' exportFilteredAsVcf(RONKSvariants$RO_1) # not written to a file 
-#' 
+#' }
 #' @export 
 exportFilteredAsVcf <- function(vars, file=NULL, ...) { 
   

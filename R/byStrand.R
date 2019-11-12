@@ -6,22 +6,20 @@
 #' light strands of the mitochondrial genome. 
 #' 
 #' @param x     a *Ranges[List] or *Alignments[List]
-#' @param anno  optional feature annotation, will use mtAnno.rCRS if NULL 
+#' @param anno  Annotation information for the reference genome
 #'
 #' @return      elements of x over features on each strand OR x split by strand 
 #' 
 #' @examples
+#' \dontrun{
+#' data(mtAnno.rCRS)
+#' anno <- mtAnno
 #' data(RONKSvariants, package="MTseekerData")
-#' byStrand(RONKSvariants)
-#' 
+#' byStrand(RONKSvariants, anno)
+#' }
 #' @export 
-byStrand <- function(x, anno=NULL) { 
-
-  if (is.null(anno)) {
-    data(mtAnno.rCRS)
-    anno <- mtAnno
-  }
-
+byStrand <- function(x, anno) { 
+  
   stranded <- split(anno, strand(anno))[c("+", "-")]
   names(stranded) <- c("heavy", "light")
   

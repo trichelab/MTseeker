@@ -21,7 +21,6 @@
 \alias{filt,MVRanges-method}
 \alias{genome,MVRanges-method}
 \alias{locateVariants,MVRanges,missing,missing-method}
-\alias{tallyVariants,MVRanges-method}
 \alias{predictCoding,MVRanges,missing,missing,missing-method}
 \alias{summarizeVariants,MVRanges,missing,missing-method}
 \alias{plot,MVRanges,ANY-method}
@@ -56,8 +55,6 @@ MVRanges(vr, coverage = NA_real_)
 
 \S4method{locateVariants}{MVRanges,missing,missing}(query,
   filterLowQual = FALSE, ...)
-
-\S4method{tallyVariants}{MVRanges}(x, filterLowQual = TRUE, ...)
 
 \S4method{predictCoding}{MVRanges,missing,missing,missing}(query, subject,
   seqSource, varAllele, ...)
@@ -97,9 +94,11 @@ MVRanges(vr, coverage = NA_real_)
 \item{y}{another MVRanges}
 }
 \value{
-an MVRanges
+\preformatted{       an MVRanges
+}
 
-depends on the method invoked.
+\preformatted{         depends on the method invoked.
+}
 }
 \description{
 Usually the MVRanges constructor will be called by callMT().
@@ -110,36 +109,35 @@ In such cases, the method will usually, but not always, be apply()ed.
 \section{Utility methods}{
 
 
-`pos` returns a character vector describing variant positions. 
-`filt` returns a subset of variant calls where PASS == TRUE (i.e. filtered)
-`coverage` returns an Rle of coverage across the mitochondrial genome
-`genomeCoverage` returns the estimated mitochondrial read coverage depth
+\code{pos} returns a character vector describing variant positions.
+\code{filt} returns a subset of variant calls where PASS == TRUE (i.e. filtered)
+\code{coverage} returns an Rle of coverage across the mitochondrial genome
+\code{genomeCoverage} returns the estimated mitochondrial read coverage depth
 }
 
 \section{Annotation methods}{
 
 
-`type` returns a character vector describing variant type (SNV or indel)
-`genes` retrieves a GRanges of mitochondrial gene locations for an MVRanges
-`snpCall` retrieves single nucleotide variant polymorphisms PASSing filters
-`annotation` gets (perhaps oddly) an MVRanges object annotated against rCRS
-`getAnnotations` returns the GRanges of gene/region annotations for an MVR
-`encoding` returns variants residing in coding regions (consequence unknown)
-`locateVariants` annotates variants w/region, gene, and localStart/localEnd
-`predictCoding` returns variants consequence predictions as one might expect
-`tallyVariants` returns a named vector of variant types by annotated region.
-`summarizeVariants` uses MitImpact to attempt annotation of coding variants.
-`consensusString` edits rCRS to create a consensus genotype for eg Haplogrep
+\code{type} returns a character vector describing variant type (SNV or indel)
+\code{genes} retrieves a GRanges of mitochondrial gene locations for an MVRanges
+\code{snpCall} retrieves single nucleotide variant polymorphisms PASSing filters
+\code{annotation} gets (perhaps oddly) an MVRanges object annotated against rCRS
+\code{getAnnotations} returns the GRanges of gene/region annotations for an MVR
+\code{encoding} returns variants residing in coding regions (consequence unknown)
+\code{locateVariants} annotates variants w/region, gene, and localStart/localEnd
+\code{predictCoding} returns variants consequence predictions as one might expect
+\code{summarizeVariants} uses MitImpact to attempt annotation of coding variants.
+\code{consensusString} edits rCRS to create a consensus genotype for eg Haplogrep
 }
 
 \section{Visualization methods}{
 
 
-`plot` creates a circular plot of mitochondrial variant calls with annotation
+\code{plot} creates a circular plot of mitochondrial variant calls with annotation
 }
 
 \examples{
-
+\dontrun{
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
@@ -153,7 +151,7 @@ if (requireNamespace("GmapGenome.Hsapiens.rCRS", quietly=TRUE)) {
   message("Consider running the indexMTgenome() function to do so.")
   message("An example MVRanges is RONKSvariants$RO_1 from MTseekerData.")
 }
-
+}
 # summarizeVariants can take too long to run, and requires internet access 
 
 }

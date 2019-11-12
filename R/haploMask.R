@@ -44,8 +44,10 @@ haploMask <- function(mvr, fasta.output = NULL, mask = TRUE,
   
   #filter out non-PASSing variants
   #this should be done by default and not up to the user...
-  mvr <- filterMTvars(mvr)
+  #mvr <- filterMTvars(mvr)
 
+  if (isEmpty(mvr)) return(mvr)
+  
   #collect variants for haplogroup inference with haplogrep
   #this will fail with disjoint ranges
   #to deal intelligently, we need a whitelist of ranges/variants to pick from

@@ -4,7 +4,6 @@
 #' 
 #' @param bam       a BAM filename, or DataFrame/SummarizedExperiment with $BAM
 #' @param filter    filter on bam$mtCovg? (default is FALSE, don't filter)
-#' @param parallel  load multiple BAMs in parallel, if possible? (FALSE)
 #' @param plotMAPQ  plot distribution of mitochondrial mapping quality? (FALSE)
 #' @param ...       additional args to pass scanBamParam(), such as mapqFilter
 #'
@@ -15,7 +14,7 @@
 #' @import Rsamtools
 #' 
 #' @examples
-#' 
+#' \dontrun{
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 #' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
@@ -26,9 +25,9 @@
 #' rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
 #' (mall <- getMT(targets))
 #' class(mall) 
-#' 
+#' }
 #' @export
-getMT <- function(bam, filter=FALSE, parallel=FALSE, plotMAPQ=FALSE, ...) {
+getMT <- function(bam, filter=FALSE, plotMAPQ=FALSE, ...) {
 
   # for lists/DataFrames/SEs of data:
   if (is(bam,"SummarizedExperiment")|is(bam,"DataFrame")|is(bam,"data.frame")) {
@@ -55,13 +54,7 @@ getMT <- function(bam, filter=FALSE, parallel=FALSE, plotMAPQ=FALSE, ...) {
       }
       # why lapply() by default? 
       # because most laptops will die otherwise!
-      if (parallel == TRUE) {
-        message("Loading multiple BAMs in parallel may kill your machine.")
-        message("Set options('mc.cores') beforehand, and beware of swapping.")
-        return(MAlignmentsList(mclapply(bams, getMT)))
-      } else {
-        return(MAlignmentsList(lapply(bams, getMT)))
-      }
+      return(MAlignmentsList(lapply(bams, getMT)))
     } else { 
       message("No matching records.")
       return(NULL) 

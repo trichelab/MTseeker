@@ -24,7 +24,7 @@ setClass("MVRanges",
 #' @import BiocGenerics
 #'
 #' @examples
-#' 
+#' \dontrun{
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 #' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
@@ -38,7 +38,7 @@ setClass("MVRanges",
 #'   message("Consider running the indexMTgenome() function to do so.")
 #'   message("An example MVRanges is RONKSvariants$RO_1 from MTseekerData.")
 #' }
-#' 
+#' }
 #' # summarizeVariants can take too long to run, and requires internet access 
 #'
 #' @export
@@ -67,7 +67,6 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #' `encoding` returns variants residing in coding regions (consequence unknown)
 #' `locateVariants` annotates variants w/region, gene, and localStart/localEnd
 #' `predictCoding` returns variants consequence predictions as one might expect
-#' `tallyVariants` returns a named vector of variant types by annotated region.
 #' `summarizeVariants` uses MitImpact to attempt annotation of coding variants.
 #' `consensusString` edits rCRS to create a consensus genotype for eg Haplogrep
 #'
@@ -91,7 +90,7 @@ MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
 #' @return              depends on the method invoked.
 #' 
 #' @aliases locateVariants getAnnotations predictCoding genes
-#' @aliases snpCall annotation tallyVariants summarizeVariants
+#' @aliases snpCall annotation summarizeVariants
 #'
 #' @import              Homo.sapiens
 #' 
@@ -165,12 +164,12 @@ setMethod("show", signature(object="MVRanges"),
 #' @export
 setMethod("annotation", signature(object="MVRanges"), 
           function(object) {
-
+            
             if (!"annotation" %in% names(metadata(object))) {
               data(mtAnno.rCRS)
               metadata(object)$annotation <- mtAnno
             }
-
+            
             anno <- getAnnotations(object)
             ol <- findOverlaps(object, anno)
             object$gene <- NA_character_
@@ -178,7 +177,7 @@ setMethod("annotation", signature(object="MVRanges"),
             object$region <- NA_character_
             object[queryHits(ol)]$region <- anno[subjectHits(ol)]$region
             return(object)
-
+            
           })
 
 # previously defined in chromvar
@@ -202,13 +201,13 @@ setMethod("getAnnotations", signature(annotations="MVRanges"),
 #' @export
 setMethod("encoding", signature(x="MVRanges"), 
           function(x) {
-
+            
             # limit the search 
             x <- locateVariants(x) 
             x <- subset(x, region == "coding") 
             chrM <- grep("(MT|chrM|rCRS|RSRS)", seqlevelsInUse(x), value=TRUE)
             return(keepSeqlevels(x, chrM, pruning.mode="coarse"))
-
+            
           })
 
 
@@ -313,17 +312,6 @@ setMethod("locateVariants",
 
 #' @rdname    MVRanges-methods
 #' @export
-setMethod("tallyVariants", signature(x="MVRanges"), 
-          function(x, filterLowQual=TRUE, ...) {
-
-            located <- locateVariants(x, filterLowQual=filterLowQual)
-            table(located$region)
-
-          })
-
-
-#' @rdname    MVRanges-methods
-#' @export
 setMethod("predictCoding", # mitochondrial annotations kept internally
           signature(query="MVRanges", "missing", "missing", "missing"), 
           function(query, ...) injectMTVariants(filt(query)))
@@ -334,7 +322,7 @@ setMethod("predictCoding", # mitochondrial annotations kept internally
 #' @export
 setMethod("summarizeVariants", signature(query="MVRanges","missing","missing"),
           function(query, ...) {
-          
+            
             # helper function  
             getImpact <- function(pos) {
               url <- paste("http://mitimpact.css-mendel.it", "api", "v2.0",
@@ -351,18 +339,18 @@ setMethod("summarizeVariants", signature(query="MVRanges","missing","missing"),
                 return(NULL)
               }
             }
-
+            
             hits <- lapply(pos(encoding(query)), getImpact)
             hits <- hits[which(sapply(hits, length) > 0)] 
-
+            
             # be precise, if possible
             for (h in names(hits)) {
               j <- hits[[h]]
               if (h %in% j$genomic) hits[[h]] <- j[which(j$genomic == h),]
             }
-
+            
             do.call(rbind, hits)
-
+            
           })
 
 

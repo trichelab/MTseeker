@@ -4,24 +4,28 @@
 \alias{byStrand}
 \title{simple helper function to split a *RangesList by the strand of its mt target}
 \usage{
-byStrand(x, anno = NULL)
+byStrand(x, anno)
 }
 \arguments{
-\item{x}{a *Ranges[List] or *Alignments[List]}
+\item{x}{a *Ranges\link{List} or *Alignments\link{List}}
 
-\item{anno}{optional feature annotation, will use mtAnno.rCRS if NULL}
+\item{anno}{Annotation information for the reference genome}
 }
 \value{
-elements of x over features on each strand OR x split by strand
+\preformatted{ elements of x over features on each strand OR x split by strand 
+}
 }
 \description{
-If presented with a GAlignments/MAlignments, this method will split the 
+If presented with a GAlignments/MAlignments, this method will split the
 element by strand, i.e. + alignments and - alignments. Otherwise the method
 retrieves ranges/variant calls that overlap genic elements on the heavy and
 light strands of the mitochondrial genome.
 }
 \examples{
+\dontrun{
+data(mtAnno.rCRS)
+anno <- mtAnno
 data(RONKSvariants, package="MTseekerData")
-byStrand(RONKSvariants)
-
+byStrand(RONKSvariants, anno)
+}
 }

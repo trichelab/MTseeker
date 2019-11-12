@@ -20,10 +20,10 @@ Either a combined MAlignments object or an updated MAlignmentsList
 Combine multiple MAlignments objects together
 }
 \examples{
-
+\dontrun{
 library(MTseeker)
 library(MTseekerData)
 snames <- names(RONKSreads)[grepl("NK", names(RONKSreads))][1:3]
 mergedMAlist <- combineMAlignments(RONKSreads, malToCombine=snames, replace=TRUE)
-
+}
 }

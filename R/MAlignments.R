@@ -26,14 +26,14 @@ setClass("MAlignments",
 #' @import            GenomicAlignments
 #'
 #' @examples
-#' 
+#' \dontrun{
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 #' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
 #' mal <- getMT(BAMs[1])
 #' class(mal) 
 #' show(mal) 
-#' 
+#' }
 #' @export
 MAlignments <- function(gal, bam) { 
   if (!is(gal, "GAlignments")) stop("gal must be a GAlignments. Exiting.")

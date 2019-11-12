@@ -10,21 +10,23 @@ validMetadata(x)
 \item{x}{an MAlignmentsList or an MVRangesList}
 }
 \value{
-TRUE or FALSE (if FALSE, attr(res)$mismatches shows why)
+\preformatted{       TRUE or FALSE (if FALSE, attr(res)$mismatches shows why)
+}
 }
 \description{
-In order to avoid a lot of lengthy calculations, both MAlignmentsList and 
+In order to avoid a lot of lengthy calculations, both MAlignmentsList and
 MVRangesList objects keep a cache of some relevant statistics and filenames
 in their metadata slot. If these caches get stale, it can cause problems.
 }
 \details{
-This function performs some sanity checks on the caches so that the above 
+This function performs some sanity checks on the caches so that the above
 problems are unlikely to occur, provided that checkMetadataCache() is called
 at sensible times. This function is NOT a replacement for validObject().
 }
 \examples{
+\dontrun{
 library(MTseekerData)
 data(RONKSreads) 
 if(validMetadata(RONKSreads)) message("RONKSreads has valid metadata")
-
+}
 }

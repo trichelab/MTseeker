@@ -12,7 +12,8 @@ lift_up_to_rCRS(ranges_obj, verbose = T)
 \item{verbose}{logical, if set to TRUE, print all messages during progressing.}
 }
 \value{
-Either Granges or MVRanges object
+\preformatted{      Either Granges or MVRanges object
+}
 }
 \description{
 Lift hg19 chrM to rCRS

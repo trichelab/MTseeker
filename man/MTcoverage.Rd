@@ -8,7 +8,7 @@
 \usage{
 MTcoverage(x, ...)
 
-plotMTCoverage(x, ...)
+plotMTCoverage(x, ref = c("rCRS", "NC_005089"), ...)
 
 plotStrandedMTCoverage(x, ...)
 }
@@ -16,14 +16,19 @@ plotStrandedMTCoverage(x, ...)
 \item{x}{an MAlignments or MVRanges}
 
 \item{...}{other arguments to pass to GenomicAlignments::coverage()}
+
+\item{ref}{string denoting reference sequence to use}
+
+\item{x}{an MAlignments or MVRanges}
 }
 \value{
-an RleList (or, invisibly for plot functions, a result list)
+\preformatted{     an RleList (or, invisibly for plot functions, a result list)
+}
 }
 \description{
-We co-opted the `coverage` method to retrieve approximate coverage depth
-across the mitochondrial genome in MAlignments[List] and MVRanges[list],
-so this function gives back what it was supposed to do (provide an Rle) 
+We co-opted the \code{coverage} method to retrieve approximate coverage depth
+across the mitochondrial genome in MAlignments\link{List} and MVRanges\link[=List]{list},
+so this function gives back what it was supposed to do (provide an Rle)
 and can allow for some subsetting (e.g. variant-supporting-read coverage)
 that may be of interest when interpreting results.
 }
@@ -35,6 +40,7 @@ plotMTCoverage does what one might expect, and plots (read or call) coverage.
 plotStrandedMTCoverage does the same thing, but keeps track of which strand.
 }
 \examples{
+\dontrun{
 library(MTseekerData)
 
 data(RONKSreads)
@@ -56,4 +62,5 @@ plotStrandedMTCoverage(RONKSreads$NKS_1)
 title("Stranded read coverage for normal kidney sample 1") 
 plotStrandedMTCoverage(RONKSreads$RO_1)
 title("Stranded read coverage for renal oncocytoma sample 1") 
+}
 }

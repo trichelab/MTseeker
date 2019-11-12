@@ -37,7 +37,6 @@
 #'
 #' @export
 filterMT <- function(DFSE, minCovg=20, fpFilter=FALSE, NuMT=FALSE) {
-
   if (!class(DFSE) %in% 
       c("data.frame","DataFrame",
         "SummarizedExperiment","RangedSummarizedExperiment")) {

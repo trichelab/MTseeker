@@ -14,17 +14,19 @@ MTcomplex(variants, defColor = "#c9eded", verbose = FALSE)
 \item{verbose}{be verbose, for debugging? (FALSE)}
 }
 \value{
-invisibly, the temporary file to which the SVG was written
+\preformatted{     invisibly, the temporary file to which the SVG was written
+}
 }
 \description{
 Tim Vickers created a beautiful illustration of the mitochondrial electron
-transport chain, and that's where coding mitochondrial DNA mutations will 
+transport chain, and that's where coding mitochondrial DNA mutations will
 usually hit (we aren't plotting the mitoribosome or tRNAs just yet). So why
 reinvent the wheel (and possibly make it square)?
 }
 \examples{
+\dontrun{
 library(MTseekerData)
 data(RONKSvariants) 
 MTcomplex(RONKSvariants$RO_1)
-
+}
 }

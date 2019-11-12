@@ -4,15 +4,14 @@
 \alias{decomposeAndCalcConsequences}
 \title{Decompose and annotate AA changes in MT variants}
 \usage{
-decomposeAndCalcConsequences(mvr, AAchanges = TRUE, parallel = FALSE,
-  ...)
+decomposeAndCalcConsequences(mvr, coding, AAchanges = TRUE, ...)
 }
 \arguments{
 \item{mvr}{An MVRangesList or MVRanges object}
 
-\item{AAchanges}{Whether to annotate amino acid (AA) changes}
+\item{coding}{TRUE when annotating only coding regions}
 
-\item{parallel}{Whether to run things in parallel}
+\item{AAchanges}{Whether to annotate amino acid (AA) changes}
 
 \item{...}{Other arguments to pass to injectMTVariants}
 }
@@ -23,7 +22,7 @@ Annotated variants
 Decompose and annotate AA changes in MT variants
 }
 \examples{
-
+\dontrun{
 library(MTseeker)
 library(MTseekerData)
 library(VariantTools)
@@ -35,5 +34,5 @@ filters <- FilterRules(list(minTotalDepth = MinTotalDepthFilter(min.depth = 2000
 ronks_vars.anno <- RONKSvariants[1]
 ronks_vars.anno <- MVRangesList(lapply(ronks_vars.anno, subsetByFilter, filters))
 ronks_vars.anno <- decomposeAndCalcConsequences(ronks_vars.anno)
-
+}
 }

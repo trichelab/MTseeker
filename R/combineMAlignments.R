@@ -11,12 +11,12 @@
 #' @import GenomicAlignments
 #'
 #' @examples
-#' 
+#' \dontrun{
 #' library(MTseeker)
 #' library(MTseekerData)
 #' snames <- names(RONKSreads)[grepl("NK", names(RONKSreads))][1:3]
 #' mergedMAlist <- combineMAlignments(RONKSreads, malToCombine=snames, replace=TRUE)
-#' 
+#' }
 #' @export
 
 combineMAlignments <- function(mall, malToCombine=NULL, replace=FALSE) {

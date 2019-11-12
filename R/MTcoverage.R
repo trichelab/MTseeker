@@ -23,6 +23,7 @@
 #' @import GenomicAlignments 
 #'
 #' @examples
+#' \dontrun{
 #' library(MTseekerData)
 #'
 #' data(RONKSreads)
@@ -44,6 +45,7 @@
 #' title("Stranded read coverage for normal kidney sample 1") 
 #' plotStrandedMTCoverage(RONKSreads$RO_1)
 #' title("Stranded read coverage for renal oncocytoma sample 1") 
+#' }
 #' @export
 MTcoverage <- function(x, ...) { 
   if (is(x, "VRanges")) {
@@ -61,23 +63,47 @@ MTcoverage <- function(x, ...) {
 #' 
 #' @import    circlize
 #' 
+#' @param x         an MAlignments or MVRanges
+#' @param ref       string denoting reference sequence to use
+#' 
 #' @export
-plotMTCoverage <- function(x, ...) { 
+plotMTCoverage <- function(x, ref=c("rCRS", "NC_005089"), ...) { 
 
+  if (length(ref) > 1) {
+    message("You forgot to set a reference, current you can use: ", paste0(ref, sep=", "))
+    stop()
+  }
+  
+  if (is(x, "GAlignmentsList")) {
+    
+    if (length(x) > 1) {
+      message("You can only plot the coverage of 1 sample at a time")
+      stop()
+    }
+    
+    else x <- unlist(x)
+  }
+
+  if (is(x, "GAlignments")) {
+    bams <- unique(mcols(x)$bam)
+    x <- MAlignments(x, bams)
+  }
+  
+  circos.clear()
+  
   CHR <- unique(seqnames(x)) 
-  if (is(x, "MAlignments") | is(x, "MVRanges")) x <- MTcoverage(x)[[CHR]]
+  if (is(x, "MAlignments") | is(x, "MVRanges")) covg <- MTcoverage(x)[[CHR]]
   message("Plotting mitochondrial coverage...")
-  data(mtAnno.rCRS)
-  anno <- mtAnno #.rCRS
-  dat <- data.frame(name=names(anno), start=start(anno), end=end(anno))
-  covg <- x
+  
   ymax <- max(covg)
-  circos.clear() 
-  circos.par("clock.wise"=FALSE, "start.degree"=90, "gap.degree"=0, 
-             "track.margin"=c(0.005, 0.005), "cell.padding"=c(0.005,0,0.005,0), 
-             "points.overflow.warning"=FALSE)
-  circos.genomicInitialize(data=dat, plotType=NULL, major.by=16569)
+  
+  # If you are plotting from the raw reads, the genome is not set yet
+  genome(x) <- ref
+  
+  # Initialize the circos plot
+  anno <- initMTcircos(x)
 
+  # Plotting coverage part
   # outside track: coverage on heavy strand
   colr <- colorRamp2(c(0,20,40,ymax), c("red","black","darkgreen","green"))
   p <- function(region, value, ...) { # {{{
@@ -86,26 +112,13 @@ plotMTCoverage <- function(x, ...) {
   circos.genomicTrack(.cov(covg, anno), track.height=0.15, 
                       ylim=c(0,ymax), bg.border=NA, panel.fun=p)
   circos.yaxis("right", labels.cex=0.5)
-
-  # main track, gene names and such
-  pfunGenes <- function(x, y) { # {{{
-    xlim <- CELL_META$xlim
-    ylim <- CELL_META$ylim
-    gr <- anno[CELL_META$sector.index]
-    ytop <- .height(gr) * ifelse(strand(gr) == "+", 1, 0)
-    ybot <- .height(gr) * ifelse(strand(gr) == "-", -1, 0)
-    lab <- ifelse(CELL_META$sector.index == "DLP", "CR", CELL_META$sector.index)
-    circos.rect(xlim[1], ybot, xlim[2], ytop, col=gr$itemRgb)
-    if (gr$region %in% c("rRNA", "coding", "D-loop") & gr$name != "HVR3") {
-      circos.text(mean(xlim), .textloc(gr), lab, col="black", 
-                  cex=.textcex(gr), font=.textbold(gr), facing="clockwise", 
-                  niceFacing=TRUE)
-    }
-  } # }}}
-  circos.track(panel.fun=pfunGenes, ylim=c(-1,1), track.height=0.5, 
-               track.margin=c(0,0), bg.border=NA)
-
-  res <- list(anno=dat, covg=x)
+  
+  # Plot the genes of the circos plot
+  genesMTcircos(x, anno, legends=T)
+  
+  # Store the information
+  dat <- data.frame(name=names(anno), start=start(anno), end=end(anno))
+  res <- list(anno=dat, covg=covg)
   invisible(res)
 }
 
@@ -116,25 +129,26 @@ plotMTCoverage <- function(x, ...) {
 #' 
 #' @export
 plotStrandedMTCoverage <- function(x, ...) { 
-
+  
+  if (genome(x) == "NC_005089") {
+    stop("Unable to plot stranded coverage for mice right now")
+  }
+  
+  circos.clear()
+  
+  anno <- initMTcircos(x)
+  
   CHR <- unique(seqnames(x)) 
   if (is(x, "MAlignments") | is(x, "MVRanges")) {
-    x <- lapply(lapply(byStrand(x), MTcoverage), `[[`, CHR)
+    covg <- lapply(lapply(byStrand(x, anno), MTcoverage), `[[`, CHR)
   }
   message("Plotting stranded mitochondrial coverage...")
-  data(mtAnno.rCRS)
-  anno <- mtAnno #.rCRS
-  dat <- data.frame(name=names(anno), start=start(anno), end=end(anno))
-  covgHeavy <- x[["+"]]
-  covgLight <- x[["-"]]
+  
+  covgHeavy <- covg[["heavy"]]
+  covgLight <- covg[["light"]]
   ymaxHeavy <- max(covgHeavy) 
   ymaxLight <- max(covgLight)
   ymax <- max(ymaxHeavy, ymaxLight)
-  circos.clear() 
-  circos.par("clock.wise"=FALSE, "start.degree"=90, "gap.degree"=0, 
-             "track.margin"=c(0.005, 0.005), "cell.padding"=c(0.005,0,0.005,0), 
-             "points.overflow.warning"=FALSE)
-  circos.genomicInitialize(data=dat, plotType=NULL, major.by=16569)
 
   # outside track: coverage on heavy strand
   colr <- colorRamp2(c(0, 20, 40, ymax), c("red","black","darkgreen","green"))
@@ -146,22 +160,7 @@ plotStrandedMTCoverage <- function(x, ...) {
   circos.yaxis("right", labels.cex=0.5)
 
   # main track, gene names and such
-  pfunGenes <- function(x, y) { # {{{
-    xlim <- CELL_META$xlim
-    ylim <- CELL_META$ylim
-    gr <- anno[CELL_META$sector.index]
-    ytop <- .height(gr) * ifelse(strand(gr) == "+", 1, 0)
-    ybot <- .height(gr) * ifelse(strand(gr) == "-", -1, 0)
-    lab <- ifelse(CELL_META$sector.index == "DLP", "CR", CELL_META$sector.index)
-    circos.rect(xlim[1], ybot, xlim[2], ytop, col=gr$itemRgb)
-    if (gr$region %in% c("rRNA", "coding", "D-loop") & gr$name != "HVR3") {
-      circos.text(mean(xlim), .textloc(gr), lab, col="black", 
-                  cex=.textcex(gr), font=.textbold(gr), facing="clockwise", 
-                  niceFacing=TRUE)
-    }
-  } # }}}
-  circos.track(panel.fun=pfunGenes, ylim=c(-1,1), track.height=0.5, 
-               track.margin=c(0,0), bg.border=NA)
+  genesMTcircos(x, anno)
 
   # inside track: coverage on light strand
   colr2 <- colorRamp2(c(0, -20, -40, -1*ymax), 
@@ -171,7 +170,9 @@ plotStrandedMTCoverage <- function(x, ...) {
   } # }}}
   circos.genomicTrack(.cov(covgLight, anno, direction="-"), track.height=0.15, 
                       ylim=c((-1*ymax), 0), bg.border=NA, panel.fun=pL)
-  res <- list(anno=dat, covg=x)
+  
+  dat <- data.frame(name=names(anno), start=start(anno), end=end(anno))
+  res <- list(anno=dat, covg=covg)
   invisible(res)
 }
 
@@ -179,7 +180,8 @@ plotStrandedMTCoverage <- function(x, ...) {
 # helper fn
 .cov <- function(covg, anno, direction=c("+","-")) {
   direction <- match.arg(direction)
-  gr <- GRanges(rep("chrM", length(runValue(covg))), 
+  gr <- GRanges(rep(seqnames(anno), length.out=length(runValue(covg)), 
+                    length(runValue(covg))), 
                 IRanges(start=start(covg), 
                         end=end(covg)),
                 value=runValue(covg), 

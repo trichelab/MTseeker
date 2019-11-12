@@ -20,8 +20,9 @@ the filtered set of variants (as an MVRanges) that was exported
 convenience wrapper for dumping filtered variants directly to an indexed VCF
 }
 \examples{
+\dontrun{
 library(MTseekerData) 
 filterMTvars(RONKSvariants$RO_1)
 exportFilteredAsVcf(RONKSvariants$RO_1) # not written to a file 
-
+}
 }

@@ -18,12 +18,19 @@ setClass("MVRangesList", contains="SimpleVRangesList")
 #' Similarly, if an element named 'bam' is located in the metadata of the
 #' supplied arguments, it will be combined into a vector named bamFiles. 
 #'
-#' @rdname        MVRangesList-methods
+#' @param   ...           The MVRanges elements to turn into an MVRangesList
+#' @param   bamFiles      (Optional) BAM filenames for each MVRanges element
+#' @param   coverageRles  (Optional) coverage Rles for each MVRanges element
+#' @param   verbose       Be verbose? (default is FALSE) 
 #' 
-#' @return        the MVRangesList
+#' @rdname                MVRangesList-methods
+#' 
+#' @return                the MVRangesList
 #' 
 #' @examples
-#'
+#' \dontrun{
+#' 
+#' # deprecated; use pileup
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 #' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
@@ -31,20 +38,17 @@ setClass("MVRangesList", contains="SimpleVRangesList")
 #' rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
 #' (mall <- getMT(targets))
 #'
-#' if (requireNamespace("GmapGenome.Hsapiens.rCRS", quietly=TRUE)) {
-#'   (mvrl <- callMT(mall))
-#'   filt(mvrl$pt1_cell1)
-#' } else { 
-#'   message("You have not yet installed an rCRS reference genome.")
-#'   message("Consider running the indexMTgenome() function to do so.")
-#'   message("An example MVRangesList is RONKSvariants from MTseekerData.")
 #' }
-#'
 #' @export
-MVRangesList <- function(...) {
-  res <- new("MVRangesList", GenomicRangesList(...), elementType = "MVRanges")
-  metadata(res)$coverageRles <- .extractCoverageRles(...)
-  metadata(res)$bamFiles <- .extractBamFiles(...)
+MVRangesList <- function(..., bamFiles=NULL, coverageRles=NULL, verbose=FALSE) {
+  res <- new("MVRangesList", ...) 
+  if (verbose) message("Class of result is ", class(res))
+  # bamFiles <- .extractBamFiles(...)
+  if (!is.null(bamFiles)) metadata(res)$bamFiles <- bamFiles
+  # coverageRles <- lapply(.extractCoverageRles(...), `[[`, 1)
+  if (!is.null(coverageRles)) metadata(res)$coverageRles <- coverageRles
+  if (verbose) message("Classes of elements are ", 
+                       paste(sapply(res, class), collapse=", "))
   return(res) 
 }
 
@@ -60,6 +64,7 @@ MVRangesList <- function(...) {
 #' @section Annotation methods:
 #'
 #' `genes`                returns an annotated GRanges of mitochondrial genes 
+#' `metadata`             get or set elements in the metadata() of an MVRL 
 #' `getAnnotations`       returns a GRanges of annotated mitochondrial features
 #' `genome`               returns the genome (or, perhaps, genomes) in an MVRL
 #' `encoding`             returns mutations in coding regions for each element
@@ -134,25 +139,23 @@ setMethod("predictCoding", # mitochondrial annotations kept internally
 
 
 #' @rdname    MVRangesList-methods
-#' @export
-setMethod("show", signature(object="MVRangesList"),
-          function(object) {
-            callNextMethod()
-            covgs <- paste0(round(unname(sapply(object, genomeCoverage))), "x")
-            cat(S4Vectors:::labeledLine("genomeCoverage", covgs))
-            if ("counts" %in% names(metadata(object))) {
-              peaks <- nrow(metadata(object)$counts)
-              cat(ifelse("bias" %in% names(rowData(counts(object))),
-                  "Bias-corrected ", "Raw "))
-              cat("fragment counts at", peaks, "peaks are available from",
-                  "counts(object).\n")
-            }
-          })
+# @export
+# setMethod("show", signature(object="MVRangesList"),
+#          function(object) {
+#            callNextMethod()
+#            covgs <- paste0(round(unname(sapply(object, genomeCoverage))), "x")
+#            cat(S4Vectors:::labeledLine("genomeCoverage", covgs))
+#          })
 
 
 # helper
-setAs(from="MVRangesList", to="GRangesList",
-      function(from) GRangesList(lapply(from, granges)))
+# setAs(from="MVRangesList", to="GRangesList",
+#       function(from) GRangesList(lapply(from, granges)))
+
+
+# helper
+# setAs(from="MVRangesList", to="VRangesList",
+#      function(from) VRangesList(lapply(from, as, "VRanges")))
 
 
 #' @rdname    MVRangesList-methods
@@ -168,7 +171,7 @@ setMethod("filt", signature(x="MVRangesList"),
 #' @export
 setMethod("granges", signature(x="MVRangesList"),
           function(x, filterLowQual=TRUE) {
-
+            
             # if cached...
             if (filterLowQual == TRUE & 
                 "granges.filtered" %in% names(metadata(x))) {
@@ -179,24 +182,28 @@ setMethod("granges", signature(x="MVRangesList"),
             }
 
             # if not...
-            if (filterLowQual == TRUE) x <- filt(x) 
+            #if (filterLowQual == TRUE) x <- filt(x) 
             anno <- suppressMessages(getAnnotations(x))
+            
             message("Aggregating variants...")
-            gr <- unlist(as(x, "GRangesList")) 
+            gr <- GRanges(unlist(x))
             gr <- keepSeqlevels(gr, "chrM", pruning.mode="coarse")
             gr <- reduce(gr)
             ol <- findOverlaps(gr, anno)
             metadata(gr)$annotation <- anno
             metadata(gr)$sampleNames <- names(x)
+            
             message("Annotating variants by region...")
             gr$gene <- NA_character_
             gr[queryHits(ol)]$gene <- names(anno)[subjectHits(ol)] 
             gr$region <- NA_character_
             gr[queryHits(ol)]$region <- anno[subjectHits(ol)]$region
+            
             message("Annotating variants by sample...") 
             hitMat <- matrix(0, ncol=length(x), nrow=length(gr),
                              dimnames=list(NULL, names(x)))
-            varHits <- findOverlaps(as(x, "GRangesList"), gr)
+            xgrl <- GRangesList(lapply(x, GRanges))
+            varHits <- findOverlaps(xgrl, gr)
             bySample <- split(subjectHits(varHits), queryHits(varHits))
             for (s in seq_along(bySample)) hitMat[bySample[[s]], s] <- 1
             mcols(gr)$overlaps <- hitMat 
@@ -232,7 +239,7 @@ setMethod("summarizeVariants",
                 return(NULL)
               }
             }
-
+            
             gr <- granges(query, filterLowQual=filterLowQual, ...)
             names(gr) <- as.character(gr)
             message("Retrieving functional annotations for variants...")
@@ -244,7 +251,7 @@ setMethod("summarizeVariants",
             res <- makeGRangesFromDataFrame(rsv, keep.extra.columns=TRUE)
             seqinfo(res) <- seqinfo(gr)
             return(res)
-
+            
           })
 
 
@@ -259,11 +266,11 @@ setMethod("genome", signature(x="MVRangesList"),
 setMethod("locateVariants", 
           signature(query="MVRangesList","missing","missing"),
           function(query, filterLowQual=TRUE, ...) {
-
+            
             stop("Don't use this method for now. It has bugs!")
             if (filterLowQual == TRUE) query <- filt(query)
             MVRangesList(lapply(query, locateVariants))
-
+            
           })
 
 
@@ -280,8 +287,8 @@ setMethod("consensusString", signature(x="MVRangesList"),
             actual <- unique(genome(x))
             res <- DNAStringSet(lapply(lapply(x, consensusString), `[[`, 1))
             names(res) <- paste(sapply(x, function(y) 
-                                as.character(unique(sampleNames(y)))), 
-                                actual, sep=".")
+              as.character(unique(sampleNames(y)))), 
+              actual, sep=".")
             return(res)
           })
 
@@ -295,7 +302,8 @@ setMethod("consensusString", signature(x="MVRangesList"),
 # helper fn
 .extractCoverageRles <- function(...) { 
   if ("coverageRle" %in% .extractCommonElts(...)) {
-    return(DataFrame(lapply(lapply(..., metadata), `[[`, "coverageRle")))
+    df <- lapply(lapply(lapply(..., metadata), `[[`, "coverageRle"), DataFrame)
+    return(df)
   } else { 
     return(NULL)
   }
@@ -310,4 +318,3 @@ setMethod("consensusString", signature(x="MVRangesList"),
     return(NULL)
   }
 }
-
