@@ -7,9 +7,9 @@
 #' @param biscuit   Is the input VCF from biscuit?
 #' @param verbose   logical, if set to TRUE, print all messages during progressing.
 #' 
-#' @import utils
 #' @import VariantTools
 #' @import VariantAnnotation
+#' @importFrom utils read.table
 #' 
 #' @return an MVRangesList
 #'

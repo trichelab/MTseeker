@@ -12,9 +12,9 @@
 #'
 #' @return An MVRanges or MVRangesList of masked haplogroup-specific variants
 #'
-#' @import utils
 #' @import rtracklayer
 #' @import GenomicRanges
+#' @importFrom utils read.delim
 #' 
 #' @export
 #'
