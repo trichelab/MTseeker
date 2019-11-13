@@ -5,5 +5,5 @@
 \alias{MAlignmentsList-class}
 \title{wraps a GAlignmentsList (made up of MAlignments) for nicer viewing}
 \description{
-wraps a GAlignmentsList (made up of MAlignments) for nicer viewing
+This is largely deprecated with the move from gmapR to Rsamtools::pileup.
 }

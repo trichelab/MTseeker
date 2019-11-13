@@ -1,5 +1,7 @@
 #' wraps a GAlignmentsList (made up of MAlignments) for nicer viewing
 #' 
+#' This is largely deprecated with the move from gmapR to Rsamtools::pileup.
+#' 
 #' @import GenomicAlignments
 #' @import S4Vectors
 #' @import IRanges
@@ -36,7 +38,6 @@ setClass("MAlignmentsList", contains="GAlignmentsList")
 #' @export
 MAlignmentsList <- function(...) {
 
-  browser()
   # this must be done first: 
   mdat <- list()
   #check for genomeSize to be 0 in a list
