@@ -21,7 +21,8 @@
 #' @import circlize
 #' @import viridis
 #'
-#' @importFrom grDevices col2rgb rgb
+#' @importFrom grDevices col2rgb rgb adjustcolor
+#' @importFrom graphics legend
 #'
 #' @examples 
 #' \dontrun{

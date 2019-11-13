@@ -37,7 +37,13 @@ pileupXenograft on thousands of individual cells (as in PDX studies).
 }
 \examples{
 \dontrun{
-  bam <- "PDX322_TTGCGTCTCCAGAAGG-1.GRCh38_GRCm38_chrM.bam" # in MTseekerData
-  mvrl <- pileupXenograft(bam, verbose=TRUE)
+  BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
+  addPath <- function(x) file.path(BAMdir, x)
+
+  pdxbam1 <- "PDX322_AGGCCACTCAAGATCC-1.GRCh38_GRCm38_chrM.bam"
+  mvrl1 <- pileupXenograft(pdxbam1, verbose=TRUE)
+
+  pdxbam2 <- "PDX110_TCGGGACGTGCATCTA-1.GRCh38_GRCm38_chrM.bam"
+  mvrl2 <- pileupXenograft(pdxbam2, verbose=TRUE)
 }
 }

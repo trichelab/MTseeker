@@ -11,7 +11,8 @@
 #' @param java.path This is an option to specify a path to a java install (e.g. /usr/bin/java)
 #'
 #' @return An MVRanges or MVRangesList of masked haplogroup-specific variants
-#' 
+#'
+#' @import utils
 #' @import rtracklayer
 #' @import GenomicRanges
 #' 
