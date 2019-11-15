@@ -31,7 +31,7 @@ BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
 class(mal) 
 
 targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
-rownames(targets) <- sapply(strsplit(basename(BAMs), "\\\\."), `[`, 1)
+rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
 (mall <- getMT(targets))
 class(mall) 
 }

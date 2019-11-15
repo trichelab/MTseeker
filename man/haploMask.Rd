@@ -4,9 +4,15 @@
 \alias{haploMask}
 \title{Mask haplogroup specific variants using haplogrep}
 \usage{
-haploMask(mvr, fasta.output = NULL, mask = TRUE,
-  return.haplogroup = TRUE, ties = c("depth", "weight"),
-  override = FALSE, java.path = NULL)
+haploMask(
+  mvr,
+  fasta.output = NULL,
+  mask = TRUE,
+  return.haplogroup = TRUE,
+  ties = c("depth", "weight"),
+  override = FALSE,
+  java.path = NULL
+)
 }
 \arguments{
 \item{mvr}{Input should be either an MVRanges or MVRangesList}
@@ -27,8 +33,5 @@ haploMask(mvr, fasta.output = NULL, mask = TRUE,
 An MVRanges or MVRangesList of masked haplogroup-specific variants
 }
 \description{
-Mask haplogroup specific variants using haplogrep
-}
-\examples{
-
+Note: this requires haplogrep, an external dependency.
 }

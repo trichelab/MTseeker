@@ -1,5 +1,7 @@
 #' Mask haplogroup specific variants using haplogrep
 #'
+#' Note: this requires haplogrep, an external dependency.
+#' 
 #' @name haploMask
 #' 
 #' @param mvr Input should be either an MVRanges or MVRangesList
@@ -16,11 +18,6 @@
 #' @import GenomicRanges
 #' @importFrom utils read.delim
 #' 
-#' @export
-#'
-#' @examples
-#' 
-
 haploMask <- function(mvr, fasta.output = NULL, mask = TRUE,
                       return.haplogroup = TRUE, ties = c("depth", "weight"),
                       override = FALSE, java.path = NULL) {
