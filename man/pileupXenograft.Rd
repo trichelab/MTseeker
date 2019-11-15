@@ -4,8 +4,16 @@
 \alias{pileupXenograft}
 \title{test harness for simultaneous mouse/human MT variant calling (for tracking)}
 \usage{
-pileupXenograft(bam, sbp = NULL, pup = NULL, callIndels = FALSE,
-  minVAF = 0.03, minDepth = 20, verbose = FALSE, ...)
+pileupXenograft(
+  bam,
+  sbp = NULL,
+  pup = NULL,
+  callIndels = FALSE,
+  minVAF = 0.03,
+  minDepth = 20,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{bam}{the BAM or object with a @bam slot}

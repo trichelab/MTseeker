@@ -4,8 +4,16 @@
 \alias{newFilterMT}
 \title{Filter SummarizedExperiment, DataFrame, MVRanges, or MVRangesList using user specified constraints}
 \usage{
-newFilterMT(vars, minTotalDepth = 20, minAltDepth = 2, minVAF = 0.9,
-  minCovg = 20, fpFilter = TRUE, NuMT = TRUE, verbose = FALSE)
+newFilterMT(
+  vars,
+  minTotalDepth = 20,
+  minAltDepth = 2,
+  minVAF = 0.9,
+  minCovg = 20,
+  fpFilter = TRUE,
+  NuMT = TRUE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{vars}{variants, can be MVRanges\link{List} or DataFrame/SummarizedExperiment with colData()$\code{mtCovg}}

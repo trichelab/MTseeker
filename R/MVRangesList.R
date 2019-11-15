@@ -138,7 +138,7 @@ setMethod("predictCoding", # mitochondrial annotations kept internally
           function(query, ...) sapply(query, predictCoding))
 
 
-#' @rdname    MVRangesList-methods
+# @rdname    MVRangesList-methods
 # @export
 # setMethod("show", signature(object="MVRangesList"),
 #          function(object) {

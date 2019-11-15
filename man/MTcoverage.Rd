@@ -18,8 +18,6 @@ plotStrandedMTCoverage(x, ...)
 \item{...}{other arguments to pass to GenomicAlignments::coverage()}
 
 \item{ref}{string denoting reference sequence to use}
-
-\item{x}{an MAlignments or MVRanges}
 }
 \value{
 \preformatted{     an RleList (or, invisibly for plot functions, a result list)

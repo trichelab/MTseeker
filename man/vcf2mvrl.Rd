@@ -4,8 +4,13 @@
 \alias{vcf2mvrl}
 \title{Convert a VCF to an MVRangesList object}
 \usage{
-vcf2mvrl(vcf_filename, bam_filename = NULL, gzip = TRUE,
-  biscuit = FALSE, verbose = TRUE)
+vcf2mvrl(
+  vcf_filename,
+  bam_filename = NULL,
+  gzip = TRUE,
+  biscuit = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{vcf_filename}{A filename/path to the corresponding VCF}

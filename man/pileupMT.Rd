@@ -4,9 +4,14 @@
 \alias{pileupMT}
 \title{Pileup the mitochondrial reads in a BAM, for variant calling or CN purposes.}
 \usage{
-pileupMT(bam, sbp = NULL, pup = NULL, callIndels = TRUE,
-  ref = c("rCRS", "GRCh37", "GRCh38", "hg38", "GRCm38", "C57BL/6J",
-  "NC_005089", "mm10"), ...)
+pileupMT(
+  bam,
+  sbp = NULL,
+  pup = NULL,
+  callIndels = TRUE,
+  ref = c("rCRS", "GRCh37", "GRCh38", "hg38", "GRCm38", "C57BL/6J", "NC_005089", "mm10"),
+  ...
+)
 }
 \arguments{
 \item{bam}{BAM (must be indexed!) file name or object with @bam slot}
