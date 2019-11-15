@@ -210,12 +210,17 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, callIndels=TRUE, ref=c("rCRS","GRC
     matchedLightMvr <- lightMvr[matchedLightIndex]
     
     # Keep track of variants found on both strands for debugging purposes
-    heavyMvr$bothStrands <- FALSE
-    uniqueLightMvr$bothStrands <- FALSE
+    if (length(heavyMvr) > 0) heavyMvr$bothStrands <- FALSE
+    if (length(uniqueLightMvr) > 0) uniqueLightMvr$bothStrands <- FALSE
     
-    # Only have to add the altDepths since the refDepths will be the same for 'duplicated' variants
-    altDepth(heavyMvr[matchedLight[matchedLightIndex]]) <- altDepth(heavyMvr[matchedLight[matchedLightIndex]]) + altDepth(matchedLightMvr)
-    heavyMvr[matchedLight[matchedLightIndex]]$bothStrands <- TRUE
+    # Only have to add the altDepths since the refDepths will be the same 
+    # for 'duplicated' variants
+    if (length(heavyMvr) > 0) {
+      altDepth(heavyMvr[matchedLight[matchedLightIndex]]) <- 
+        altDepth(heavyMvr[matchedLight[matchedLightIndex]]) + 
+        altDepth(matchedLightMvr)
+      heavyMvr[matchedLight[matchedLightIndex]]$bothStrands <- TRUE
+    }
 
     # Merge together the light and heavy strand variants
     mvr <- MVRanges(c(heavyMvr, uniqueLightMvr), coverage=covg)
@@ -227,18 +232,6 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, callIndels=TRUE, ref=c("rCRS","GRC
     metadata(mvr)$bam <- basename(bam)
     metadata(mvr)$sbp <- sbp
     metadata(mvr)$pup <- pup
-    
-    # Determine if these are potentially a part of haplogroup regions
-    # Only for human genomes
-    # Decided not to use this since it may confuse the user
-    #if (ref == "rCRS") {
-      #data(haplomask_whitelist)
-      #mvr$potentialHaplo <- FALSE
-      
-      #haploNames <- names(subsetByOverlaps(mvr, haplomask_whitelist[[1]]))
-      #mvr[haploNames]$potentialHaplo <- TRUE
-    #}
-
     names(mvr) <- MTHGVS(mvr)
   }
 
