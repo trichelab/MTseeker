@@ -10,6 +10,7 @@
 \alias{encoding,MVRangesList-method}
 \alias{coverage,MVRangesList-method}
 \alias{predictCoding,MVRangesList,missing,missing,missing-method}
+\alias{show,MVRangesList-method}
 \alias{filt,MVRangesList-method}
 \alias{granges,MVRangesList-method}
 \alias{summarizeVariants,MVRangesList,missing,missing-method}
@@ -34,6 +35,8 @@ MVRangesList(..., bamFiles = NULL, coverageRles = NULL, verbose = FALSE)
 \S4method{coverage}{MVRangesList}(x)
 
 \S4method{predictCoding}{MVRangesList,missing,missing,missing}(query, subject, seqSource, varAllele, ...)
+
+\S4method{show}{MVRangesList}(object)
 
 \S4method{filt}{MVRangesList}(x)
 

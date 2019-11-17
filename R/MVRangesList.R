@@ -137,29 +137,37 @@ setMethod("predictCoding", # mitochondrial annotations kept internally
           function(query, ...) sapply(query, predictCoding))
 
 
-# @rdname    MVRangesList-methods
-# @export
-# setMethod("show", signature(object="MVRangesList"),
-#          function(object) {
-#            callNextMethod()
-#            covgs <- paste0(round(unname(sapply(object, genomeCoverage))), "x")
-#            cat(S4Vectors:::labeledLine("genomeCoverage", covgs))
-#          })
+#' @rdname    MVRangesList-methods
+#'
+#' @export
+setMethod("show", signature(object="MVRangesList"),
+          function(object) {
+            callNextMethod() # not sure why it has to be done like this... 
+          })
 
 
 # helper
 setAs(from="MVRangesList", to="GRangesList",
-      function(from) GRangesList(lapply(from, granges)))
+      function(from) {
+        message("Coercing from MVRangesList to GRangesList...") 
+        GRangesList(lapply(from, granges))
+      })
 
 
 # helper
 setAs(from="MVRangesList", to="GRanges",
-      function(from) granges(from))
+      function(from) {
+        message("Coercing from MVRangesList to GRanges...") 
+        granges(from)
+      })
 
 
 # helper
 setAs(from="MVRangesList", to="VRangesList",
-      function(from) VRangesList(lapply(from, as, "VRanges")))
+      function(from) {
+        message("Coercing from MVRangesList to VRangesList...") 
+        VRangesList(lapply(from, as, "VRanges"))
+      })
 
 
 #' @rdname    MVRangesList-methods
