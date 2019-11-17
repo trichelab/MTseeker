@@ -207,7 +207,8 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, callIndels=TRUE, ref=c("rCRS","GRC
     if (length(heavyMvr) > 0) heavyMvr$bothStrands <- FALSE
     if (length(uniqueLightMvr) > 0) uniqueLightMvr$bothStrands <- FALSE
     
-    # Only have to add the altDepths since the refDepths will be the same for 'duplicated' variants
+    # Only have to add the altDepths since the refDepths will be the same 
+    # for 'duplicated' variants
     if (length(heavyMvr) > 0) {
       altDepth(heavyMvr[matchedLight[matchedLightIndex]]) <- 
         altDepth(heavyMvr[matchedLight[matchedLightIndex]]) + 
@@ -225,18 +226,6 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, callIndels=TRUE, ref=c("rCRS","GRC
     metadata(mvr)$bam <- basename(bam)
     metadata(mvr)$sbp <- sbp
     metadata(mvr)$pup <- pup
-    
-    # Determine if these are potentially a part of haplogroup regions
-    # Only for human genomes
-    # Decided not to use this since it may confuse the user
-    #if (ref == "rCRS") {
-      #data(haplomask_whitelist)
-      #mvr$potentialHaplo <- FALSE
-      
-      #haploNames <- names(subsetByOverlaps(mvr, haplomask_whitelist[[1]]))
-      #mvr[haploNames]$potentialHaplo <- TRUE
-    #}
-
     names(mvr) <- MTHGVS(mvr)
   }
 
