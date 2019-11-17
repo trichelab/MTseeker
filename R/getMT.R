@@ -66,7 +66,6 @@ getMT <- function(bam, filter=FALSE, plotMAPQ=FALSE, ...) {
   bamfile <- BamFile(bam, index=bai, asMates=TRUE)
   chrMs <- grep("(chrM|MT)$", seqlevels(bamfile), value=TRUE)
   mtSeqLen <- seqlengths(bamfile)[chrMs] # GRCh37/38, hg38 & rCRS are identical
-  browser() 
 
   # modified to handle xenograft BAMs if necessary 
   if (length(mtSeqLen) > 1) {

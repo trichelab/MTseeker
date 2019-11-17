@@ -49,8 +49,7 @@ locateMTvariants <- function(query, coding=TRUE) {
   }
   
   if (length(subjectHits(ol)) > 2) {
-    message("More than 2 overlapping genes in locateVariants")
-    browser()
+    stop("More than 2 overlapping genes in locateVariants")
   }
   
   query$gene <- NA_character_
