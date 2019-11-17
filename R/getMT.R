@@ -15,6 +15,7 @@
 #' @import Rsamtools
 #'
 #' @importFrom Biostrings lcsuffix
+#' @importFrom graphics par
 #'
 #' @examples
 #' library(MTseekerData)

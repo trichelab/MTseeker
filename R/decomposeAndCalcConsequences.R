@@ -16,7 +16,6 @@
 #' @import VariantTools
 #'
 #' @examples
-#' library(MTseeker)
 #' library(MTseekerData)
 #' library(VariantTools)
 #' 
