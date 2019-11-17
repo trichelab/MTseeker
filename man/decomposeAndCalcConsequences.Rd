@@ -23,7 +23,6 @@ decomposeAndCalcConsequences(mvr, coding = TRUE, AAchanges = TRUE, ...)
 FIXME: this function is remarkably slow
 }
 \examples{
-library(MTseeker)
 library(MTseekerData)
 library(VariantTools)
 

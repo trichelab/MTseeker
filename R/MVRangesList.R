@@ -47,6 +47,7 @@ MVRangesList <- function(..., bamFiles=NULL, coverageRles=NULL, verbose=FALSE) {
   if (!is.null(bamFiles)) metadata(res)$bamFiles <- bamFiles
   if (!is.null(coverageRles)) metadata(res)$coverageRles <- coverageRles
   
+
   return(res) 
 
 }
@@ -146,12 +147,12 @@ setMethod("show", signature(object="MVRangesList"),
           })
 
 
-# helper
-setAs(from="MVRangesList", to="GRangesList",
-      function(from) {
-        message("Coercing from MVRangesList to GRangesList...") 
-        GRangesList(lapply(from, granges))
-      })
+# helper; deprecated 
+# setAs(from="MVRangesList", to="GRangesList",
+#      function(from) {
+#        message("Coercing from MVRangesList to GRangesList...") 
+#        GRangesList(lapply(from, granges))
+#      })
 
 
 # helper
