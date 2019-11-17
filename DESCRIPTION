@@ -1,7 +1,7 @@
 Package: MTseeker
 Type: Package
 Title: Bioconductor Tools for Human Mitochondrial Variant Analysis
-Version: 1.5.7
+Version: 1.5.8
 Author: Tim Triche <tim.triche@gmail.com>
 Authors@R: c(person("Tim", "Triche", role = c("cre", "aut"),
                     email = "tim.triche@gmail.com"),
@@ -13,6 +13,7 @@ Maintainer: Tim Triche <tim.triche@gmail.com>
 Description: Variant analysis tools for mitochondrial genetics. 
 biocViews: Genetics, Metabolomics, VariantAnnotation
 Depends:
+    R (>= 3.5.0), 
     GenomeInfoDb,
     GenomicFeatures,
     GenomicAlignments,
