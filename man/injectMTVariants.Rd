@@ -4,7 +4,7 @@
 \alias{injectMTVariants}
 \title{Inject (one or more) variants against rCRS.}
 \usage{
-injectMTVariants(mvr, coding, gr = NULL)
+injectMTVariants(mvr, coding = TRUE, gr = NULL)
 }
 \arguments{
 \item{mvr}{An MVRanges, usually from callMT, often subsetted}
@@ -22,9 +22,7 @@ FIXME: this function could most likely be orders of magnitude faster.
 FIXME: this ONLY considers variants injected against rCRS, not RSRS or hg19.
 }
 \examples{
-\dontrun{
 library(MTseekerData)
-RO_2 <- RONKSvariants[["RO_2"]]
-injectMTVariants(RO_2)
-}
+injectMTVariants(RONKSvariants[["RO_2"]]) 
+
 }

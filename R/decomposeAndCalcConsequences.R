@@ -1,35 +1,35 @@
 #' Decompose and annotate AA changes in MT variants
 #'
+#' FIXME: this function is remarkably slow 
+#' 
 #' @name decomposeAndCalcConsequences
 #'
-#' @param mvr    An MVRangesList or MVRanges object
-#' @param coding  TRUE when annotating only coding regions
-#' @param AAchanges   Whether to annotate amino acid (AA) changes 
-#' @param ...    Other arguments to pass to injectMTVariants
+#' @param mvr         An MVRangesList or MVRanges object
+#' @param coding      Annotate only coding regions? (TRUE)
+#' @param AAchanges   Annotate amino acid (AA) changes? (TRUE) 
+#' @param ...         Other arguments to pass to injectMTVariants
 #'
-#' @return    Annotated variants
+#' @return            Annotated variants, as an MVRanges
 #' 
 #' @import GenomicRanges
 #' @import VariantAnnotation
 #' @import VariantTools
 #'
 #' @examples
-#' \dontrun{
 #' library(MTseeker)
 #' library(MTseekerData)
 #' library(VariantTools)
 #' 
-#' #Set a really high depth filter
-#' #This is just for an example and not something you'd use to filter real data
-#' #Something like 10-20 reads is more reasonable
-#' filters <- FilterRules(list(minTotalDepth = MinTotalDepthFilter(min.depth = 2000L)))
-#' ronks_vars.anno <- RONKSvariants[1]
-#' ronks_vars.anno <- MVRangesList(lapply(ronks_vars.anno, subsetByFilter, filters))
-#' ronks_vars.anno <- decomposeAndCalcConsequences(ronks_vars.anno)
-#' }
+#' # Set a really high depth filter
+#' # Just an example, not something you'd use to filter real data
+#' # Something like 20 reads is more reasonable (gives Sanger-like error rates)
+#' filters <- 
+#'   FilterRules(list(minTotalDepth=MinTotalDepthFilter(min.depth=2e3L)))
+#' ronks_vars.anno <- subsetByFilter(RONKSvariants[[1]], filters)
+#' decomposeAndCalcConsequences(ronks_vars.anno)
+#' 
 #' @export
-
-decomposeAndCalcConsequences <- function(mvr, coding, AAchanges=TRUE, ...) { 
+decomposeAndCalcConsequences <- function(mvr, coding=TRUE, AAchanges=TRUE, ...){
   
   #this will decompose non-disjoint ranges for injectMTVariants()
   if (!class(mvr) %in% c("MVRanges", "MVRangesList")) stop("Input is not an MVRanges or MVRangesList.")

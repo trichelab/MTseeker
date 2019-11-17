@@ -11,12 +11,10 @@
 #' @return      elements of x over features on each strand OR x split by strand 
 #' 
 #' @examples
-#' \dontrun{
 #' data(mtAnno.rCRS)
-#' anno <- mtAnno
 #' data(RONKSvariants, package="MTseekerData")
-#' byStrand(RONKSvariants, anno)
-#' }
+#' byStrand(RONKSvariants, mtAnno)
+#'
 #' @export 
 byStrand <- function(x, anno) { 
   

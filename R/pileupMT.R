@@ -18,26 +18,20 @@
 #' @import Rsamtools
 #' 
 #' @examples
-#' \dontrun{
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
-#' BAMs <- list.files(BAMdir, pattern=".bam$")
-#' bam <- BAMs[1]
-#' 
-#' sbp <- scanMT(bam)
-#' show(sbp)
-#' 
-#' pu <- pileupMT(bam, ref="rCRS", sbp=sbp)
-#' show(pu) 
-#' }
-#' @export
+#' patientBAMs <- list.files(BAMdir, pattern="^pt.*.bam$")
+#' (bam <- patientBAMs[1])
+#' (sbp <- scanMT(bam))
+#' (pu <- pileupMT(bam, sbp=sbp, callIndels=TRUE, ref="rCRS"))
 #'
+#' @export
 pileupMT <- function(bam, sbp=NULL, pup=NULL, callIndels=TRUE, ref=c("rCRS","GRCh37","GRCh38","hg38", "GRCm38","C57BL/6J","NC_005089","mm10"), ...) { 
   
   # List of reference genomes and their lengths
   refSeqLengths <- .refSeqLengths() # synonyms 
   
-  # Stop if the user forget to specify a reference genome
+  # Stop if the user forgets to specify a reference genome (FIXME: autodetect)
   if (length(ref) > 1) {
     stop("You forgot to set a reference genome! MTseeker currently supports: ", paste(names(refSeqLengths), collapse= ", "))
   }
@@ -210,12 +204,16 @@ pileupMT <- function(bam, sbp=NULL, pup=NULL, callIndels=TRUE, ref=c("rCRS","GRC
     matchedLightMvr <- lightMvr[matchedLightIndex]
     
     # Keep track of variants found on both strands for debugging purposes
-    heavyMvr$bothStrands <- FALSE
-    uniqueLightMvr$bothStrands <- FALSE
+    if (length(heavyMvr) > 0) heavyMvr$bothStrands <- FALSE
+    if (length(uniqueLightMvr) > 0) uniqueLightMvr$bothStrands <- FALSE
     
     # Only have to add the altDepths since the refDepths will be the same for 'duplicated' variants
-    altDepth(heavyMvr[matchedLight[matchedLightIndex]]) <- altDepth(heavyMvr[matchedLight[matchedLightIndex]]) + altDepth(matchedLightMvr)
-    heavyMvr[matchedLight[matchedLightIndex]]$bothStrands <- TRUE
+    if (length(heavyMvr) > 0) {
+      altDepth(heavyMvr[matchedLight[matchedLightIndex]]) <- 
+        altDepth(heavyMvr[matchedLight[matchedLightIndex]]) + 
+        altDepth(matchedLightMvr)
+      heavyMvr[matchedLight[matchedLightIndex]]$bothStrands <- TRUE
+    }
 
     # Merge together the light and heavy strand variants
     mvr <- MVRanges(c(heavyMvr, uniqueLightMvr), coverage=covg)

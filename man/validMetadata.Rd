@@ -24,9 +24,8 @@ problems are unlikely to occur, provided that checkMetadataCache() is called
 at sensible times. This function is NOT a replacement for validObject().
 }
 \examples{
-\dontrun{
 library(MTseekerData)
-data(RONKSreads) 
-if(validMetadata(RONKSreads)) message("RONKSreads has valid metadata")
-}
+data(RONKSvariants) 
+obj <- "RONKSvariants"
+if (validMetadata(get(obj))) message(obj, " has valid metadata.")
 }

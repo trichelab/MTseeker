@@ -28,28 +28,27 @@ setClass("MVRangesList", contains="SimpleVRangesList")
 #' @return                the MVRangesList
 #' 
 #' @examples
-#' \dontrun{
 #' 
-#' # deprecated; use pileup
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
-#' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
-#' targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
-#' rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
-#' (mall <- getMT(targets))
+#' pdxBAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern="^PDX.*.bam$"))
+#' (mvrl <- pileupXenograft(pdxBAMs[1]))
 #'
 #' }
 #' @export
 MVRangesList <- function(..., bamFiles=NULL, coverageRles=NULL, verbose=FALSE) {
-  res <- new("MVRangesList", ...) 
-  if (verbose) message("Class of result is ", class(res))
-  # bamFiles <- .extractBamFiles(...)
+
+  if (!is(..., "VRangesList") & !is(..., "MVRangesList")) {
+    res <- new("MVRangesList", VRangesList(...))
+  } else { 
+    res <- new("MVRangesList", ...) 
+  }
+  
   if (!is.null(bamFiles)) metadata(res)$bamFiles <- bamFiles
-  # coverageRles <- lapply(.extractCoverageRles(...), `[[`, 1)
   if (!is.null(coverageRles)) metadata(res)$coverageRles <- coverageRles
-  if (verbose) message("Classes of elements are ", 
-                       paste(sapply(res, class), collapse=", "))
+  
   return(res) 
+
 }
 
 
@@ -149,13 +148,18 @@ setMethod("predictCoding", # mitochondrial annotations kept internally
 
 
 # helper
-# setAs(from="MVRangesList", to="GRangesList",
-#       function(from) GRangesList(lapply(from, granges)))
+setAs(from="MVRangesList", to="GRangesList",
+      function(from) GRangesList(lapply(from, granges)))
 
 
 # helper
-# setAs(from="MVRangesList", to="VRangesList",
-#      function(from) VRangesList(lapply(from, as, "VRanges")))
+setAs(from="MVRangesList", to="GRanges",
+      function(from) granges(from))
+
+
+# helper
+setAs(from="MVRangesList", to="VRangesList",
+      function(from) VRangesList(lapply(from, as, "VRanges")))
 
 
 #' @rdname    MVRangesList-methods

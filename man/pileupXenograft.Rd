@@ -44,14 +44,12 @@ FIXME: add an iterator to create (human, mouse) MVRangesLists when running
 pileupXenograft on thousands of individual cells (as in PDX studies).
 }
 \examples{
-\dontrun{
+
   BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
   addPath <- function(x) file.path(BAMdir, x)
+  pdxBAMs <- addPath(list.files(path=BAMdir, pattern="^PDX.*.bam$"))
+  names(pdxBAMs) <- sapply(strsplit(basename(pdxBAMs), "_"), `[`, 1)
+  mvrls <- lapply(pdxBAMs, pileupXenograft, verbose=TRUE)
+  vapply(mvrls, names, character(2))
 
-  pdxbam1 <- "PDX322_AGGCCACTCAAGATCC-1.GRCh38_GRCm38_chrM.bam"
-  mvrl1 <- pileupXenograft(pdxbam1, verbose=TRUE)
-
-  pdxbam2 <- "PDX110_TCGGGACGTGCATCTA-1.GRCh38_GRCm38_chrM.bam"
-  mvrl2 <- pileupXenograft(pdxbam2, verbose=TRUE)
-}
 }

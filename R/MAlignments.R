@@ -1,15 +1,10 @@
 #' wraps a GAlignments with information about coverage and its target BAM file
 #' 
-#' The runLength slot stores readLength and named for historic reasons.
-#' 
 #' @import GenomicAlignments
 #' @import Rsamtools
 #' 
 #' @exportClass MAlignments
-setClass("MAlignments",
-         representation(bam="character",
-                        runLength="numeric"), 
-         contains="GAlignments")
+setClass("MAlignments", representation(bam="character"), contains="GAlignments")
 
 
 #' wrap a GAlignments for easier stats
@@ -26,19 +21,18 @@ setClass("MAlignments",
 #' @import            GenomicAlignments
 #'
 #' @examples
-#' \dontrun{
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
-#' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
-#' mal <- getMT(BAMs[1])
+#' patientBAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern="^pt.*.bam$"))
+#' mal <- getMT(patientBAMs[1])
 #' class(mal) 
 #' show(mal) 
-#' }
+#'
 #' @export
 MAlignments <- function(gal, bam) { 
   if (!is(gal, "GAlignments")) stop("gal must be a GAlignments. Exiting.")
   if (length(bam) > 1) stop("bam must be a string naming a BAM file. Exiting.")
-  new("MAlignments", gal, bam=bam, runLength=(median(qwidth(gal))-1))
+  new("MAlignments", gal, bam=bam)
 }
 
 
@@ -65,16 +59,11 @@ setGeneric("genomeCoverage",
            function(x) unname((length(x)*readLength(x))/genomeLength(x)))
 
 
-#' @rdname    MAlignments-methods
-#' 
+#' @rdname          MAlignments-methods
+#'
 #' @export
-setMethod("Summary", signature(x="MAlignments"),
-          function(x) {
-            c(reads=length(x),
-              readLength=readLength(x),
-              genomeSize=genomeLength(x),
-              genomeCoverage=genomeCoverage(x))
-          })
+setMethod("genomeCoverage", "MAlignments", 
+          function(x) unname(sum(width(x)) / genomeLength(x)))
 
 
 #' @rdname    MAlignments-methods
@@ -100,9 +89,7 @@ setMethod("fileName", signature(object="MAlignments"),
 #'
 #' @export
 setMethod("scanBamHeader", signature(files="MAlignments"),
-          function(files) {
-            return(scanBamHeader(fileName(files)))
-          })
+          function(files) return(scanBamHeader(fileName(files))))
 
 
 #' @rdname    MAlignments-methods
@@ -123,7 +110,7 @@ setGeneric("readLength",
 #' @rdname    MAlignments-methods 
 #' 
 #' @export
-setMethod("readLength", "MAlignments", function(x) x@runLength)
+setMethod("readLength", "MAlignments", function(x) median(qwidth(x)) - 1)
 
 
 #' @rdname    MAlignments-methods

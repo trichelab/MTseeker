@@ -4,35 +4,35 @@
 \alias{decomposeAndCalcConsequences}
 \title{Decompose and annotate AA changes in MT variants}
 \usage{
-decomposeAndCalcConsequences(mvr, coding, AAchanges = TRUE, ...)
+decomposeAndCalcConsequences(mvr, coding = TRUE, AAchanges = TRUE, ...)
 }
 \arguments{
 \item{mvr}{An MVRangesList or MVRanges object}
 
-\item{coding}{TRUE when annotating only coding regions}
+\item{coding}{Annotate only coding regions? (TRUE)}
 
-\item{AAchanges}{Whether to annotate amino acid (AA) changes}
+\item{AAchanges}{Annotate amino acid (AA) changes? (TRUE)}
 
 \item{...}{Other arguments to pass to injectMTVariants}
 }
 \value{
-Annotated variants
+\preformatted{       Annotated variants, as an MVRanges
+}
 }
 \description{
-Decompose and annotate AA changes in MT variants
+FIXME: this function is remarkably slow
 }
 \examples{
-\dontrun{
 library(MTseeker)
 library(MTseekerData)
 library(VariantTools)
 
-#Set a really high depth filter
-#This is just for an example and not something you'd use to filter real data
-#Something like 10-20 reads is more reasonable
-filters <- FilterRules(list(minTotalDepth = MinTotalDepthFilter(min.depth = 2000L)))
-ronks_vars.anno <- RONKSvariants[1]
-ronks_vars.anno <- MVRangesList(lapply(ronks_vars.anno, subsetByFilter, filters))
-ronks_vars.anno <- decomposeAndCalcConsequences(ronks_vars.anno)
-}
+# Set a really high depth filter
+# Just an example, not something you'd use to filter real data
+# Something like 20 reads is more reasonable (gives Sanger-like error rates)
+filters <- 
+  FilterRules(list(minTotalDepth=MinTotalDepthFilter(min.depth=2e3L)))
+ronks_vars.anno <- subsetByFilter(RONKSvariants[[1]], filters)
+decomposeAndCalcConsequences(ronks_vars.anno)
+
 }

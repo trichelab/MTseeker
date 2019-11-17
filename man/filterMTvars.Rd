@@ -24,8 +24,7 @@ a filtered set of variants
 sanitize PASSing mitochondrial variant calls to a moderate degree
 }
 \examples{
-\dontrun{
 library(MTseekerData) 
 filterMTvars(RONKSvariants$RO_1)
-}
+
 }

@@ -13,15 +13,14 @@
 #' @importFrom utils data
 #'
 #' @examples
-#' \dontrun{
 #' library(MTseekerData)
-#' RO_2 <- RONKSvariants[["RO_2"]]
-#' injectMTVariants(RO_2)
-#' }
+#' injectMTVariants(RONKSvariants[["RO_2"]]) 
+#' 
 #' @export
-injectMTVariants <- function(mvr, coding, gr=NULL) {
+injectMTVariants <- function(mvr, coding=TRUE, gr=NULL) {
 
   # rCRS only, for the time being 
+  # FIXME: add mouse, at the very least
   stopifnot(unique(genome(mvr)) == "rCRS")
   
   # get mtGenes if needed 

@@ -4,7 +4,7 @@
 \alias{MAlignments}
 \alias{MAlignments-methods}
 \alias{genomeCoverage}
-\alias{Summary,MAlignments-method}
+\alias{genomeCoverage,MAlignments-method}
 \alias{show,MAlignments-method}
 \alias{fileName,MAlignments-method}
 \alias{scanBamHeader,MAlignments-method}
@@ -18,7 +18,7 @@ MAlignments(gal, bam)
 
 genomeCoverage(x)
 
-\S4method{Summary}{MAlignments}(x)
+\S4method{genomeCoverage}{MAlignments}(x)
 
 \S4method{show}{MAlignments}(object)
 
@@ -60,12 +60,11 @@ these methods can have various argument names, but all of them tend to
 take an MAlignments as their argument.
 }
 \examples{
-\dontrun{
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
-BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
-mal <- getMT(BAMs[1])
+patientBAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern="^pt.*.bam$"))
+mal <- getMT(patientBAMs[1])
 class(mal) 
 show(mal) 
-}
+
 }

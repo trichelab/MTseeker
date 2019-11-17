@@ -121,16 +121,3 @@ supplied arguments, it will be combined into a vector named bamFiles.
 \code{plot}                 creates circular plot of mitochondrial variant calls
 }
 
-\examples{
-\dontrun{
-
-# deprecated; use pileup
-library(MTseekerData)
-BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
-BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
-targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
-rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
-(mall <- getMT(targets))
-
-}
-}

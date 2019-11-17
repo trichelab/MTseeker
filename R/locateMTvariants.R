@@ -2,16 +2,12 @@
 #' Primarily meant to be used within injectMTvarients
 #' 
 #' @param query      A single variant in MVRanges form 
-#' @param coding     TRUE to look only at coding regions
+#' @param coding     Look only at coding regions? (TRUE) 
 #'
-#' @return           An MVRanges with start and end codons (overlaps return 2 copies of the variant)
-#'
-#'
+#' @return           An MVRanges with start/end codons (overlaps return copies)
 #'
 #' @export
-
-
-locateMTvariants <- function(query, coding) {
+locateMTvariants <- function(query, coding=TRUE) {
 
   # Checks if the function has been run before
   if ("gene" %in% names(mcols(query)) &
@@ -53,8 +49,8 @@ locateMTvariants <- function(query, coding) {
   }
   
   if (length(subjectHits(ol)) > 2) {
-    warning("More than 2 overlapping genes in locateVariants")
-    stop()
+    message("More than 2 overlapping genes in locateVariants")
+    browser()
   }
   
   query$gene <- NA_character_

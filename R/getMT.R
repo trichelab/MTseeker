@@ -1,6 +1,7 @@
 #' grab the mitochondrial reads from a BAM & estimate their fraction (of total)
 #'
 #' This purely a convenience function, and an incredibly convenient one at that.
+#' FIXME: this function is still useful, but it desperately needs refactoring.
 #' 
 #' @param bam       a BAM filename, or DataFrame/SummarizedExperiment with $BAM
 #' @param filter    filter on bam$mtCovg? (default is FALSE, don't filter)
@@ -12,20 +13,15 @@
 #' @import GenomicAlignments
 #' @import GenomeInfoDb
 #' @import Rsamtools
-#' 
+#'
+#' @importFrom Biostrings lcsuffix
+#'
 #' @examples
-#' \dontrun{
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
-#' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
-#' (mal <- getMT(BAMs[1]))
+#' patientBAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern="^pt.*.bam$"))
+#' (mal <- getMT(patientBAMs[1]))
 #' class(mal) 
-#'
-#' targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
-#' rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
-#' (mall <- getMT(targets))
-#' class(mall) 
-#' }
 #' @export
 getMT <- function(bam, filter=FALSE, plotMAPQ=FALSE, ...) {
 
@@ -68,57 +64,92 @@ getMT <- function(bam, filter=FALSE, plotMAPQ=FALSE, ...) {
   if (!file.exists(bam)) stop(paste("Cannot find file", bam))
   if (!file.exists(bai)) indexBam(bam)
   bamfile <- BamFile(bam, index=bai, asMates=TRUE)
-  chrM <- ifelse("chrM" %in% seqlevels(bamfile), "chrM", "MT")
-  mtSeqLen <- seqlengths(bamfile)[chrM] # GRCh37/38, hg38 & rCRS are identical
-  mtGenome <- ifelse(mtSeqLen == 16569, "rCRS", "other") # hg19 YRI is "other"
-  # Note: based on the BAM headers (alone), we can't distinguish rCRS from RSRS
+  chrMs <- grep("(chrM|MT)$", seqlevels(bamfile), value=TRUE)
+  mtSeqLen <- seqlengths(bamfile)[chrMs] # GRCh37/38, hg38 & rCRS are identical
+  browser() 
+
+  # modified to handle xenograft BAMs if necessary 
+  if (length(mtSeqLen) > 1) {
+    message("This looks like a xenograft BAM...")
+  } 
+  mtGenome <- ifelse(any(mtSeqLen == 16569), "rCRS","other") # hg19 is "other"
+  # Note: based on the BAM headers alone, we can't distinguish rCRS from RSRS
   if (mtGenome == "other") {
-    message("MTseeker currently supports only rCRS-derived reference genomes.")
-    message(bam, " may be aligned to hg19, as length(", chrM, ") is not 16569.")
-    message("We find lifting hg19 (YRI) chrM to rCRS/RSRS can create problems.")
-    message("(Patches for this and other human/nonhuman MT refs are welcome!)")
+    message(bam, " may be aligned to hg19; length(", chrMs, ") is not 16569.")
+    message("Patches for this and other human/nonhuman MT refs are welcome!")
     stop("Currently unsupported mitochondrial reference detected; exiting.")
   }
 
   idxStats <- idxstatsBam(bamfile)
   rownames(idxStats) <- idxStats$seqnames
-  mtReadCount <- idxStats[chrM, "mapped"] 
-  nucReadCount <- sum(subset(idxStats, seqnames != chrM)$mapped)
-  mtFrac <- mtReadCount / sum(idxStats[, "mapped"])
-  message(bam, " maps ", mtReadCount, " unique reads (~",
-          round(mtFrac * 100, 1), "%) to ", chrM, ".")
+  
+  if (length(mtSeqLen) > 1) {
+    message("Looks like a xenograft, splitting...")
+    dropChars <- lcsuffix(chrMs[1], chrMs[2])
+    genomes <- sub("_+", "", 
+                   vapply(chrMs, 
+                          function(x) substr(x, 1, nchar(x) - dropChars),
+                          character(1)))
+    idxStats$genome <- .getGenome(idxStats$seqnames, genomes)
+    reads <- split(idxStats, idxStats$genome)
+  } else { 
+    idxStats$genome <- "rCRS"
+    reads <- list(idxStats)
+  }
 
-  mtRange <- GRanges(chrM, IRanges(1, mtSeqLen), strand="*")
-  mtView <- BamViews(bam, bai, bamRanges=mtRange)
-  flags <- scanBamFlag(isPaired=TRUE, 
-                       isProperPair=TRUE, 
-                       isUnmappedQuery=FALSE, 
-                       hasUnmappedMate=FALSE, 
+  mtFrac <- vapply(reads, .getReadProportions, numeric(1)) 
+
+  # this part can probably go away now that we pileup()
+  mtRanges <- GRanges(chrMs, IRanges(1, mtSeqLen), strand="*")
+  mtView <- BamViews(bam, bai, bamRanges=mtRanges)
+  flags <- scanBamFlag(isUnmappedQuery=FALSE, 
                        isSecondaryAlignment=FALSE, 
                        isNotPassingQualityControls=FALSE, 
                        isDuplicate=FALSE) 
-  mtParam <- ScanBamParam(flag=flags, what=c("seq","mapq"), ...) 
+  mtParam <- ScanBamParam(flag=flags, what=c("seq","mapq"), which=mtRanges, ...)
   mtReads <- suppressWarnings(readGAlignments(mtView, 
                                               use.names=TRUE, # for revmapping
                                               param=mtParam)[[1]])
-  attr(mtReads, "mtFrac") <- mtFrac
-  mtReads <- keepSeqlevels(mtReads, chrM)
-  isCircular(seqinfo(mtReads))[chrM] <- TRUE 
-  seqlevelsStyle(mtReads) <- "UCSC"
-  genome(mtReads) <- mtGenome
-
-  if (plotMAPQ) {
-    plot(density(mcols(mtReads)$mapq), type="h", col="red",
-         xlab="MAPQ", ylab="fraction of reads with this MAPQ", 
-         main=paste("Mitochondrial read mapping quality for\n", bam))
+  
+  if (length(mtFrac) > 1) { 
+    seqlevels(mtReads) <- seqlevelsInUse(mtReads)
+    mtReads <- split(mtReads, .getGenome(seqnames(mtReads)))
+    for (i in names(mtReads)) {
+      seqlevels(mtReads[[i]]) <- seqlevelsInUse(mtReads[[i]])
+      mtChr <- grep("(MT|chrM)$", seqlevelsInUse(mtReads[[i]]), value=TRUE)
+      isCircular(seqinfo(mtReads[[i]]))[mtChr] <- TRUE 
+    }
+    genome(mtReads) <- .getGenome(seqlevels(mtReads))
+  } else {
+    mtReads <- keepSeqlevels(mtReads, chrMs)
+    isCircular(seqinfo(mtReads))[chrMs] <- TRUE 
+    seqlevelsStyle(mtReads) <- "UCSC"
+    genome(mtReads) <- mtGenome
   }
+  attr(mtReads, "mtFrac") <- mtFrac
+
+  if (plotMAPQ) { 
+   if (length(mtFrac == 1)) {
+     plot(density(mcols(mtReads)$mapq), type="h", col="red",
+          xlab="MAPQ", ylab="fraction of reads with this MAPQ", 
+          main=paste("Mitochondrial read mapping quality for\n", bam))
+   } else { 
+     par(mfrow=c(1, length(mtFrac)))
+     for (i in names(mtReads)) {
+       plot(density(mcols(mtReads[[i]])$mapq), type="h", col="red",
+            xlab="MAPQ", ylab="fraction of reads with this MAPQ", 
+            main=paste("MT read MAPQ for", seqlevelsInUse(mtReads[[i]])))
+i    }
+   }
+  } 
 
   # MAlignments == wrapped GAlignments
-  mal <- MAlignments(gal=mtReads, bam=bam)
+  if (length(mtFrac) > 1) { 
+    mal <- MAlignmentsList(lapply(mtReads, MAlignments, bam=bam))
+  } else { 
+    mal <- MAlignments(gal=mtReads, bam=bam)
+  }
   attr(mal, "coverage") <- coverage(mal)
-  attr(mal, "nucReads") <- nucReadCount
-  attr(mal, "mtReads") <- mtReadCount
-  attr(mal, "mtVsNuc") <- mtReadCount/nucReadCount
   return(mal)
 
 }
@@ -130,4 +161,26 @@ getMT <- function(bam, filter=FALSE, plotMAPQ=FALSE, ...) {
          "AC"="rCRS",
          "NN"="RSRS",
          "neither rCRS nor RSRS")
+}
+
+
+# helper function:
+.getGenome <- function(x, genomes=c("GRCh38","GRCh37","hg38","GRCm38","mm10")) {
+  if (length(x) > 1) vapply(x, .getGenome, genomes=genomes, character(1))
+  else for (genome in genomes) if (grepl(genome, x)) return(genome) 
+}
+
+
+# helper function:
+.getReadProportions <- function(idxStats, chrM="(chrM|MT)") {
+
+  MT <- grep(chrM, idxStats$seqnames, value=TRUE)
+  mtReadCount <- idxStats[MT, "mapped"] 
+  names(mtReadCount) <- MT
+  nucReadCount <- sum(subset(idxStats, seqnames != MT)$mapped)
+  mtFrac <- mtReadCount / (mtReadCount + nucReadCount)
+  message(bam, " maps ", mtReadCount, " unique reads (~",
+          round(mtFrac * 100, 1), "%) to ", MT, ".")
+  return(mtFrac)
+
 }

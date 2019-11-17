@@ -19,9 +19,7 @@ object's existing metadata is used. The object (with fixed metadata) is
 then returned. If automatic fixes are impossible, a message is generated.
 }
 \examples{
-\dontrun{
 library(MTseekerData)
-data(RONKSreads)
-fixed <- fixMetadata(RONKSreads)
-}
+data(RONKSvariants)
+fixMetadata(RONKSvariants)
 }

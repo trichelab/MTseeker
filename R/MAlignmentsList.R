@@ -14,7 +14,7 @@ setClass("MAlignmentsList", contains="GAlignmentsList")
 #'
 #' Normally the MAlignmentsList constructor will be called by getMT. 
 #' 
-#' @rdname          MAlignmentsList-methods
+#' @rdname            MAlignmentsList-methods
 #' 
 #' @param ...         MAlignments
 #'
@@ -23,92 +23,24 @@ setClass("MAlignmentsList", contains="GAlignmentsList")
 #' @import            GenomicAlignments
 #' 
 #' @examples
-#' \dontrun{
+#'
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 #' print(BAMdir)
 #' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
 #' print(BAMs)
-#' targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
-#' rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
-#' mall <- getMT(targets)
-#' class(mall) 
-#' show(mall) 
-#' }
+#' mall <- getMT(BAMs[1]) # a xenograft
+#' genomeLength(mall) 
+#' readLength(mall) 
+#' fileName(mall) 
+#' scanBamHeader(mall) 
+#'
 #' @export
 MAlignmentsList <- function(...) {
 
-  # this must be done first: 
-  mdat <- list()
-  #check for genomeSize to be 0 in a list
-  #this is a really odd bug... but this will currently patch it
-  if (is(sapply(..., genomeLength), "list")) {
-    mdat$cache <- data.frame(BAM = sapply(..., fileName),
-                             reads = sapply(..., length),
-                             readLength = sapply(..., readLength),
-                             genomeSize = unlist(as.numeric(sapply(..., genomeLength))),
-                             genome = unname(sapply(..., genome)),
-                             nuclearReads = unname(sapply(..., attr, "nucReads")),
-                             mitoVsNuclear = unname(sapply(..., attr, "mtVsNuc")))
-  } else {
-    mdat$cache <- data.frame(BAM = sapply(..., fileName),
-                             reads = sapply(..., length),
-                             readLength = sapply(..., readLength),
-                             genomeSize = sapply(..., genomeLength),
-                             genome = unname(sapply(..., genome)),
-                             nuclearReads = unname(sapply(..., attr, "nucReads")),
-                             mitoVsNuclear = unname(sapply(..., attr, "mtVsNuc")))
-  }
-
-  # options(stringsAsFactors) fix
-  if (is.factor(mdat$cache$BAM)) {
-    mdat$cache$BAM <- levels(mdat$cache$BAM)[mdat$cache$BAM] 
-  }
-  mdat$cache$genomeCoverage <- with(mdat$cache, 
-                                    round((reads*readLength) / genomeSize))
-  mdat$summaryCols <- c("reads", "readLength", 
-                        "genomeSize", "genomeCoverage")
-
-  # not relevant if only chrM reads  
-  if (any(mdat$cache$nuclearReads > 0)) {
-    mdat$summaryCols <- append(mdat$summaryCols, 
-                               c("nuclearReads","mitoVsNuclear"))
-  }
-
-  # if cache is not prepped beforehand, this will clobber it: 
   gal <- GenomicAlignments::GAlignmentsList(...)
-  # and no, I don't entirely understand why
-
-  # name entries if possible
-  if (is.null(names(gal))) {
-    warning("This MAlignmentsList has no element names!")
-  } else {
-    rownames(mdat$cache) <- names(gal) 
-  }
-  
-  #filter out samples that have 0 reads
-  if (any(mdat$cache$reads == 0)) {
-    message("Filtering out samples with 0 reads after pre-processing...")
-    lcfilt <- mdat$cache[which(mdat$cache$reads > 0),]
-    mdat$cache <- mdat$cache[rownames(lcfilt),]
-    gal <- gal[rownames(lcfilt),]
-  }
-  
-  #add a filter step for personal use
-  if (any(mdat$cache$genomeCoverage < 10)) {
-    message("Filtering out samples with < 10x coverage after pre-processing...")
-    lcfilt <- mdat$cache[which(mdat$cache$genomeCoverage >= 10),]
-    mdat$cache <- mdat$cache[rownames(lcfilt),]
-    gal <- gal[rownames(lcfilt),]
-  }
-  
-  #check if there is anything left!
-  if (length(gal) == 0) stop("After filtering samples, there aren't any samples left. Exiting.")
-  
-  # construct the object + its cache
-  mal <- new("MAlignmentsList", gal)
-  metadata(mal) <- mdat
-  return(mal)
+  if (is.null(names(gal))) warning("This MAlignmentsList has no element names!")
+  new("MAlignmentsList", gal)
 
 }
 
@@ -119,56 +51,14 @@ MAlignmentsList <- function(...) {
 #' these methods can have various argument names, but all of them tend to 
 #' take an MAlignmentsList as their argument.
 #'
-#' @param x         an MAlignmentsList
 #' @param object    an MAlignmentsList
+#' @param files     an MAlignmentsList
+#' @param x         an MAlignmentsList
 #' 
 #' @return          various objects, as appropriate to the method 
 #'
 #' @name            MAlignmentsList-methods
 NULL
-
-
-
-#' @rdname          MAlignmentsList-methods
-#'
-#' @export
-setMethod("genomeCoverage", signature(x="MAlignmentsList"),
-          function(x) {
-            covg <- metadata(x)$cache$genomeCoverage
-            names(covg) <- names(x)
-            return(covg)
-          })
-
-
-#' @rdname          MAlignmentsList-methods
-#'
-#' @export
-setMethod("readLength", signature(x="MAlignmentsList"),
-          function(x) {
-            rl <- metadata(x)$cache$readLength
-            names(rl) <- names(x)
-            return(rl)
-          })
-
-
-#' @rdname          MAlignmentsList-methods
-#' 
-#' @export
-setMethod("fileName", signature(object="MAlignmentsList"),
-          function(object) {
-            BAMs <- metadata(object)$cache$BAM
-            names(BAMs) <- names(object)
-            return(BAMs)
-          }) 
-
-
-#' @rdname          MAlignmentsList-methods
-#' 
-#' @export
-setMethod("Summary", signature(x="MAlignmentsList"),
-          function(x) {
-            DataFrame(metadata(x)$cache[, metadata(x)$summaryCols])
-          })
 
 
 #' @rdname          MAlignmentsList-methods
@@ -177,11 +67,40 @@ setMethod("Summary", signature(x="MAlignmentsList"),
 setMethod("show", signature(object="MAlignmentsList"),
           function(object) {
             cat("MAlignmentsList object of length", length(object), "\n")
-            cat("-------\n", sep = "")
-            cat("Summary(object):\n")
-            show(Summary(object))
-            cat("-------\n", sep = "")
             cat("seqinfo: ", summary(seqinfo(object)), "\n", sep = "")
           })
 
 
+#' @rdname          MAlignmentsList-methods
+#'
+#' @export
+setMethod("fileName", "MAlignmentsList",
+          function(object) vapply(object, fileName, character(1)))
+
+
+#' @rdname          MAlignmentsList-methods
+#'
+#' @export
+setMethod("scanBamHeader", "MAlignmentsList",
+          function(files) vapply(files, scanBamHeader, list(1)))
+
+
+#' @rdname          MAlignmentsList-methods 
+#' 
+#' @export
+setMethod("readLength", "MAlignmentsList", 
+          function(x) vapply(x, readLength, numeric(1)))
+
+
+#' @rdname          MAlignmentsList-methods 
+#' 
+#' @export
+setMethod("genomeLength", "MAlignmentsList", 
+           function(x) vapply(x, genomeLength, numeric(1)))
+
+
+#' @rdname          MAlignmentsList-methods
+#'
+#' @export
+setMethod("genomeCoverage", "MAlignmentsList", 
+          function(x) vapply(x, genomeCoverage, numeric(1)))

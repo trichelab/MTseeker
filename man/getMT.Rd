@@ -21,18 +21,12 @@ getMT(bam, filter = FALSE, plotMAPQ = FALSE, ...)
 }
 \description{
 This purely a convenience function, and an incredibly convenient one at that.
+FIXME: this function is still useful, but it desperately needs refactoring.
 }
 \examples{
-\dontrun{
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
-BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
-(mal <- getMT(BAMs[1]))
+patientBAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern="^pt.*.bam$"))
+(mal <- getMT(patientBAMs[1]))
 class(mal) 
-
-targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
-rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
-(mall <- getMT(targets))
-class(mall) 
-}
 }

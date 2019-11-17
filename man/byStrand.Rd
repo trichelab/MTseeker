@@ -22,10 +22,8 @@ retrieves ranges/variant calls that overlap genic elements on the heavy and
 light strands of the mitochondrial genome.
 }
 \examples{
-\dontrun{
 data(mtAnno.rCRS)
-anno <- mtAnno
 data(RONKSvariants, package="MTseekerData")
-byStrand(RONKSvariants, anno)
-}
+byStrand(RONKSvariants, mtAnno)
+
 }

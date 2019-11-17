@@ -36,16 +36,11 @@ Human mitochondrial genomes (GRCh37+ and hg38+) are fully supported, mouse
 mitochondrial genomes (C57BL/6J aka NC_005089) are only somewhat supported.
 }
 \examples{
-\dontrun{
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
-BAMs <- list.files(BAMdir, pattern=".bam$")
-bam <- BAMs[1]
+patientBAMs <- list.files(BAMdir, pattern="^pt.*.bam$")
+(bam <- patientBAMs[1])
+(sbp <- scanMT(bam))
+(pu <- pileupMT(bam, sbp=sbp, callIndels=TRUE, ref="rCRS"))
 
-sbp <- scanMT(bam)
-show(sbp)
-
-pu <- pileupMT(bam, ref="rCRS", sbp=sbp)
-show(pu) 
-}
 }

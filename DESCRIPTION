@@ -1,7 +1,7 @@
 Package: MTseeker
 Type: Package
 Title: Bioconductor Tools for Human Mitochondrial Variant Analysis
-Version: 1.5.5
+Version: 1.5.6
 Author: Tim Triche <tim.triche@gmail.com>
 Authors@R: c(person("Tim", "Triche", role = c("cre", "aut"),
                     email = "tim.triche@gmail.com"),

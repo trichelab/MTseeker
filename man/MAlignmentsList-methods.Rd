@@ -3,31 +3,36 @@
 \name{MAlignmentsList}
 \alias{MAlignmentsList}
 \alias{MAlignmentsList-methods}
-\alias{genomeCoverage,MAlignmentsList-method}
-\alias{readLength,MAlignmentsList-method}
-\alias{fileName,MAlignmentsList-method}
-\alias{Summary,MAlignmentsList-method}
 \alias{show,MAlignmentsList-method}
+\alias{fileName,MAlignmentsList-method}
+\alias{scanBamHeader,MAlignmentsList-method}
+\alias{readLength,MAlignmentsList-method}
+\alias{genomeLength,MAlignmentsList-method}
+\alias{genomeCoverage,MAlignmentsList-method}
 \title{wrap a GAlignmentsList for viewing}
 \usage{
 MAlignmentsList(...)
 
-\S4method{genomeCoverage}{MAlignmentsList}(x)
-
-\S4method{readLength}{MAlignmentsList}(x)
+\S4method{show}{MAlignmentsList}(object)
 
 \S4method{fileName}{MAlignmentsList}(object)
 
-\S4method{Summary}{MAlignmentsList}(x)
+\S4method{scanBamHeader}{MAlignmentsList}(files)
 
-\S4method{show}{MAlignmentsList}(object)
+\S4method{readLength}{MAlignmentsList}(x)
+
+\S4method{genomeLength}{MAlignmentsList}(x)
+
+\S4method{genomeCoverage}{MAlignmentsList}(x)
 }
 \arguments{
 \item{...}{MAlignments}
 
-\item{x}{an MAlignmentsList}
-
 \item{object}{an MAlignmentsList}
+
+\item{files}{an MAlignmentsList}
+
+\item{x}{an MAlignmentsList}
 }
 \value{
 \preformatted{       an MAlignments 
@@ -44,16 +49,16 @@ these methods can have various argument names, but all of them tend to
 take an MAlignmentsList as their argument.
 }
 \examples{
-\dontrun{
+
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 print(BAMdir)
 BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
 print(BAMs)
-targets <- data.frame(BAM=BAMs, stringsAsFactors=FALSE) 
-rownames(targets) <- sapply(strsplit(basename(BAMs), "\\."), `[`, 1)
-mall <- getMT(targets)
-class(mall) 
-show(mall) 
-}
+mall <- getMT(BAMs[1]) # a xenograft
+genomeLength(mall) 
+readLength(mall) 
+fileName(mall) 
+scanBamHeader(mall) 
+
 }
