@@ -38,15 +38,20 @@ setClass("MVRangesList", contains="SimpleVRangesList")
 #' @export
 MVRangesList <- function(..., bamFiles=NULL, coverageRles=NULL, verbose=FALSE) {
 
-  if (!is(..., "VRangesList") & !is(..., "MVRangesList")) {
-    res <- new("MVRangesList", VRangesList(...))
+  if (is(..., "MVRangesList")) {
+    if (verbose) message("Argument is an MVRangesList")
+    res <- (...) 
+  } else if (is(..., "VRangesList")) {
+    if (verbose) message("Argument is a VRangesList")
+    res <- new("MVRangesList", ..., elementType="MVRanges")
   } else { 
-    res <- new("MVRangesList", ...) 
+    if (verbose) message("Argument is not a VRangesList or an MVRangesList")
+    res <- new("MVRangesList", VRangesList(...), elementType="MVRanges")
   }
   
-  if (!is.null(bamFiles)) metadata(res)$bamFiles <- bamFiles
   if (!is.null(coverageRles)) metadata(res)$coverageRles <- coverageRles
-  
+  if (!is.null(bamFiles)) metadata(res)$bamFiles <- bamFiles
+  if (verbose) message("elementType is ", elementType(res))
 
   return(res) 
 
@@ -164,11 +169,11 @@ setAs(from="MVRangesList", to="GRanges",
 
 
 # helper
-setAs(from="MVRangesList", to="VRangesList",
-      function(from) {
-        message("Coercing from MVRangesList to VRangesList...") 
-        VRangesList(lapply(from, as, "VRanges"))
-      })
+# setAs(from="MVRangesList", to="VRangesList",
+#       function(from) {
+#         message("Coercing from MVRangesList to VRangesList...") 
+#         VRangesList(lapply(from, as, "VRanges"))
+#       })
 
 
 #' @rdname    MVRangesList-methods

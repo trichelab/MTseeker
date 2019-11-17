@@ -21,9 +21,9 @@
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 #' patientBAMs <- list.files(BAMdir, pattern="^pt.*.bam$")
-#' (bam <- patientBAMs[1])
+#' (bam <- file.path(BAMdir, patientBAMs[1]))
 #' (sbp <- scanMT(bam))
-#' (pu <- pileupMT(bam, sbp=sbp, callIndels=TRUE, ref="rCRS"))
+#' (mvr <- pileupMT(bam, sbp=sbp, callIndels=TRUE, ref="rCRS"))
 #'
 #' @export
 pileupMT <- function(bam, sbp=NULL, pup=NULL, callIndels=TRUE, ref=c("rCRS","GRCh37","GRCh38","hg38", "GRCm38","C57BL/6J","NC_005089","mm10"), ...) { 
