@@ -19,7 +19,7 @@
 #' @examples
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
-#' patientBAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern="^pt.*.bam$"))
+#' patientBAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern="^pt.*bam$"))
 #' (mal <- getMT(patientBAMs[1]))
 #' class(mal) 
 #' @export
@@ -96,7 +96,7 @@ getMT <- function(bam, filter=FALSE, plotMAPQ=FALSE, ...) {
     reads <- list(idxStats)
   }
 
-  mtFrac <- vapply(reads, .getReadProportions, numeric(1)) 
+  mtFrac <- vapply(reads, .getReadProportions, bam=bam, numeric(1)) 
 
   # this part can probably go away now that we pileup()
   mtRanges <- GRanges(chrMs, IRanges(1, mtSeqLen), strand="*")
@@ -171,7 +171,7 @@ i    }
 
 
 # helper function:
-.getReadProportions <- function(idxStats, chrM="(chrM|MT)") {
+.getReadProportions <- function(idxStats, bam, chrM="(chrM|MT)") {
 
   MT <- grep(chrM, idxStats$seqnames, value=TRUE)
   mtReadCount <- idxStats[MT, "mapped"] 
