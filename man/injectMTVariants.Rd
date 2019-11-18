@@ -20,6 +20,7 @@ injectMTVariants(mvr, coding = TRUE, gr = NULL)
 \description{
 FIXME: this function could most likely be orders of magnitude faster.
 FIXME: this ONLY considers variants injected against rCRS, not RSRS or hg19.
+FIXME: this function really needs mouse support as well.
 }
 \examples{
 library(MTseekerData)

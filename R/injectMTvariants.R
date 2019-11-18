@@ -2,6 +2,7 @@
 #' 
 #' FIXME: this function could most likely be orders of magnitude faster.
 #' FIXME: this ONLY considers variants injected against rCRS, not RSRS or hg19. 
+#' FIXME: this function really needs mouse support as well.
 #' 
 #' @param mvr       An MVRanges, usually from callMT, often subsetted
 #' @param gr        A GRanges, usually of protein-n regions (the default)

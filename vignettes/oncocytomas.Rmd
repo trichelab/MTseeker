@@ -83,8 +83,7 @@ if (FALSE) {
 
 Since realigning 22 whole exomes and extracting/counting reads takes a while,
 we created the MTseekerData package to hold the output from doing the above. 
-The _RONKSreads_ and _RONKSvariants_ data objects hold aligned reads (as 
-an MAlignments object) and called variants (as an MVRangesList object)
+The _RONKSvariants_ data object holds called variants (as an MVRangesList)
 comparing _R_enal _O_ncocytomas and _N_ormal _K_idney _S_amples from 11 
 subjects who developed this premalignant neoplasia of the kidney. Most such 
 cases seem to be self-limiting, perhaps due to their defective mitophagy, and
@@ -101,62 +100,15 @@ that results in the accumulation of additional mutations (like _TP53_ in CRCCs).
 library(MTseekerData)
 ```
 
-# Relative mitochondrial copy number changes
-
-We'd like to compute the relative mitochondrial copy number for each.
-For whatever reason, this seems to throw an error in the vignette build 
-if we plot all of them, so we will just plot a subset in this vignette.
-
-*NOTE* This will fail if you try using the bams from the oncocytomaBams git repository!
-
-```{r computeCN}
-data(RONKSreads, package="MTseekerData")
-mVn <- Summary(RONKSreads)$mitoVsNuclear
-names(mVn) <- names(RONKSreads) 
-CN <- mVn[seq(2,22,2)]/mVn[seq(1,21,2)] 
-mtCN <- data.frame(subject=names(CN), CN=CN)
-
-library(ggplot2) 
-library(ggthemes)
-p <- ggplot(head(mtCN), aes(x=subject, y=CN, fill=subject)) + 
-       geom_col() + theme_tufte(base_size=24) + ylim(0,4) + 
-       ylab("Tumor/normal mitochondrial ratio") + 
-       ggtitle("Mitochondrial retention in oncocytomas")
-print(p)
-```
-
-Note that some of the oncocytomas appear to have fewer mitochondrial genome
-copies than their normal kidney sample counterparts, contrary to intuition. 
-These tumors usually stain as great big pink eosinophil-like cells on slides,
-supposedly due to their massive cytoplasmic load of mitochongdria. For whatever
-reason, though, the amount of (non-duplicated) mtDNA recovered in some of the 
-oncocytomas relative to nearby normal kidney cells isn't always much greater. 
-(It is also possible that some neighboring cells might also be premalignant.)
-
 # Calling variants
 
 Obviously it's not much good to have a variant caller that can't call variants,
 so we demonstrate that here. (Note: tumor/normal calls, haplogroup inference,
 and soft-backfiltering of haplogroup-determining variants are works in progress,
 so we do not currently demonstrate them here, although the fpFilter datasets 
-are useful for these purposes) At present, MTseeker supports the _gmapR_ package
-for mitochondrial variant calling, though we plan to provide cross-platform 
-support via Rsamtools::pileup in the near future.     
-
-gmapR can be a bit feisty, so we simply document the process below: 
-
-```{r callVariants, eval=FALSE} 
-if (FALSE) { 
-  # doing this requires the BAM files
-  RONKSvariants <- callMT(RONKSreads, parallel = TRUE,
-                          cores = 8, verbose = TRUE)
-  # which is why we skip it in the vignette 
-  save(RONKSvariants, file="RONKSvariants.rda")
-  # see ?callMT for a much simpler runnable example
-}
-```
-
-For this vignette, we have stored the results in the MTseekerData package:
+are useful for these purposes) MTseeker used to use the _gmapR_ package
+for mitochondrial variant calling; now we provide cross-platform support via
+Rsamtools::pileup. However, we provide a pre-called dataset to use here.
 
 ```{r loadVariants}
 library(MTseekerData)
@@ -170,12 +122,11 @@ It's important to mask off ancestry-related variants for a variety of reasons, o
 ```{r haplomask}
 
 # this depends upon having java installed
-RONKSvariants <- haploMask(RONKSvariants)
-
-# if you are running this on a linux machine with openJDK installed as the default
-# it will fail
 # unfortunately, you need oracle java to have haplogrep run...
-# RONKSvariants <- haploMask(RONKSvariants, java.path = "/user/bin/java")
+if (FALSE) {
+  RONKSvariants <- haploMask(RONKSvariants, java.path = "/usr/bin/java")
+} 
+
 
 ```
 
