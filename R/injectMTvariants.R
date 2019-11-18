@@ -15,7 +15,7 @@
 #'
 #' @examples
 #' library(MTseekerData)
-#' injectMTVariants(RONKSvariants[["RO_2"]]) 
+#' injectMTVariants(head(RONKSvariants[["RO_2"]])) 
 #' 
 #' @export
 injectMTVariants <- function(mvr, coding=TRUE, gr=NULL) {
@@ -34,7 +34,7 @@ injectMTVariants <- function(mvr, coding=TRUE, gr=NULL) {
   # No mvr given
   if (!length(mvr)) return(mvr[0])
 
-  submvr <- locateMTvariants(mvr, coding=coding)
+  submvr <- locateVariants(mvr, coding=coding)
 
   # If submvr is empty
   if (!length(submvr)) return(mvr[0])
