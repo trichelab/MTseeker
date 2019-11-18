@@ -21,7 +21,7 @@ filterMTvars(vars, fp = TRUE, NuMT = 0.03, covg = 20, depth = 2)
 a filtered set of variants
 }
 \description{
-sanitize PASSing mitochondrial variant calls to a moderate degree
+FIXME: generalize this to mm10
 }
 \examples{
 library(MTseekerData) 

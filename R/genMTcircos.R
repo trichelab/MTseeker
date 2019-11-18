@@ -1,8 +1,4 @@
-#' Plot an empty circos plot of the mitochondrial genome
-#'
-#' @param mvr      MVRanges
-#'
-#' @return        Image of mitochondrial genome
+#' @rdname    MTcircos
 #'
 #' @export
 genMTcircos <- function(mvr) {
@@ -10,15 +6,11 @@ genMTcircos <- function(mvr) {
   circos.clear()
   
   anno <- initMTcircos(mvr)
-  genesMTcircos(mvr, anno, legends=T)
+  genesMTcircos(mvr, anno, legends=TRUE)
   
 }
 
-#' Initialize the circos plots
-#'
-#' @param x       something with a genome() 
-#'
-#' @return        annotations
+#' @rdname    MTcircos
 #'
 #' @export
 initMTcircos <- function(x) {
@@ -32,6 +24,7 @@ initMTcircos <- function(x) {
   
   # Mouse
   else if (unique(genome(x)) == "NC_005089") {
+    # FIXME: this will always fail until it is moved into MTseeker/data 
     anno <- readRDS("~/Documents/pileupTesting/NC_005089genome/MTmouseAnno.rds")
     refWidth <- 16299
   }
@@ -50,7 +43,7 @@ initMTcircos <- function(x) {
 }
 
 
-#' Actually plot the rings with the gene names
+#' @rdname    MTcircos
 #' 
 #' @param x       something with a genome() 
 #' @param anno    a GRanges with annotations

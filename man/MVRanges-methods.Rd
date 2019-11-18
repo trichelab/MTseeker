@@ -29,7 +29,7 @@
 \alias{consensusString,MVRanges-method}
 \title{wrap a VRanges for mitochondrial use}
 \usage{
-MVRanges(vr, coverage = NA_real_)
+MVRanges(vr = NULL, coverage = NA_real_)
 
 \S4method{genomeCoverage}{MVRanges}(x)
 
@@ -136,21 +136,14 @@ In such cases, the method will usually, but not always, be apply()ed.
 }
 
 \examples{
-\dontrun{
+
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
-BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
-(mal <- getMT(BAMs[1]))
-if (requireNamespace("GmapGenome.Hsapiens.rCRS", quietly=TRUE)) {
-  (mvr <- callMT(mal))
-  locateVariants(mvr)
-  predictCoding(mvr) 
-} else { 
-  message("You have not yet installed an rCRS reference genome.")
-  message("Consider running the indexMTgenome() function to do so.")
-  message("An example MVRanges is RONKSvariants$RO_1 from MTseekerData.")
-}
-}
-# summarizeVariants can take too long to run, and requires internet access 
+BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern="^pt.*bam$"))
+(mvr <- filterMTvars(pileupMT(BAMs[1], ref="rCRS")))
+locateVariants(head(encoding(mvr))) # FIXME: no gene overlaps?!?
+predictCoding(mvr) # FIXME: none!
+
+# summarizeVariants can take a LONG time to run, and requires Internet
 
 }

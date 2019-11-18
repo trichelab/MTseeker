@@ -14,8 +14,10 @@
 #' 
 
 lift_up_to_rCRS <- function(ranges_obj, verbose = T) {
+
   #referred to http://haplogrep.uibk.ac.at/blog/rcrs-vs-rsrs-vs-hg19/
-  if(!(class(ranges_obj) == "GRanges" || class(ranges_obj) == "MVRanges")) {
+
+  if(!(is(ranges_obj, "GRanges") | is(ranges_obj, "MVRanges"))) {
     stop("Either GRanges or MVRanges must be provided as input")
   } 
   

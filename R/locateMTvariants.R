@@ -23,10 +23,7 @@ locateMTvariants <- function(query, coding=TRUE) {
   if (length(query) == 0) return(NULL)
   
   #run serially
-  if (is(query, "MVRangesList")) {
-    mvr <- MVRangesList(lapply(query, locateVariants))
-    return(mvr)
-  }
+  if (is(query, "MVRangesList")) MVRangesList(lapply(query, locateVariants))
   
   # For now only support rCRS
   stopifnot(genome(query) == "rCRS")
@@ -39,24 +36,35 @@ locateMTvariants <- function(query, coding=TRUE) {
   #anno <- subset(mtAnno, region %in% c("tRNA", "coding"))
 
   # decomposeAndCalc throws me an error when I try to use tRNA
+  anno <- mtAnno
   if (coding) anno <- subset(mtAnno, region == "coding")
-  else anno <- mtAnno
   ol <- findOverlaps(query, anno, ignore.strand=TRUE)
   
+  # Initialize
+  query$gene <- NA_character_
+  query$overlapGene <- NA_character_
+  query$region <- NA_character_
+  query$localStart <- NA_integer_
+  query$localEnd <- NA_integer_
+  query$startCodon <- NA_integer_
+  query$endCodon <- NA_integer_
+  
+  
   if (length(ol) == 0) {
-    message("No overlapping genes in coding regions for variant: ", names(query))
-    return(query[0])
+    message("No overlapping genes for variant: ", names(query))
+    return(query) # allows iterating over an MVRanges this way 
   }
   
   if (length(subjectHits(ol)) > 2) {
-    stop("More than 2 overlapping genes in locateVariants")
+    message("More than 2 overlapping genes in locateVariants")
+    message("locateMTvariants is meant to run on individual variants.")
+    stop("Exiting.")
   }
   
-  query$gene <- NA_character_
-  query$overlapGene <- NA_character_
 
   # If there are multiple genes the variant is located within
-  # Create multiple copies of the variant to handle each gene that it is located within
+  # Create multiple copies of the variant to handle each gene 
+  # that it is located within
   if (length(subjectHits(ol)) > 1) {
 
     query <- rep(query, length(subjectHits(ol)))
@@ -64,22 +72,17 @@ locateMTvariants <- function(query, coding=TRUE) {
     # Assume that there are only 2 overlapping genes
     query[1]$gene <- names(anno)[subjectHits(ol)][1]
     query[2]$gene <- names(anno)[subjectHits(ol)][2]
-    query$overlapGene <- paste(names(anno)[subjectHits(ol)], collapse = ",")
-  } 
-  
-  # Otherwise there is no overlap
-  else {
+    overlappedGenes <- names(anno)[subjectHits(ol)]
+    query$overlapGene <- paste(unique(overlappedGenes), collapse = ",")
+
+  } else {
+    
+    # Otherwise there is no overlap
     query$gene <- names(anno)[subjectHits(ol)]
+
   }
   
-  # Initialize
-  query$region <- NA_character_
-  query$localStart <- NA_integer_
-  query$localEnd <- NA_integer_
-  query$startCodon <- NA_integer_
-  query$endCodon <- NA_integer_
-  
-  for (i in 1:length(query)) {
+  for (i in seq_along(query)) {
     
     subHit <- subjectHits(ol)[i]
     

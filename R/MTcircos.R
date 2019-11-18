@@ -24,14 +24,17 @@
 #' @importFrom grDevices col2rgb rgb adjustcolor
 #' @importFrom graphics legend
 #'
+#' @aliases genMTcircos initMTcircos genesMTcircos
+#'
 #' @examples 
-#' \dontrun{
+#'
 #' library(MTseekerData)
-#' data(RONKSvariants) 
-#' MTcircos(RONKSvariants)
-#' # same as plot(RONKSvariants)
-#' title("Renal oncocytomas and normal kidney samples")
-#' }
+#' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
+#' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern="^pt.*bam$"))
+#' (mvr <- filterMTvars(pileupMT(BAMs[1], ref="rCRS")))
+#' MTcircos(mvr)
+#' title("Mitochondrial variants in a leukemia patient's blast cell")
+#' 
 #' @export 
 MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL, 
                      incol=NULL, anno=NULL, how=c("matrix", "AA"), ...) {
@@ -88,8 +91,9 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
       vafBed1 <- .vafMatrix(bed1, outside, how)
     }
     
-    circos.genomicHeatmap(bed1, outcol, line_col=.colorCode(bed1$chr), col = vafBed1,
-                          track.margin=c(0,0), side="outside", border=NA,
+    circos.genomicHeatmap(bed1, outcol, line_col=.colorCode(bed1$chr), 
+                          col = vafBed1, track.margin=c(0,0), 
+                          side="outside", border=NA,
                           line_lwd=2) 
   }
   else {
@@ -142,28 +146,33 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
   
 }
 
+
+# helper fn
 .makeColoredMatrix <- function(mvr) {
 
   # Making a colored matrix
   if (is(mvr, "MVRangesList")) {
     allNames <- lapply(mvr, names)
-    allNames <- unique(unlist(unname(allNames)))
+    allNames <- unlist(unname(allNames))
     numSamples <- length(mvr)
   } else {
-    allNames <- unique(names(mvr))
+    allNames <- make.unique(names(mvr))
     numSamples <- 1
   }
 
   rowNam <- c("chr", "start", "end")
 
-  if (numSamples == 1) rowNam <- append(rowNam, unique(as.character(sampleNames(mvr))))
-  else rowNam <- append(rowNam, names(mvr))
+  if (numSamples == 1) {
+    rowNam <- append(rowNam, unique(as.character(sampleNames(mvr))))
+  } else {
+    rowNam <- append(rowNam, names(mvr))
+  }
   
   m <- matrix(0, ncol = length(rowNam), nrow = length(allNames))
   typeDF <- data.frame(m)
 
   names(typeDF) <- rowNam
-  rownames(typeDF) <- allNames
+  rownames(typeDF) <- make.unique(allNames)
 
   # Figure out which of the variants in a sample is SNV, ins, del
   # Assign color according to the unique values set for each type of variant
@@ -177,10 +186,8 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
     typeDF[,4][snv] <- 2
     typeDF[,4][del] <- 3
 
-  }
- 
-  else {
-    for (i in 1:numSamples) {
+  } else {
+    for (i in seq_len(numSamples)) {
       
       #if(length(mvr[[i]]) == 0) next
       
@@ -207,7 +214,7 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
   
   else {
     # Get the start and end position for each variants
-    for (j in 1:numSamples) {
+    for (j in seq_len(numSamples)) {
       
       #if(length(mvr[[j]]) == 0) next
       
@@ -226,12 +233,12 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
   # Get the names of the genes each variant is found in
   anno <- suppressMessages(getAnnotations(mvr))
   ov <- findOverlaps(IRanges(typeDF$start, typeDF$end), ranges(anno))
-
-  # If there are overlapping genes
-  # Only list the first gene it overlaps in
-  firstOv <- ov[match(unique(queryHits(ov)), queryHits(ov)), ]
-  
-  typeDF$chr <- names(anno)[subjectHits(firstOv)]
+  if (length(ov) > 0) { 
+    # If there are overlapping genes
+    # Only list the first gene it overlaps in
+    firstOv <- ov[match(unique(queryHits(ov)), queryHits(ov)), ]
+    typeDF$chr <- names(anno)[subjectHits(firstOv)]
+  }
 
   return(typeDF)
 }
@@ -245,10 +252,9 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
   # Get the VAF for each nonzero element of the matrix
   if (is(mvr, "MVRanges")) {
     vafs[,4] <- mvr$VAF
-  }
-  # Get the VAF for each variants
-  else {
-    for (j in 1:(ncol(bed) - 3)) {
+  } else {
+    # Get the VAF for each variants
+    for (j in seq_len(ncol(bed) - 3)) {
       
       hits <- which(bed[,j + 3] != 0)
       varNames <- row.names(bed)[hits]
@@ -278,14 +284,12 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
       bed[,4][which(bed[,4] == 5)] <- cols[5]
       bed[,4][which(bed[,4] == 6)] <- cols[6]
       
-      for (i in 1:length(mvr)) {
+      for (i in seq_along(mvr)) {
         bed[,4][i] <- adjustcolor(col = bed[,4][i],alpha.f = vafs[,4][i])
       }
-    }
-    
-    else {
+    } else {
 
-      for (i in 1:(ncol(bed) - 3)) {
+      for (i in seq_len(ncol(bed) - 3)) {
         
         bed[,i + 3][which(bed[,i + 3] == 1)] <- cols[1]
         bed[,i + 3][which(bed[,i + 3] == 2)] <- cols[2]
@@ -297,7 +301,7 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
       }
 
       # Add transparency
-      for (k in 1:nrow(nonzero)) {
+      for (k in seq_len(nrow(nonzero))) {
         
         # 1 is the row
         # 2 is the column
@@ -310,24 +314,20 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
       
     }
     
-  }
-  
-  # Only color code snvs, ins, dels
-  else {
+  } else {
     
+    # Only color code snvs, ins, dels
     if (is(mvr, "MVRanges")) {
 
       bed[,4][which(bed[,4] == 1)] <- "red"
       bed[,4][which(bed[,4] == 2)] <- "black"
       bed[,4][which(bed[,4] == 3)] <- "blue"
       
-      for (i in 1:length(mvr)) {
+      for (i in seq_along(mvr)) {
         bed[,4][i] <- adjustcolor(col = bed[,4][i],alpha.f = vafs[,4][i])
       }
-    }
-    
-    else {
-      for (k in 1:nrow(nonzero)) {
+    } else {
+      for (k in seq_len(nrow(nonzero))) {
         
         # 1 is the row
         # 2 is the column
@@ -346,7 +346,7 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
 
   }
 
-  bed <- bed[,4:ncol(bed)]
+  bed <- bed[, setdiff(seq_len(ncol(bed)), c(1,2,3))]
   if (is(mvr, "MVRanges")) bed <- as.matrix(bed)
   return(bed)
 }
@@ -356,10 +356,10 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
   # Making a colored matrix
   if (is(mvr, "MVRangesList")) {
     allNames <- lapply(mvr, names)
-    allNames <- unique(unlist(unname(allNames)))
+    allNames <- make.unique(unlist(unname(allNames)))
     numSamples <- length(mvr)
   } else {
-    allNames <- unique(names(mvr))
+    allNames <- make.unique(names(mvr))
     numSamples <- 1
   }
   
@@ -372,7 +372,7 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
   typeDF <- data.frame(m)
   
   names(typeDF) <- rowNam
-  rownames(typeDF) <- allNames
+  rownames(typeDF) <- make.unique(allNames)
   
   
   # Assign values to the type of mutations
@@ -399,7 +399,7 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
     
     # Figure out which of the variants in a sample is which type of variants
     # Assign color according to the unique values set for each type of variant
-    for (i in 1:numSamples) {
+    for (i in seq_len(numSamples)) {
 
       rowInd <- which(allNames %in% names(mvr[[i]]))
       rowOverlapNames <- allNames[rowInd]
@@ -432,7 +432,7 @@ MTcircos <- function(variants=NULL, outside=NULL, inside=NULL, outcol=NULL,
   else {
     
     # Get the start and end position for each variants
-    for (j in 1:numSamples) {
+    for (j in seq_len(numSamples)) {
       
       hits <- which(typeDF[,j + 3] != 0)
       varNames <- allNames[hits]

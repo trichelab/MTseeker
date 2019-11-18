@@ -28,5 +28,5 @@ library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 patientBAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern="^pt.*bam$"))
 (mal <- getMT(patientBAMs[1]))
-class(mal) 
+
 }

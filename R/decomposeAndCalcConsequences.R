@@ -31,9 +31,12 @@
 decomposeAndCalcConsequences <- function(mvr, coding=TRUE, AAchanges=TRUE, ...){
   
   #this will decompose non-disjoint ranges for injectMTVariants()
-  if (!class(mvr) %in% c("MVRanges", "MVRangesList")) stop("Input is not an MVRanges or MVRangesList.")
+  if (!(is(mvr, "MVRanges") | is(mvr, "MVRangesList"))) {
+    stop("Error: Input is not an MVRanges or MVRangesList. Cannot proceed.")
+  }
   
   if (is(mvr, "MVRangesList")) {
+    # this may or may not be such a good idea -- vapply would be preferable
     MVRangesList(lapply(mvr, decomposeAndCalcConsequences, coding=coding, ...))
   }
 
@@ -45,7 +48,8 @@ decomposeAndCalcConsequences <- function(mvr, coding=TRUE, AAchanges=TRUE, ...){
   if (coding) mvr <- .getCoding(mvr, ...)
 
   if (length(mvr) == 0) {
-    message("No variants found within the coding region, returning empty MVRanges")
+    message("No variants found within the coding region.")
+    message("Returning an empty MVRanges.")
     return(mvr)
   }
   

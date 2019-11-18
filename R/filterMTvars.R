@@ -1,5 +1,7 @@
 #' sanitize PASSing mitochondrial variant calls to a moderate degree
 #'
+#' FIXME: generalize this to mm10
+#'
 #' @param vars 	an MVRanges or MVRangesList (will be unlisted and relisted)
 #' @param fp 	  use false positive filter[s]? (TRUE: use Triska fpFilter)
 #' @param NuMT	variants with VAF < [this number] will be presumed NuMTs (0.03)
@@ -26,6 +28,7 @@ filterMTvars <- function(vars, fp=TRUE, NuMT=0.03, covg=20, depth=2) {
   } 
 
   if (is(vars, "MVRanges")) {
+    vars <- subset(vars, totalDepth >= covg)
     vars <- subset(vars, !is.na(altDepth(vars)) & altDepth(vars) >= depth)
     vars$VAF <- altDepth(vars) / totalDepth(vars)
     vars <- subset(subsetByOverlaps(vars, fpFilter), VAF >= NuMT)

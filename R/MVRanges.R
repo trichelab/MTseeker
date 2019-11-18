@@ -24,25 +24,21 @@ setClass("MVRanges",
 #' @import BiocGenerics
 #'
 #' @examples
-#' \dontrun{
+#' 
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
-#' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
-#' (mal <- getMT(BAMs[1]))
-#' if (requireNamespace("GmapGenome.Hsapiens.rCRS", quietly=TRUE)) {
-#'   (mvr <- callMT(mal))
-#'   locateVariants(mvr)
-#'   predictCoding(mvr) 
-#' } else { 
-#'   message("You have not yet installed an rCRS reference genome.")
-#'   message("Consider running the indexMTgenome() function to do so.")
-#'   message("An example MVRanges is RONKSvariants$RO_1 from MTseekerData.")
-#' }
-#' }
-#' # summarizeVariants can take too long to run, and requires internet access 
+#' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern="^pt.*bam$"))
+#' (mvr <- filterMTvars(pileupMT(BAMs[1], ref="rCRS")))
+#' locateVariants(head(encoding(mvr))) # FIXME: no gene overlaps?!?
+#' predictCoding(mvr) # FIXME: none!
+#' 
+#' # summarizeVariants can take a LONG time to run, and requires Internet
 #'
 #' @export
-MVRanges <- function(vr, coverage=NA_real_) new("MVRanges",vr,coverage=coverage)
+MVRanges <- function(vr=NULL, coverage=NA_real_) {
+  if (is.null(vr)) vr <- VRanges()
+  new("MVRanges", vr, coverage=coverage)
+}
 
 
 #' MVRanges methods (centralized).
@@ -180,15 +176,18 @@ setMethod("annotation", signature(object="MVRanges"),
             
           })
 
+
 # previously defined in chromvar
 setGeneric("getAnnotations",
            function(annotations, ...) standardGeneric("getAnnotations"))
+
 
 #' @rdname    MVRanges-methods
 #' @export
 setMethod("getAnnotations", signature(annotations="MVRanges"), 
           function(annotations) {
             if (is.null(metadata(annotations)$annotation)) {
+              # FIXME: mouse anno
               data(mtAnno.rCRS)
               return(mtAnno)
             } else { 
@@ -203,8 +202,13 @@ setMethod("encoding", signature(x="MVRanges"),
           function(x) {
             
             # limit the search 
-            x <- locateVariants(x) 
-            x <- subset(x, region == "coding") 
+            anno <- getAnnotations(x)
+            if (!is.null(anno)) {
+              x <- subsetByOverlaps(x, subset(anno, region == "coding"))
+            } else {
+              x <- locateVariants(x) 
+              x <- subset(x, region == "coding") 
+            }
             chrM <- grep("(MT|chrM|rCRS|RSRS)", seqlevelsInUse(x), value=TRUE)
             return(keepSeqlevels(x, chrM, pruning.mode="coarse"))
             
@@ -228,84 +232,20 @@ setMethod("genome", signature(x="MVRanges"),
 setMethod("locateVariants", 
           signature(query="MVRanges","missing","missing"),
           function(query, filterLowQual=FALSE, ...) {
+           
             if (filterLowQual == TRUE) query <- filt(query)
-            if ("gene" %in% names(mcols(query)) &
-                "region" %in% names(mcols(query)) &
-                "localEnd" %in% names(mcols(query)) & 
-                "localStart" %in% names(mcols(query)) &
-                "startCodon " %in% names(mcols(query)) &
-                "endCodon" %in% names(mcols(query))) {
-              return(query) # done 
-            }
-            if (length(query) == 0) return(NULL)
-            
-            data("mtAnno.rCRS", package="MTseeker")
-            metadata(query)$annotation <- mtAnno
-            
-            ol <- findOverlaps(query, mtAnno, ignore.strand=TRUE)
-            query$gene <- NA_character_
-            query$overlapGene <- NA_character_
-            #check if we picked up a hit in overlapping genes
-            #NOTE: this ignores strand if overlapping hits based on above
-            if (length(names(mtAnno)[subjectHits(ol)]) > 1) {
-              #pick off the first gene name
-              query[queryHits(ol)]$gene <- names(mtAnno)[subjectHits(ol)][1]
-              query[queryHits(ol)]$overlapGene <- paste(names(mtAnno)[subjectHits(ol)],
-                                                        collapse = ",")
+            if (length(query) == 0) {
+              return(query)
+            } else if (length(query) > 1) {
+              res <- MVRanges()  
+              # lapply/getListElement misbehave
+              for (i in seq_along(query)) {
+                res <- c(res, locateMTvariants(query[i], ...))         
+              } 
+              return(res)
             } else {
-              query[queryHits(ol)]$gene <- names(mtAnno)[subjectHits(ol)]
+              locateMTvariants(query, ...)
             }
-            #query[queryHits(ol)]$gene <- names(mtAnno)[subjectHits(ol)] 
-            query$region <- NA_character_
-            query[queryHits(ol)]$region <- mtAnno[subjectHits(ol)]$region
-            
-            ## Localized genic coordinates
-            anno <- subset(mtAnno, region == "coding") 
-            ol2 <- findOverlaps(query, anno, ignore.strand=TRUE)
-            query$localStart <- NA_integer_
-            #check if we picked up a hit in overlapping genes
-            if (length(start(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])) > 1) {
-              dnaStart <- 
-                start(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])
-              #be consistent with first start
-              #could add a check here to make sure we have the same gene
-              query[queryHits(ol2)]$localStart <- dnaStart[1]
-            } else {
-              query[queryHits(ol2)]$localStart <- 
-                start(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])
-            }
-            query$localEnd <- NA_integer_
-            if (length(end(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])) > 1) {
-              dnaEnd <- 
-                end(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])
-              #be consistent with first end
-              #could add a check here to make sure we have the same gene
-              query[queryHits(ol2)]$localEnd <- dnaEnd[1]
-            } else {
-              query[queryHits(ol2)]$localEnd <- 
-                end(query[queryHits(ol2)]) - start(anno[subjectHits(ol2)])
-            }
-            
-            ## Affected reference codon(s)
-            query$startCodon <- NA_integer_
-            #check if we picked up overlapping genes
-            if (length(query[queryHits(ol2)]$localStart %/% 3) > 1) {
-              aaStart <- query[queryHits(ol2)]$localStart %/% 3
-              query[queryHits(ol2)]$startCodon <- aaStart[1]
-            } else {
-              query[queryHits(ol2)]$startCodon <- 
-                query[queryHits(ol2)]$localStart %/% 3
-            }
-            query$endCodon <- NA_integer_
-            if (length(query[queryHits(ol2)]$localEnd %/% 3) > 1) {
-              aaEnd <- query[queryHits(ol2)]$localEnd %/% 3
-              query[queryHits(ol2)]$endCodon <- aaEnd[1]
-            } else {
-              query[queryHits(ol2)]$endCodon <- 
-                query[queryHits(ol2)]$localEnd %/% 3
-            }
-            
-            return(query)
             
           })
 
