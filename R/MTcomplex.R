@@ -15,11 +15,10 @@
 #' @importFrom utils browseURL
 #'
 #' @examples
-#' \dontrun{
 #' library(MTseekerData)
 #' data(RONKSvariants) 
 #' MTcomplex(RONKSvariants$RO_1)
-#' }
+#' 
 #' @export 
 MTcomplex <- function(variants, defColor="#c9eded", verbose=FALSE){
 

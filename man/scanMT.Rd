@@ -21,7 +21,7 @@ scanMT(bam, chrM = "(rCRS|chrM|MT)", ...)
 This purely a convenience function, and an incredibly convenient one at that.
 }
 \examples{
-\dontrun{
+
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
@@ -31,5 +31,5 @@ show(sbp)
 
 sbps <- scanMT(BAMs, mapqFilter=20)
 show(sbps) 
-}
+
 }

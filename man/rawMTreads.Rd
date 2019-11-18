@@ -17,15 +17,13 @@ rawMTreads(bams)
 Raw reads shown as GAlignments\link{List}
 }
 \examples{
-\dontrun{
+
 library(MTseekerData)
 BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 BAMs <- list.files(BAMdir, pattern="bam$")
 BAMs <- paste0(BAMdir, "/", BAMs)
-
 rawReads <- rawMTreads(BAMs)
-
 rawReads_1 <- MAlignments(rawReads[[1]], BAMs[1])
 plotMTCoverage(rawReads_1)
-}
+
 }

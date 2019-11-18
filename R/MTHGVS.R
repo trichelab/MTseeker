@@ -7,11 +7,11 @@
 #' @return          proper HGVS names for the *Ranges (or a renamed *Ranges)
 #'
 #' @examples
-#' \dontrun{
+#'
 #' library(MTseekerData) 
 #' data(RONKSvariants) 
 #' MTHGVS(RONKSvariants$RO_1)
-#' }
+#' 
 #' @export
 MTHGVS <- function(x, asMVR=FALSE, verbose=FALSE) { 
 

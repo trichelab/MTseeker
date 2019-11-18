@@ -21,9 +21,9 @@ MTHGVS(x, asMVR = FALSE, verbose = FALSE)
 convert mitochondrial variant calls to HGVS format for naming
 }
 \examples{
-\dontrun{
+
 library(MTseekerData) 
 data(RONKSvariants) 
 MTHGVS(RONKSvariants$RO_1)
-}
+
 }

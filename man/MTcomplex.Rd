@@ -24,9 +24,8 @@ usually hit (we aren't plotting the mitoribosome or tRNAs just yet). So why
 reinvent the wheel (and possibly make it square)?
 }
 \examples{
-\dontrun{
 library(MTseekerData)
 data(RONKSvariants) 
 MTcomplex(RONKSvariants$RO_1)
-}
+
 }

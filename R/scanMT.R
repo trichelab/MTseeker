@@ -13,7 +13,7 @@
 #' @import Rsamtools
 #' 
 #' @examples
-#' \dontrun{
+#' 
 #' library(MTseekerData)
 #' BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
 #' BAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern=".bam$"))
@@ -23,7 +23,7 @@
 #'
 #' sbps <- scanMT(BAMs, mapqFilter=20)
 #' show(sbps) 
-#' }
+#' 
 #' @export
 scanMT <- function(bam, chrM="(rCRS|chrM|MT)", ...) { 
 

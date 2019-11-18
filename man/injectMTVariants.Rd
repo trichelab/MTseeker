@@ -7,11 +7,11 @@
 injectMTVariants(mvr, coding = TRUE, gr = NULL)
 }
 \arguments{
-\item{mvr}{An MVRanges, usually from callMT, often subsetted}
+\item{mvr}{An MVRanges, usually from pileupMT, often subsetted}
 
 \item{coding}{TRUE to only look at coding regions}
 
-\item{gr}{A GRanges, usually of protein-n regions (the default)}
+\item{gr}{A GRanges, usually of protein-coding regions (the default)}
 }
 \value{
 \preformatted{     The GRanges, with ref/var DNA and AA and 

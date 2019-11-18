@@ -38,7 +38,6 @@ plotMTCoverage does what one might expect, and plots (read or call) coverage.
 plotStrandedMTCoverage does the same thing, but keeps track of which strand.
 }
 \examples{
-\dontrun{
 library(MTseekerData)
 
 data(RONKSreads)
@@ -60,5 +59,5 @@ plotStrandedMTCoverage(RONKSreads$NKS_1)
 title("Stranded read coverage for normal kidney sample 1") 
 plotStrandedMTCoverage(RONKSreads$RO_1)
 title("Stranded read coverage for renal oncocytoma sample 1") 
-}
+
 }

@@ -4,8 +4,8 @@
 #' FIXME: this ONLY considers variants injected against rCRS, not RSRS or hg19. 
 #' FIXME: this function really needs mouse support as well.
 #' 
-#' @param mvr       An MVRanges, usually from callMT, often subsetted
-#' @param gr        A GRanges, usually of protein-n regions (the default)
+#' @param mvr       An MVRanges, usually from pileupMT, often subsetted
+#' @param gr        A GRanges, usually of protein-coding regions (the default)
 #' @param coding    TRUE to only look at coding regions
 #' 
 #' @return          The GRanges, with ref/var DNA and AA and 

@@ -23,7 +23,6 @@
 #' @import GenomicAlignments 
 #'
 #' @examples
-#' \dontrun{
 #' library(MTseekerData)
 #'
 #' data(RONKSreads)
@@ -45,7 +44,7 @@
 #' title("Stranded read coverage for normal kidney sample 1") 
 #' plotStrandedMTCoverage(RONKSreads$RO_1)
 #' title("Stranded read coverage for renal oncocytoma sample 1") 
-#' }
+#' 
 #' @export
 MTcoverage <- function(x, ...) { 
   if (is(x, "VRanges")) {
