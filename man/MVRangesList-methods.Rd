@@ -124,3 +124,11 @@ supplied arguments, it will be combined into a vector named bamFiles.
 \code{plot}                 creates circular plot of mitochondrial variant calls
 }
 
+\examples{
+
+library(MTseekerData)
+BAMdir <- system.file("extdata", "BAMs", package="MTseekerData")
+pdxBAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern="^PDX.*.bam$"))
+(mvrl <- pileupXenograft(pdxBAMs[1]))
+
+}

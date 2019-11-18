@@ -2,10 +2,10 @@
 #'
 #' @name importVCF
 #' 
-#' @param x   character, list or dataframe for file name of VCF(and BAM)
-#' @param gzip   Is the input gzipped?
-#' @param biscuit   Is the input VCF from biscuit?
-#' @param verbose   logical, if set to TRUE, print all messages during progressing.
+#' @param x         character, list or dataframe for file name of VCF(and BAM)
+#' @param gzip      Is the input gzipped? (FIXME: autodetect this)
+#' @param biscuit   Is the input VCF from biscuit? (FALSE)
+#' @param verbose   Print all messages during progress? (TRUE) 
 #' 
 #' @import VariantTools
 #' @import VariantAnnotation
@@ -13,19 +13,26 @@
 #' 
 #' @return an MVRangesList
 #'
-#' @export
-#' 
 #' @examples 
 #' 
+#' library(MTseekerData)
+#' VCFdir <- system.file("extdata", package="MTseekerData")
+#' VCF <- file.path(VCFdir, list.files(VCFdir, pattern="*.vcf.gz$"))
+#' mvr <- importVCF(VCF)[[1]]
+#' mvr$FILTER <- ifelse(totalDepth(mvr) >= 20, "PASS", ".")
+#' mvr$PASS <- mvr$FILTER == "PASS"
+#' filterMT(mvr)
 #' 
-
+#' @export
 importVCF <- function(x, gzip = TRUE, biscuit = FALSE, verbose = TRUE) {
   bam_files <- NULL
   if(is(x, 'character') || is(x, 'list')) {
     vcf_files <- x
   } else if(is(x, 'data.frame') || is(x, 'dataframe')) {
     if(!("VCF" %in% names(x))) {
-      stop("If given input is in type of data.frame, there must be column name \"VCF\" in input.")
+      message("If given input is in some type of data.frame,")
+      message("there must be column named \"VCF\" in it.")
+      stop("Exiting.")
     } else {
       if("BAM" %in% names(x)) {
         if(verbose) message("Found column name \"BAM\" in input.")
@@ -34,7 +41,7 @@ importVCF <- function(x, gzip = TRUE, biscuit = FALSE, verbose = TRUE) {
       vcf_files <- as.character(x$VCF)
     }
   } else {
-    stop('Input must be given in type of either character, list or dataframe')
+    stop('Input type must be either character, list, or data.frame')
   }
 
   mvrl <- NULL
@@ -66,21 +73,26 @@ importVCF <- function(x, gzip = TRUE, biscuit = FALSE, verbose = TRUE) {
 #' 
 #' @param vcf_filename   A filename/path to the corresponding VCF
 #' @param bam_filename   A filename/path to the corresponding BAM
-#' @param gzip    Is the input gzipped?
-#' @param biscuit    Is the input VCF from biscuit?
-#' @param verbose   logical, if set to TRUE, print all messages during progressing.
+#' @param gzip           Is the input gzipped? (TRUE; really ought not matter)
+#' @param biscuit        Is the input VCF from biscuit? (FALSE)
+#' @param verbose        Print all messages during progress? (TRUE) 
 #' 
 #' @import VariantTools
 #' @import VariantAnnotation
 #' 
 #' @return an MVRangesList
-#'
-#' @export
 #' 
 #' @examples 
 #' 
+#' library(MTseekerData)
+#' VCFdir <- system.file("extdata", package="MTseekerData")
+#' VCF <- file.path(VCFdir, list.files(VCFdir, pattern="*.vcf.gz$"))
+#' mvr <- vcf2mvrl(VCF)[[1]]
+#' mvr$FILTER <- ifelse(totalDepth(mvr) >= 20, "PASS", ".")
+#' mvr$PASS <- mvr$FILTER == "PASS"
+#' filterMT(mvr)
 #' 
-
+#' @export
 vcf2mvrl <- function(vcf_filename, bam_filename = NULL, gzip = TRUE,
                      biscuit = FALSE, verbose = TRUE) {
   
@@ -99,7 +111,8 @@ vcf2mvrl <- function(vcf_filename, bam_filename = NULL, gzip = TRUE,
     mt_chr <- 'MT'
   }
   
-  rang <- GRanges(mt_chr, IRanges(1, 20000)) ## Total length of chrM is smaller than 20K (16571-hg19 or 16569-rCRS)
+  rang <- GRanges(mt_chr, IRanges(1, 20000)) 
+  ## Total length of chrM is smaller than 20K (16571-hg19 or 16569-rCRS)
   param <- ScanVcfParam(which=rang)
   
   mvrl <- NULL
@@ -113,13 +126,16 @@ vcf2mvrl <- function(vcf_filename, bam_filename = NULL, gzip = TRUE,
       if (!("CX" %in% colnames(info(collVcf)))) stop("This doesn't look like a VCF from biscuit. Stopping.")
       collVcf <- collVcf[is.na(info(collVcf)$CX),]
     }
-    if(all(c("DP", "AC") %in% names(geno(collVcf)))){
+    if("DP" %in% names(geno(collVcf))) {
       dp <- unname(geno(collVcf)$DP[, 1])
-      alt_c <- geno(collVcf)$AC
-      alt_c[is.na(alt_c == 0)] <- 0
-      alt_c <- unlist(alt_c)
-      ref_c <- dp - alt_c
-        
+      if ("AC" %in% names(geno(collVcf))) {
+        alt_c <- geno(collVcf)$AC
+        alt_c[is.na(alt_c == 0)] <- 0
+        alt_c <- unlist(alt_c)
+      } else { 
+        alt_c <- unname(geno(collVcf)$AD[, , 2])
+        ref_c <- dp - alt_c
+      } 
       gr <- rowRanges(collVcf)
       gr$REF <- as.character(gr$REF)
       gr$ALT <- as.character(gr$ALT@unlistData)
@@ -133,14 +149,14 @@ vcf2mvrl <- function(vcf_filename, bam_filename = NULL, gzip = TRUE,
                                    alt.field = "ALT",
                                    totalDepth.field = "DP",
                                    refDepth.field = "RC",
-                                   altDepth.field = "AC"
-      )
+                                   altDepth.field = "AC")
       vr$VAF <- alt_c / dp
     } else {
       message("Please look into your VCF file before running again")
-      stop("Can't find columns, either [DP] or [AC], or both ...")
+      stop("Can't find [DP] column and/or [AD]/[AC] column...")
     }
-      
+ 
+        
     vr$PASS <- vr$FILTER == "PASS"
       
     if(ncol(collVcfs) == 1 && !is.null(bam_filename)) {
@@ -148,9 +164,11 @@ vcf2mvrl <- function(vcf_filename, bam_filename = NULL, gzip = TRUE,
     } else {
       cov <- 1
     }
-      
-    mvr <- keepSeqlevels(MVRanges(vr, coverage=cov), mt_chr, pruning.mode="coarse") 
+
+    mvr <- keepSeqlevels(MVRanges(vr, coverage=cov), mt_chr, 
+                         pruning.mode="coarse") 
     isCircular(mvr)[mt_chr]<- TRUE
+    genome(mvr) <- "rCRS"
     names(mvr) <- MTHGVS(mvr)
       
     if(seqlengths(mvr) == 16571) {

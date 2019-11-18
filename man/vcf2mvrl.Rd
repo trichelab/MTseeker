@@ -17,11 +17,11 @@ vcf2mvrl(
 
 \item{bam_filename}{A filename/path to the corresponding BAM}
 
-\item{gzip}{Is the input gzipped?}
+\item{gzip}{Is the input gzipped? (TRUE; really ought not matter)}
 
-\item{biscuit}{Is the input VCF from biscuit?}
+\item{biscuit}{Is the input VCF from biscuit? (FALSE)}
 
-\item{verbose}{logical, if set to TRUE, print all messages during progressing.}
+\item{verbose}{Print all messages during progress? (TRUE)}
 }
 \value{
 an MVRangesList
@@ -31,5 +31,12 @@ Convert a VCF to an MVRangesList object
 }
 \examples{
 
+library(MTseekerData)
+VCFdir <- system.file("extdata", package="MTseekerData")
+VCF <- file.path(VCFdir, list.files(VCFdir, pattern="*.vcf.gz$"))
+mvr <- vcf2mvrl(VCF)[[1]]
+mvr$FILTER <- ifelse(totalDepth(mvr) >= 20, "PASS", ".")
+mvr$PASS <- mvr$FILTER == "PASS"
+filterMT(mvr)
 
 }

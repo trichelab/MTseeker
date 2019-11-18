@@ -34,7 +34,6 @@ setClass("MVRangesList", contains="SimpleVRangesList")
 #' pdxBAMs <- paste0(BAMdir, "/", list.files(BAMdir, pattern="^PDX.*.bam$"))
 #' (mvrl <- pileupXenograft(pdxBAMs[1]))
 #'
-#' }
 #' @export
 MVRangesList <- function(..., bamFiles=NULL, coverageRles=NULL, verbose=FALSE) {
 

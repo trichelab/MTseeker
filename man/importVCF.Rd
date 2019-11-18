@@ -9,11 +9,11 @@ importVCF(x, gzip = TRUE, biscuit = FALSE, verbose = TRUE)
 \arguments{
 \item{x}{character, list or dataframe for file name of VCF(and BAM)}
 
-\item{gzip}{Is the input gzipped?}
+\item{gzip}{Is the input gzipped? (FIXME: autodetect this)}
 
-\item{biscuit}{Is the input VCF from biscuit?}
+\item{biscuit}{Is the input VCF from biscuit? (FALSE)}
 
-\item{verbose}{logical, if set to TRUE, print all messages during progressing.}
+\item{verbose}{Print all messages during progress? (TRUE)}
 }
 \value{
 an MVRangesList
@@ -23,5 +23,12 @@ Import a VCF directly into MTseeker
 }
 \examples{
 
+library(MTseekerData)
+VCFdir <- system.file("extdata", package="MTseekerData")
+VCF <- file.path(VCFdir, list.files(VCFdir, pattern="*.vcf.gz$"))
+mvr <- importVCF(VCF)[[1]]
+mvr$FILTER <- ifelse(totalDepth(mvr) >= 20, "PASS", ".")
+mvr$PASS <- mvr$FILTER == "PASS"
+filterMT(mvr)
 
 }
