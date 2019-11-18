@@ -21,9 +21,10 @@ injectMTVariants(mvr, coding = TRUE, gr = NULL)
 FIXME: this function could most likely be orders of magnitude faster.
 FIXME: this ONLY considers variants injected against rCRS, not RSRS or hg19.
 FIXME: this function really needs mouse support as well.
+FIXME: recent changes seem to have destabilized this fn.
 }
 \examples{
 library(MTseekerData)
-injectMTVariants(RONKSvariants[["RO_2"]]) 
+injectMTVariants(RONKSvariants[["RO_2"]][59]) 
 
 }
