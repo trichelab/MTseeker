@@ -4,7 +4,9 @@
 \name{hg19TorCRS}
 \alias{hg19TorCRS}
 \title{a liftOver chain for hg19 to rCRS attempts. We do not recommend this.}
-\format{a Chain object}
+\format{
+a Chain object
+}
 \usage{
 hg19TorCRS
 }

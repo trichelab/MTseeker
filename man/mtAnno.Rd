@@ -5,7 +5,9 @@
 \alias{mtAnno}
 \alias{mtAnno.rCRS}
 \title{annotation for the rCRS genome}
-\format{a GRanges object}
+\format{
+a GRanges object
+}
 \usage{
 mtAnno
 }

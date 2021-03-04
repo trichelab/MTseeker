@@ -4,7 +4,9 @@
 \name{rCRSeq}
 \alias{rCRSeq}
 \title{The complete sequence of the human rCRS mitogenome. Yes, it's that small.}
-\format{a DNAStringSet of length 1}
+\format{
+a DNAStringSet of length 1
+}
 \usage{
 rCRSeq
 }

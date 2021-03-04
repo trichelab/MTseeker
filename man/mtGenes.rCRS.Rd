@@ -4,7 +4,9 @@
 \name{mtGenes.rCRS}
 \alias{mtGenes.rCRS}
 \title{All annotated gene regions (not just coding genes) from rCRS.}
-\format{a GRanges}
+\format{
+a GRanges
+}
 \usage{
 mtGenes.rCRS
 }

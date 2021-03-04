@@ -4,7 +4,9 @@
 \name{haplomask_whitelist}
 \alias{haplomask_whitelist}
 \title{a whitelist for haplomasking}
-\format{an MVRangesList object}
+\format{
+an MVRangesList object
+}
 \usage{
 haplomask_whitelist
 }

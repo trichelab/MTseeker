@@ -9,7 +9,8 @@ pileupMT(
   sbp = NULL,
   pup = NULL,
   callIndels = TRUE,
-  ref = c("rCRS", "GRCh37", "GRCh38", "hg38", "GRCm38", "C57BL/6J", "NC_005089", "mm10"),
+  ref = c("rCRS", "GRCh37", "GRCh38", "hg38", "GRCm38", "C57BL/6J", "NC_005089",
+    "mm10"),
   ...
 )
 }

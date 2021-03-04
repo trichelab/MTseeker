@@ -4,7 +4,9 @@
 \name{chrominfo.rCRS}
 \alias{chrominfo.rCRS}
 \title{Sequence information (seqinfo) for the rCRS mitogenome}
-\format{a Seqinfo object}
+\format{
+a Seqinfo object
+}
 \usage{
 chrominfo.rCRS
 }

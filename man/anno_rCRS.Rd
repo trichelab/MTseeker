@@ -4,7 +4,9 @@
 \name{anno_rCRS}
 \alias{anno_rCRS}
 \title{annotation for the regions (genic and not) of the rCRS mitogenome}
-\format{a GRanges object}
+\format{
+a GRanges object
+}
 \usage{
 anno_rCRS
 }

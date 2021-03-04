@@ -4,7 +4,9 @@
 \name{mtGenes}
 \alias{mtGenes}
 \title{Base sequences of mitochondrial coding genes.}
-\format{a GRanges with a DNAStringSet of the base sequences as its mcols.}
+\format{
+a GRanges with a DNAStringSet of the base sequences as its mcols.
+}
 \usage{
 mtGenes
 }

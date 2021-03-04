@@ -148,7 +148,7 @@ calls into a GenomicRanges object with the aggregated affected regions.
 
 ```{r filterRoVariants}
 RO <- grep("RO_", names(RONKSvariants))
-filtered_RO <- filterMT(RONKSvariants[RO], fpFilter=TRUE, NuMT=TRUE)
+filtered_RO <- filterMTvars(RONKSvariants[RO], fpFilter=TRUE, NuMT=TRUE)
 RO_recurrent <- subset(granges(filtered_RO), 
                        region == "coding" & rowSums(overlaps) > 1)
 ```

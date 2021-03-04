@@ -4,7 +4,9 @@
 \name{fpFilter_RSRS}
 \alias{fpFilter_RSRS}
 \title{false positive filter (fpFilter) for RSRS haplogroup-determining variants}
-\format{a GRanges object}
+\format{
+a GRanges object
+}
 \usage{
 fpFilter_RSRS
 }

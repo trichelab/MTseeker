@@ -4,7 +4,9 @@
 \name{fpFilter_Triska}
 \alias{fpFilter_Triska}
 \title{a false positive (fp) filter from Petr Triska's manuscript on mtDNA variants}
-\format{a GRanges object}
+\format{
+a GRanges object
+}
 \usage{
 fpFilter_Triska
 }
